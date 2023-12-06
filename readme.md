@@ -129,3 +129,21 @@ DH、Digital_Certificate等都需要和smartcard交互，这个包可以考虑�
 
 ### BUG
 1.子窗口打开时不能修改标题。
+
+
+## Version1.2 -2023.12.06
+
+修复：
+修复了一些已知的bug：导入bug
+Password_system_ui
+
+```
+combo_box=[ComboBox(enabled=True, id="ComboBox", label="Select",
+                    items=["SHA1", "SHA256", "SHA3-256", "MD5", "SM3"])]
+```
+
+```
+combo_widget.currentIndexChanged.connect(combo.changed_function)  # 添加这一行以关联信号和槽函数
+```
+
+已添加changed_function，操作为pass
