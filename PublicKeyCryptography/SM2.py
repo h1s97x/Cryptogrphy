@@ -9,7 +9,7 @@
 =================================================="""
 import logging
 from PyQt5 import QtCore
-from gmssl import sm2, func
+from PublicKeyCryptography.gmssl import sm2, func
 from Util import TypeConvert
 
 

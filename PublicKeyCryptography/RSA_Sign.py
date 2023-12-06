@@ -2,7 +2,7 @@ import decimal
 import itertools
 import logging
 from PyQt5 import QtCore
-import mm_rsa
+from PublicKeyCryptography import mm_rsa
 from Util import TypeConvert
 
 

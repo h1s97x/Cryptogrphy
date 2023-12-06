@@ -181,7 +181,7 @@ class CryptographyWidget(QMainWindow):
         import PublicKeyCryptography
         import StreamCipher
         import Hash
-        import CryptographicProtocol
+        # import CryptographicProtocol
         import MathematicalBasis
 
         self.setWindowTitle("Menu Bar")
@@ -377,7 +377,7 @@ class CryptographyWidget(QMainWindow):
             lambda: self.handleCipherAction(MathematicalBasis.EulerWidget))  # 修改为通用的处理方法
         math_algorithm_menu.addAction(Euler_cipher_action)
 
-        Euclidean_cipher_action = QAction("Euler", self)
+        Euclidean_cipher_action = QAction("Euclidean", self)
         Euclidean_cipher_action.triggered.connect(
             lambda: self.handleCipherAction(MathematicalBasis.EuclideanWidget))  # 修改为通用的处理方法
         math_algorithm_menu.addAction(Euclidean_cipher_action)

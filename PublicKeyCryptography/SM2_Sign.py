@@ -9,7 +9,7 @@
 
 from PyQt5 import QtCore
 
-from gmssl import sm2, func, sm3
+from PublicKeyCryptography.gmssl import sm2, func, sm3
 from Util import TypeConvert
 
 

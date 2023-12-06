@@ -19,7 +19,7 @@ class PSWidget(CryptographyWidget):
                      key_edit=[],
                      buttons=[],
                      combo_box=[ComboBox(enabled=True, id="ComboBox", label="Select",
-                                         items=["SHA1", "SHA256", "SHA3-256", "MD5", "SM3"])]
+                                         items=["SHA1", "SHA256", "SHA3-256", "MD5", "SM3"],changed_function=self.combox_changed)]
                      ),
             Group(name="Registration",
                   plain_text_edits=[PlainTextEdit(id="Account_Registration", label="Account (String)", default_text=""),
@@ -108,6 +108,8 @@ class PSWidget(CryptographyWidget):
         self.information = None
         self.hash_mode = None
 
+    def combox_changed(self):
+        pass
     def sign_up(self):
         self.account = self.widgets_dict["Account_Registration"].get_text()
         self.password = self.widgets_dict["Password_Registration"].get_text()

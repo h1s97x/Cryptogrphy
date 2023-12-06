@@ -1,4 +1,4 @@
-from gmssl.SM2extend import kp
+from PublicKeyCryptography.gmssl.SM2extend import kp
 from . import sm3, func
 
 # 选择素域，设置椭圆曲线参数

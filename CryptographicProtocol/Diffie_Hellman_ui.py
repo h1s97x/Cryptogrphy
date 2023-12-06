@@ -2,7 +2,7 @@ import logging
 from PyQt5.QtWidgets import QApplication, QVBoxLayout, QLabel, QPushButton, QWidget, QComboBox
 
 import random
-import ModularPower, PrimeGen
+from CryptographicProtocol import ModularPower, PrimeGen
 from Util.Modules import Button, PlainTextEdit, Key, KeyGroup, Group, ErrorType, TextEdit, ComboBox
 from Util.Modules import CryptographyWidget
 from Util import Path, TypeConvert

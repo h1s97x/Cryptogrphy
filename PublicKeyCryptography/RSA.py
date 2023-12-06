@@ -1,6 +1,6 @@
 import logging
 from PyQt5 import QtCore
-import mm_rsa
+from PublicKeyCryptography import mm_rsa
 
 
 class KeyThread(QtCore.QThread):
