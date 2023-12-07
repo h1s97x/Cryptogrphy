@@ -126,6 +126,67 @@ DH、Digital_Certificate等都需要和smartcard交互，这个包可以考虑�
 1.在主窗口菜单栏整合了所有的子窗口；
 2.导入优化。
 
+### 导入优化
+
+在把所有子窗口整合到主窗口时遇到的问题：
+
+1.在项目头处导入子窗口类会报错：循环导入
+
+```
+File "E:\Document\OneDrive - mail.sdu.edu.cn\Desktop\pyqt5\Util\Modules.py", line 7, in <module>
+    from ClassicCrypto.Hill_ui import HillWidget
+ImportError: cannot import name 'HillWidget' from partially initialized module 'ClassicCrypto.Hill_ui' (most likely due to a circular import)
+```
+
+因此就需要延迟导入，即在需要的时候再导入：
+
+[Python 中的延迟导入 (linux-console.net)](https://cn.linux-console.net/?p=26741)
+
+那么解决方法就是在主窗口初始化菜单时再导入。
+
+```
+    def initUI(self):
+        # 延迟导入
+        import ClassicCrypto
+        import BlockCipher
+        import PublicKeyCryptography
+        import StreamCipher
+        import Hash
+        # import CryptographicProtocol
+        import MathematicalBasis
+```
+
+
+
+2.因为项目中包含多个子窗口且分散在不同的py模块里，如果按照
+
+```
+from ClassicCrypto.Hill_ui import HillWidget
+```
+
+这样的方式一个个导入，不仅写起来麻烦，同样会给以后的维护带来很大的弊端，而且不太符合编程的规范。因此有没有什么办法能够将一个软件包直接导入进来？
+
+这就要提到init.py了，
+
+***init**.py的作用
+它的作用是在导入包时首先执行的。
+假设在 exp.py 中写入 import one.exp1 ，那么会首先执行 **init**.py 文件，接着会执行exp1.py文件
+如果不需要，**init**.py可以为空，也可以干脆不加入__init__.py*
+
+```
+# ClassicCrypto/__init__.py
+from .Hill_ui import HillWidget
+from .Caesar_ui import CaesarWidget
+from .Enigma_ui import EnigmaWidget
+from .Frequency_Analysis_ui import FAWidget
+from .Monoalphabetic_Cipher_ui import MonoalphabeticWidget
+from .Playfair_ui import PlayfairWidget
+from .Vigenere_ui import VigenereWidget
+
+```
+
+
+
 
 ### BUG
 1.子窗口打开时不能修改标题。

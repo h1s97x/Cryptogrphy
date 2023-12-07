@@ -384,11 +384,11 @@ class CryptographyWidget(QMainWindow):
 
         protocol_algorithm_menu = menubar.addMenu("Cryptographic Protocol")
 
-        DH_cipher_action = QAction("Diffie Hellman", self)
-        DH_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(CryptographicProtocol.DHWidget))  # 修改为通用的处理方法
-        protocol_algorithm_menu.addAction(DH_cipher_action)
-
+        # DH_cipher_action = QAction("Diffie Hellman", self)
+        # DH_cipher_action.triggered.connect(
+        #     lambda: self.handleCipherAction(CryptographicProtocol.DHWidget))  # 修改为通用的处理方法
+        # protocol_algorithm_menu.addAction(DH_cipher_action)
+        #
 
         self.central_widget = QWidget(self)
         self.setCentralWidget(self.central_widget)
