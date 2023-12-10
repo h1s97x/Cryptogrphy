@@ -44,55 +44,8 @@ class HillWidget(CryptographyWidget):
                   ])
         ]
 
-        layout = QVBoxLayout()
-        central_widget = QWidget(self)
-        central_widget.setLayout(layout)
-        self.setCentralWidget(central_widget)
-
-
-        for group_config in self.groups_config:
-            # 考虑在父类实现
-            # group_config.initUI()
-
-            group_label = QLabel(group_config.name)
-            layout.addWidget(group_label)
-
-            # if isinstance(group_config, KeyGroup):
-            #     for edit in group_config.key_edit:
-            #         edit_label = QLabel(edit.label)
-            #         layout.addWidget(edit_label)
-            #
-            #         edit_text = edit.text
-            #         edit_widget = TextEdit(edit_text)  # 使用QLineEdit或其他适当的小部件替换此处的QLabel
-            #         layout.addWidget(edit_widget)
-
-            if isinstance(group_config, Group):
-
-                for plain_text_edit in group_config.plain_text_edits:
-                    self.widgets_dict[plain_text_edit.id] = plain_text_edit
-                    edit_label = QLabel(plain_text_edit.label)
-                    layout.addWidget(edit_label)
-
-                    edit_text = plain_text_edit.text
-                    edit_widget = TextEdit(edit_text)
-                    layout.addWidget(edit_widget)
-                    self.widgets_dict[plain_text_edit.id] = edit_widget  # 将QTextEdit小部件与plain_text_edit对象关联起来
-
-            for button in group_config.buttons:
-                self.widgets_dict[button.id] = button
-                button_widget = QPushButton(button.name)
-                button_widget.clicked.connect(button.clicked_function)
-                layout.addWidget(button_widget)
-
-        layout.addWidget(self.logging_widget)
-
-
-        self.setGeometry(300, 300, 500, 400)
-        self.show()
+        self.render()
         self.logging.log("Hill algorithm has been imported.\n")
-
-        # # render user interface based on above-mentioned configurations
-        # self.render()
 
     def import_plaintext(self):
         try:

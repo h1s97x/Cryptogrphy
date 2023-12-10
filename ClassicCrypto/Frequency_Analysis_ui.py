@@ -31,37 +31,7 @@ class FAWidget(CryptographyWidget):
                       Button(id="ComputerDecrypt_multi", name="Decrypt Multi (PC)", clicked_function=self.attack_multi)
                   ])
         ]
-        layout = QVBoxLayout()
-        central_widget = QWidget(self)
-        central_widget.setLayout(layout)
-        self.setCentralWidget(central_widget)
-
-        for group_config in self.groups_config:
-            group_label = QLabel(group_config.name)
-            layout.addWidget(group_label)
-
-            if isinstance(group_config, Group):
-                for plain_text_edit in group_config.plain_text_edits:
-                    self.widgets_dict[plain_text_edit.id] = plain_text_edit
-                    edit_label = QLabel(plain_text_edit.label)
-                    layout.addWidget(edit_label)
-
-                    edit_text = plain_text_edit.text
-                    edit_widget = TextEdit(edit_text)
-                    layout.addWidget(edit_widget)
-                    self.widgets_dict[plain_text_edit.id] = edit_widget  # 将QTextEdit小部件与plain_text_edit对象关联起来
-
-            for button in group_config.buttons:
-                self.widgets_dict[button.id] = button
-                button_widget = QPushButton(button.name)
-                button_widget.clicked.connect(button.clicked_function)
-                layout.addWidget(button_widget)
-
-        layout.addWidget(self.logging.log_widget)
-
-        self.setWindowTitle("Cryptography Widget")
-        self.setGeometry(300, 300, 500, 400)
-        self.show()
+        self.render()
         self.logging.log("Frequency Analysis Attack has been imported.\n")
 
     def logging_decrypt_multi(self, str_data):
