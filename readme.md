@@ -276,3 +276,8 @@ Modules.py
 ```
 
 2.新增实验报告
+
+3.解决了一个bug
+
+No module named 'Crypto' 
+参考博客：https://blog.csdn.net/xiaojin21cen/article/details/109642940
