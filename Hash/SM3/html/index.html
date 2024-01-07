@@ -1,0 +1,359 @@
+﻿<!-- 本文档参考：http://www.oscca.gov.cn/sca/xxgk/2010-12/17/1002389/files/302a3ada057c4a73830536d03e683110.pdf -->
+<!-- 本文档参考：https://blog.csdn.net/omfalio1101/article/details/80295108 -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="" name="description">
+    <meta content="True" name="HandheldFriendly">
+    <meta content="320" name="MobileOptimized">
+    <meta content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>SM3算法 - Documentation</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+MathJax = {    
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    //tags: 'ams'  // should be 'ams', 'none', or 'all'
+  }
+};
+
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <h2 class="lone-header">数缘科技 - SM3密码算法</h2>
+        </div>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="docs-nav" id="menu-left">
+                <li><strong>实验介绍</strong></li>
+                <li><a class=" " href="#SM3算法实验说明">SM3算法实验说明</a></li>
+                <li><a class=" " href="#SM3示例卡说明">SM3示例卡说明</a></li>
+                <li class="separator"></li>
+                <li><strong>SM3算法介绍</strong></li>
+                <li><a class=" " href="#算法概述">算法概述</a></li>
+                <li><a class=" " href="#消息填充">消息填充</a></li>
+                <li><a class=" " href="#分块">分块</a></li>
+                <li><a class=" " href="#迭代压缩">迭代压缩</a></li>
+                <ul>
+                    <li><a class=" " href="#压缩函数">压缩函数</a></li>
+                    <li><a class=" " href="#块消息扩展">块消息扩展</a></li>
+                    <li><a class=" " href="#计算中间值">计算中间值</a></li>
+                    <li><a class=" " href="#更新ABCDEFGH">更新ABCDEFGH</a></li>
+                </ul>
+                <li><a class=" " href="#杂凑值">杂凑值</a></li>
+            </ul>
+            <div class="docs-content">
+                <h3 id="SM3算法实验说明"> SM3算法实验说明</h3>
+                <p>本实验支持自定义消息进行SM3 Hash运算，且支持两种方式：PC端Hash运算和智能卡Hash运算。</p>
+                <p>对于PC端进行Hash运算，本实验支持任意长度的Hash运算，且可显示Hash过程中关键步骤的中间值；对于智能卡Hash运算，本实验支持
+                    <emphasis>32字节</emphasis>
+                    以内的Hash运算，在已定义消息的情况下，支持一键与智能卡进行通信并获取Hash结果的方式，也支持通过手动输入APDU指令与智能卡通信的方式。
+                </p>
+                <p>以下为本实验的重要提示：</p>
+                <ul>
+                    <li>连接智能卡：本实验用到的智能卡为“
+                        <emphasis>教学卡14：SM3算法</emphasis>
+                        ”，需要通过读卡器连接电脑和智能卡。具体做法是：将智能卡读卡器的USB插口插入电脑的USB接口，并将智能卡插入读卡器中。
+                    </li>
+                    <li>消息输入：进行SM3 Hash运算仅需输入消息值，消息可以在右侧的“Message (Hex)”文本输入框进行输入，消息输入框已填入默认值，可参考默认值进行设置。</li>
+                    <li>PC端Hash：PC端的Hash运算支持任意长度的消息输入，可在正确输入消息后，点击交互栏部分的“Hash (PC)”按钮。在运算过程中，可以切换到“Intermediate
+                        Value”页面，查看关键步骤的中间值。
+                    </li>
+                    <li>智能卡Hash：我们可通过两种方式进行智能卡的Hash运算：既可以通过点击“Hash (Card)”按钮直接获取运算结果，也可以切换到“Smart
+                        Card”页面，通过手动输入APDU指令进行智能卡通信，这部分我们将在“<a class=" " href="#SM3示例卡说明">SM3示例卡说明"</a>”一节进行详细介绍。
+                    </li>
+                    <li>数据格式：软件右侧交互栏部分可以进行SM3算法的消息输入。注意请以
+                        <emphasis>16进制</emphasis>
+                        的格式进行输入，并在每个字节之间加入一个空格作为分隔符。
+                    </li>
+                </ul>
+                <h3 id="SM3示例卡说明"> SM3示例卡说明</h3>
+                <p>下面我们对SM3示例卡的APDU指令进行说明，SM3示例卡的Command APDU如下：</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>CLA</p></td>
+                            <td class=formLable0><p class=formLableText>INS</p></td>
+                            <td class=formLable0><p class=formLableText>P1</p></td>
+                            <td class=formLable0><p class=formLableText>P2</p></td>
+                            <td class=formLable0><p class=formLableText>Lc/Le</p></td>
+                            <td class=formLable1><p class=formLableText>Data</p></td>
+                            <td class=formLable1><p class=formLableText>功能</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>44</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>Lc</p></td>
+                            <td class=formContentLable01><p class=formContentText>Lc字节消息</p></td>
+                            <td class=formContentLable01><p class=formContentText>SM3 Hash</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>C0</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>20</p></td>
+                            <td class=formContentLable11><p class=formContentText></p></td>
+                            <td class=formContentLable11><p class=formContentText>读取Hash运算结果</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p><u><i>注：上表中的数字均为16进制表示。</i></u></p>
+                <p>Response APDU的SW1、SW2我们定义如下：</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>SW1</p></td>
+                            <td class=formLable0><p class=formLableText>SW2</p></td>
+                            <td class=formLable1><p class=formLableText>状态</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>90</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>成功</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>61</p></td>
+                            <td class=formContentLable10><p class=formContentText>xx</p></td>
+                            <td class=formContentLable11><p class=formContentText>有“xx”字节数据可读取</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>6E</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>CLA错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>6D</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText>INS错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>6B</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>P1或P2错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>67</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText>Lc或Le错误</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p><u><i>注：上表中的数字均为16进制表示。</i></u></p>
+                <p>我们对卡内的指令进行说明，用Message表示消息，令：</p>
+                <p>Message =
+                    <emphasis>61 62 63</emphasis>
+                    ，
+                </p>
+                <p>那么我们要发送的APDU指令为
+                    <emphasis>00 44 00 00 03 61 62 63</emphasis>
+                    。
+                </p>
+                <p>当智能卡内程序正确时，卡会返回
+                    <emphasis>61 20</emphasis>
+                    ，表示AES加密正常，有0x20个字节的数据可读取。此时如果我们想要获得智能卡的加密结果，可以发送APDU指令
+                    <emphasis>00 C0 00 00 20</emphasis>
+                    以读取加密结果。
+                </p>
+                <p>学员可切换至“Smart Card”页面，尝试与智能卡发送指令以进行学习。此处需要注意，当插入我们配套的读卡器后，右侧交互栏的读卡器列表将有一项值为“ACS ACR1281 1S Dual Reader
+                    ICC 0”的元素，选择该项，然后在“Smart Card”页面的“Command
+                    (Hex)”文本框内输入命令，并点击“Send”按钮，即可发送APDU指令给智能卡。智能卡的返回数据将显示在“Receive (Hex)”文本框内。</p>
+                <hr>
+                <!-- <h3 id="术语和定义"> 术语和定义</h3>
+                <ul>
+                  <li>比特串：由0和1组成的二进制数字序列。</li>
+                  <li>大端：数据在内存中的一种表示格式，规定左边为高有效位，右边为低有效位。数的高阶字节放在存储器的低地址，数的低阶字节放在存储器的高地址。</li>
+                  <li>消息：任意有限长度的比特串。本文本中消息作为杂凑算法的输入数据。</li>
+                  <li>杂凑值：杂凑算法作用于消息后输出的特定长度的比特串。本文本中的杂凑值长度为256比特。</li>
+                  <li>字：长度为32的比特串。
+                    </li>
+                </ul> -->
+                <!-- <h3 id="符号"> 符号</h3>
+                <p>下列符号适用于本文本：</p>
+                <ul>
+                  <li>$m$：消息。</li>
+                  <li>$m^{\prime}$：填充后的消息。</li>
+                  <li>$mod$：模运算。</li>
+                  <li>$\wedge$：32比特与运算。</li>
+                  <li>$\vee$：32比特或运算。</li>
+                  <li>$\oplus$：32比特异或运算。</li>
+                  <li>$\neg$：32比特非运算。</li>
+                  <li>+：$mod2^{32}$算数加运算。</li>
+                  <li>$\lll k$：循环左移$k$比特运算。</li>
+                  <li>$\leftarrow$：左向赋值运算符。</li>
+                </ul> -->
+                <h3 id="算法概述"> 算法概述</h3>
+                <p>SM3算法是中华人民共和国政府采用的一种密码散列函数标准，由国家密码管理局于2010年12月17日发布。相关标准为“GM/T 0004-2012 《SM3密码杂凑算法》”。</p>
+                <p>在商用密码体系中，SM3主要用于数字签名及验证、消息认证码生成及验证、随机数生成等，其算法公开。据国家密码管理局表示，其安全性及效率与SHA-256相当。</p>
+                <p>对长度为 $l(l<2^{64})$ 比特的消息 $m$ ，SM3杂凑算法经过
+                    <emphasis>消息填充</emphasis>
+                    、
+                    <emphasis>分块</emphasis>
+                    和
+                    <emphasis>迭代压缩</emphasis>
+                    ，生成杂凑值，杂凑值长度为
+                    <emphasis>256比特</emphasis>
+                    。值得注意的是，SM3内所有字的存储方式均为大端存储。（大端：数据在内存中的一种表示格式，规定左边为高有效位，右边为低有效位。数的高阶字节放在存储器的低地址，数的低阶字节放在存储器的高地址。）
+                </p>
+                <h3 id="消息填充">消息填充</h3>
+                <p>假设消息 $m$ 的长度为 $l$ 比特。首先将比特“ $1$ ”添加到消息的末尾，再添加 $k$ 个“ $0$ ”， $k$ 是满足 $l+1+k=448\bmod512$
+                    的最小的非负整数。然后再添加一个64位比特串，该比特串是长度 $l$ 的二进制表示。填充后的消息 $m^{\prime}$ 的比特长度为512的倍数。消息填充如图1所示：</p>
+                <p style="text-align:center"><img alt="消息填充" class="img-responsive" src="images/消息填充.png"
+                                                  style="width: 55em;height:14em"></p>
+                <p style="text-align:center">图1 消息填充</p>
+                <p>例如：对消息 $01100001 01100010 01100011$ ，其长度 $l=24$ ，经填充得到比特串：</p>
+                \begin{equation}
+                01100001~~01100010~~011000111~~\overbrace{00\cdots00}^{423比特}~~\underbrace{\overbrace{00\cdots011000}^{64比特}}_{l~的二进制表示}
+                \end{equation}
+                <h3 id="分块">分块</h3>
+                <p>如图2所示，将填充后的消息 $m^{\prime}$ 按
+                    <emphasis>512比特</emphasis>
+                    进行分组： $m^{\prime}=B^{(0)} B^{(1)} \cdots B^{(n-1)}$，
+                </p>
+                <p>其中 $n=(l+k+65) / 512$ 。</p>
+                <p style="text-align:center"><img alt="分块" class="img-responsive" src="images/分块.png"
+                                                  style="width: 40em;height:11.2em"></p>
+                <p style="text-align:center">图2 分块</p>
+                <h3 id="迭代压缩">迭代压缩</h3>
+
+                <p>如图3所示，对分组后的消息按照以下方式进行迭代计算：</p>
+                <p style="text-align:center"><img alt="迭代压缩" class="img-responsive" src="images/迭代压缩.png"
+                                                  style="width: 50em;height:18em"></p>
+                <p style="text-align:center">图3 迭代压缩</p>
+                <p>对应公式如下：</p>
+                \begin{multline}
+                \begin{split}
+                &\mathrm{FOR}~~i=0~~\mathrm{TO}~~n-1\\
+                &\quad\quad V^{(i+1)}=\mathrm{CF}\left(V^{(i)}, B^{(i)}\right)\\
+                &\mathrm{ENDFOR}
+                \end{split}
+                \end{multline}
+                <p>其中 $\mathrm{CF}$ 是压缩函数， $V^{(0)}$ 为256比特初始值 $IV$ ， $B^{(i)}$ 为填充后的消息分组，迭代压缩的结果为 $V^{(n)}$ 。</p>
+                <p>其中，初始值 $IV$ 的值为7380166F 4914B2B9 172442D7 dA8A0600 A96F30BC 163138AA E38DEE4D B0FB0E4E。</p>
+                <ol>
+                    <h4 id="压缩函数">
+                        <li>压缩函数</li>
+                    </h4>
+                    <p>令 $A,B,C,D,E,F,G,H$ 为字寄存器， $TT1,TT2$ 为中间变量,压缩函数的输出 $V^{i+1}=\mathrm{CF}\left(V^{(i)},
+                        B^{(i)}\right)，0 \leq i \leq n-1$ 。对于消息分组 $B^{(i)}$ ，压缩函数描述如图4： </p>
+                    <p style="text-align:center"><img alt="压缩函数" class="img-responsive" src="images/压缩函数.png"
+                                                      style="width: 25em;height:36em"></p>
+                    <p style="text-align:center">图4 压缩函数</p>
+
+                    <h4 id="块消息扩展">
+                        <li>块消息扩展</li>
+                    </h4>
+                    <p>将消息分组 $B^{(i)}$ ，首先要按以下方法扩展生成132个字 $W_{0}, W_{1}, \cdots, W_{67}, W_{0}^{\prime}, W_{1}^{\prime},
+                        \cdots, W_{63}^{\prime}$ ，将生成的132个字每用于压缩函数 $\mathrm{CF}$ ：</p>
+                    <p>a)将消息分组 $B^{(i)}$ 划分为16个字 $W_{0}, W_{1}, \cdots, W_{15}$ 。</p>
+                    <p>b)</p>
+                    \begin{multline}
+                    \begin{split}
+                    &\mathrm{FOR}~~j=16~~\mathrm{TO}~~67\\
+                    &\quad\quad W_{j} \leftarrow \mathrm{P_{1}}\left(W_{j-16} \oplus W_{j-9} \oplus\left(W_{j-3} \lll
+                    15\right)\right)\oplus\left(W_{j-13} \lll 7\right) \oplus W_{j-6}\\
+                    &\mathrm{ENDFOR}
+                    \end{split}
+                    \end{multline}
+                    <p>c)</p>
+                    \begin{multline}
+                    \begin{split}
+                    &\mathrm{FOR}~~j=0~~\mathrm{TO}~~63\\
+                    &\quad\quad W_{j}^{\prime}=W_{j} \oplus W_{j+4}\\
+                    &\mathrm{ENDFOR}
+                    \end{split}
+                    \end{multline}
+                    <p>这里的 $\mathrm{P_{1}}$ 是一个置换函数， $\mathrm{P_{1}}(X)=X \oplus(X \lll 15) \oplus(X \lll 23)$ ，式中 $X$
+                        为字。</p>
+                    <h4 id="计算中间值">
+                        <li>计算中间值</li>
+                    </h4>
+                    <p>对寄存器ABCDEFGH赋值后，即可计算中间值 $TT1,TT2$ ，再计算中间值 $TT1,TT2$ 的过程中，我们还定义了另外两个中间值 $SS1,SS2$ ，计算 $TT1,TT2$
+                        的流程如图5所示：</p>
+                    <p style="text-align:center"><img alt="计算中间值" class="img-responsive" src="images/计算中间值.png"
+                                                      style="width: 49em;height:30em"></p>
+                    <p style="text-align:center">图5 计算中间值</p>
+                    $\mathrm{FF}_{j}(X, Y, Z)=\left\{\begin{array}{l}{X+Y+Z} \\ {X-Y-Z}\end{array}\right.$
+                    <p>计算中间值的公式如下：</p>
+                    \begin{multline}
+                    \begin{split}
+                    &{S S 1 \leftarrow\left((A \lll 12)+E+\left(T_{j} \lll j\right)\right) \lll 7} \\
+                    &{S S 2 \leftarrow S S 1 \oplus(A \lll 12)} \\
+                    &{T T 1 \leftarrow \mathrm{F F}_{j}(A, B, C)+D+S S 2+W_{j}^{\prime}} \\
+                    &{T T 2 \leftarrow \mathrm{G G}_{j}(E, F, G)+H+S S 1+W_{j}} \\
+                    \end{split}
+                    \end{multline}
+                    <p>其中 $\mathrm{F F}_{j}$ 和 $\mathrm{G G}_{j}$ 为布尔函数，随 $j$ 的变化取不同的表达式。</p>
+                    \begin{multline}
+                    \begin{split}
+                    &{F F_{j}(X, Y, Z)=\left\{\begin{array}{ll}{X \oplus Y \oplus Z} & {0 \leq \mathrm{j} \leq 15} \\
+                    {(X \wedge Y) \vee(X \wedge Z) \vee(Y \wedge Z)} & {16 \leq \mathrm{j} \leq 63}\end{array}\right.}
+                    \\
+                    &{G G_{j}(X, Y, Z)=\left\{\begin{array}{ll}{X \oplus Y \oplus Z} & {0 \leq j \leq 15} \\ {(X \wedge
+                    Y) \vee(\neg X \wedge Z)} & {16 \leq j \leq 63}\end{array}\right.} \\
+                    \end{split}
+                    \end{multline}
+                    <p>式中 $X, Y, Z$ 为字。</p>
+                    <p>$T_{j}$ 为常量，随 $j$ 的变化取不同的值。</p>
+                    \begin{multline}
+                    \begin{split}
+                    &{T_{j}=\left\{\begin{array}{ll}{79CC4519} & {0 \leq j \leq 15} \\ {7A879D8A} & {16 \leq j \leq
+                    63}\end{array}\right.} \\
+                    \end{split}
+                    \end{multline}
+                    <h4 id="更新ABCDEFGH">
+                        <li>更新ABCDEFGH</li>
+                    </h4>
+                    <p>计算完 $TT1,TT2$ 后，需要对寄存器进行更新，更新方式如图6所示：</p>
+                    <p style="text-align:center"><img alt="更新ABCDEFGH" class="img-responsive"
+                                                      src="images/更新ABCDEFGH.png" style="width: 50em;height:12em"></p>
+                    <p style="text-align:center">图6 更新ABCDEFGH</p>
+                    <p>对应公式如下：</p>
+                    \begin{multline}
+                    \begin{split}
+                    &{A \leftarrow TT1} \\
+                    &{B \leftarrow A} \\
+                    &{C \leftarrow B \lll 9} \\
+                    &{D \leftarrow C} \\
+                    &{E \leftarrow \mathrm{P_{0}}(T T 2)}\\
+                    &{F \leftarrow E} \\
+                    &{G \leftarrow F \lll 19} \\
+                    &{H \leftarrow G} \\
+                    \end{split}
+                    \end{multline}
+                    <p>其中，置换函数 $\mathrm{P_{0}}(X)=X \oplus(X \lll 9) \oplus(X \lll 17)$ ，式中 $X$ 为字。</p>
+
+                </ol>
+                <h3 id="杂凑值">杂凑值</h3>
+                <p>最后一组消息分组 $B^{(n-1)}$ 进行迭代压缩后，得到了256比特的压缩结果 $V^{(n)}$ ， $V^{(n)}$ 即是我们要的杂凑值。</p>
+                <p class="separator"></p>
+                <p><a href="#"> 回到顶部</a></p>
+                <p></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="vibrant centered">
+        <div class="container">
+            <h6> &copy; 北京数缘科技有限公司，鲁ICP备09017473号，Copyright (c) 2015 MathMagic Technology Co., Ltd. All Rights
+                Reserved.</h6>
+            <h6>地址：北京市海淀区中关村南大街9号理工科技大厦1412室，邮编：100081，电话：+86-15253166443，邮箱：sales@mathmagic.cn。</h6>
+        </div>
+    </section>
+</div>
+</body>
+</html>

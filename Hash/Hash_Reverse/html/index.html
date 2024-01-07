@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="" name="description">
+    <meta content="True" name="HandheldFriendly">
+    <meta content="320" name="MobileOptimized">
+    <meta content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>Hash值反向查询 - Documentation</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+MathJax = {    
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    //tags: 'ams'  // should be 'ams', 'none', or 'all'
+  }
+};
+
+
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <h2 class="lone-header">数缘科技 - Hash值反向查询</h2>
+        </div>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="docs-nav" id="menu-left">
+                <li><strong>实验介绍</strong></li>
+                <li><a class=" " href="#Hash值反向查询算法实验说明">Hash值反向查询实验说明</a></li>
+                <li><a class=" " href="#Hash值反向查询实验样例">Hash值反向查询实验样例</a></li>
+                <li class="separator"></li>
+                <li><strong>Hash值反向查询介绍</strong></li>
+                <li><a class=" " href="#Hash值反向查询算法概述">Hash值反向查询概述</a></li>
+                <li><a class=" " href="#Hash值反向查询算法描述"> Hash值反向查询描述</a></li>
+                <ul>
+                    <li><a class=" " href="#彩虹表信息">彩虹表信息</a></li>
+                    <li><a class=" " href="#Hash值反向查询">Hash值反向查询</a></li>
+                </ul>
+                <li class="separator"></li>
+            </ul>
+            <div class="docs-content">
+                <h3 id="Hash值反向查询实验说明"> Hash值反向查询实验说明</h3>
+                <p>本实验支持一定范围内Hash值反向查询，目前支持五种Hash算法：SHA-1，SHA-256，SHA3-256，MD5，SM3。</p>
+                <p>以下为本实验的重要提示：</p>
+                <ul>
+                    <li>实验说明：目前仅支持一定范围内的Hash值反向查询，对应的原始消息为000101到991231，对应100年内的6位生日。前两位
+                        <emphasis>00</emphasis>
+                        为年份，中间两位
+                        <emphasis>01</emphasis>
+                        为月份，末尾两位
+                        <emphasis>01</emphasis>
+                        为天数，可在正确输入Hash值后，点击交互栏部分的 “HashReverse” 按钮，获取Message值。若存在原始消息则会显示原始消息，否则返回Null。
+                    </li>
+                    <li>数据格式：Hash值反向查询算法的数据格式均以
+                        <emphasis>16进制</emphasis>
+                        的格式进行输入，并在每个字节之间加入一个空格作为分隔符。
+                    </li>
+                    </li>
+                </ul>
+                <h3 id="Hash值反向查询实验样例"> Hash值反向查询样例</h3>
+                <p>本实验支持SHA-1，SHA-256，SHA3-256，MD5，SM3的hash值反向查询，下面给出几个样例以供查询：</p>
+                <li>SHA1</li>
+                <p>Hash：<emphasis>D4 C5 18 B0 D6 5C 8F 3F 9F C4 56 D4 6F 99 FC 99 9D FC 9F A2</emphasis>
+                </p>
+                <p>Message：<emphasis>000104</emphasis></p>
+                <li>SHA256</li>
+                <p>Hash：<emphasis>43 29 DE 81 AE 55 F0 EA 35 27 8A 80 28 D2 74 26 ED 7B 16 CB D2 35 74 47 00 98 65 59 92 BF 06 CE</emphasis>
+                </p>
+                <p>Message：<emphasis>091231</emphasis></p>
+                <li>SHA3-256</li>
+                <p>Hash：<emphasis>84 8D 42 F9 16 ED D8 6B 8E C0 EA 10 24 74 0C DE B3 AE DA 8B E8 BA 6F EC 59 31 51 D9 D8 7C 8B 93</emphasis>
+                </p>
+                <p>Message：<emphasis>000102</emphasis></p>
+                <li>MD5</li>
+                <p>Hash：<emphasis>57 1A B1 4F 17 43 CE 8A 1B 7D F8 A1 47 02 CB 0C</emphasis>
+                </p>
+                <p>Message：<emphasis>500602</emphasis></p>
+                <li>SM3</li>
+                <p>Hash：<emphasis>3E 59 0D 95 9B 93 9F 52 C3 EB A9 1A 0F 8F C6 9C 75 3A AD B2 4C 26 9D 75 E1 F6 60 90 94 B9 DC A9</emphasis>
+                </p>
+                <p>Message：<emphasis>000116</emphasis></p>
+                <hr>
+                <h3 id="Hash值反向查询算法概述"> Hash值反向查询算法概述——彩虹表</h3>
+                <p>彩虹表是一个用于加密散列函数逆运算的预先计算好的表，为破解密码的散列值（或称Hash值、微缩图、摘要、指纹、Hash密文）而准备。一般主流的彩虹表都在100G以上。这样的表常常用于恢复由有限集字符组成的固定长度的纯文本密码。这是空间/时间替换的典型实践,
+                    比每一次尝试都计算Hash的暴力破解处理时间少而储存空间多，但却比简单的对每条输入散列翻查表的破解方式储存空间少而处理时间多。使用加salt的KDF函数可以使这种攻击难以实现。彩虹表是马丁·赫尔曼早期提出的简单算法的应用。</p>
+                <p>Hash表又称散列表，是一种存储结构，通常用来存储多个元素。和其它存储结构（线性表、树等）相比，Hash表查找目标元素的效率非常高。每个存储到Hash表中的元素，都配有一个唯一的标识（又称“索引”或者“键”），用户想查找哪个元素，凭借该元素对应的标识就可以直接找到它，无需遍历整个Hash表。
+                    多数场景中，Hash表是在数组的基础上构建的，使用数组构建Hash表，最大的好处在于：可以直接将数组下标当作已存储元素的索引，不再需要为每个元素手动配置索引，极大得简化了构建Hash表的难度。在数组中查找一个元素，除非提前知晓它存储位置处的下标，否则只能遍历整个数组。Hash表的解决方案是：各个元素并不从数组的起始位置依次存储，它们的存储位置由专门设计的函数计算得出，我们通常将这样的函数称为Hash函数，常见的有：MD5，SHA-1，SM3，SHA-2，SHA-3。</p>
+                <p>Hash函数具有如下几个特性：</p>
+                <ul>
+                    <li>单向性(one way)：已知$x$，求$x=h(m)$的$m$在计算上是不可行的。</li>
+                    <li>弱抗碰撞性(weakly collision free)：对于任意给定消息$m$，如果找到另一个不同的消息$m’$，使得$h(m’)=h(m)$在计算上是不可行的。</li>
+                    <li>抗强碰撞性(strongly collision free)：寻找两个消息$m$和$m’$，使得$h(m’)=h(m)$在计算上是不可行的。</li>
+                </ul>
+                <p>在计算机系统中的密码不是直接存储为纯文本，而是使用加密进行Hash处理，以Hash值存储。但由于目前已知的Hash算法不可逆向，这意味着无法解密Hash以查看密码的明文内容，无法通过给定的Hash值判断原始数据。</p>
+                <p>起初黑客们通过字典穷举的方法进行破解，这对简单的密码和简单的密码系统是可行的，但对于复杂的密码和密码系统，则会产生无穷大的字典。为了解决逆向破解的难题，黑客们就产生了彩虹表的技术。</p>
+                <h3 id="Hash值反向查询算法描述"> Hash值反向查询算法描述</h3>
+                <p>通过不同的Hash算法将原始消息转换为对应Hash值，并将原始消息和对应的Hash值存入Hash表（彩虹表）中，输入待查找的Hash值，遍历在表中的位置找到对应原始消息。</p>
+                <ol>
+                    <h4 id="彩虹表信息">彩虹表信息</h4>
+                    <p>通过遍历信息，将信息与Hash值的一一对应关系存储在Hash表内，这也就是最简单的字典穷举法。但是面对复杂的密码系统，字典穷举法也捉襟见肘，于是彩虹表横空出世。</p>
+                    <p>彩虹表主要使用归约函数来影射Hash值所对应的密码，通过交替密码和Hash值，可以得到一条Hash链，这样的Hash链大大减少了储存空间的需求。</p>
+                    <h4 id="Hash值反向查询">Hash值反向查询</h4>
+                    <p>将不同算法名称作为关键字，通过输入的Hash值，遍历表中位置，返回对应关键字的位置。</p>
+                </ol>
+
+                <p class="separator"></p>
+                <p><a href="#"> 回到顶部</a></p>
+                <p></p>
+            </div>
+        </div>
+    </section>
+    <section class="vibrant centered">
+        <div class="container">
+            <h6> &copy; 北京数缘科技有限公司，鲁ICP备09017473号，Copyright （c） 2015 MathMagic Technology Co., Ltd. All Rights
+                Reserved.</h6>
+            <h6>地址：北京市海淀区中关村南大街9号理工科技大厦1412室，邮编：100081，电话：+86-15253166443，邮箱：sales@mathmagic.cn。</h6>
+        </div>
+    </section>
+</div>
+</body>
+</html>

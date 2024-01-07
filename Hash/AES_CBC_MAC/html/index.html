@@ -1,0 +1,203 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="" name="description">
+    <meta content="True" name="HandheldFriendly">
+    <meta content="320" name="MobileOptimized">
+    <meta content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>AES-CBC-MAC算法 - Documentation</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+MathJax = {    
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    //tags: 'ams'  // should be 'ams', 'none', or 'all'
+  }
+};
+
+
+
+
+
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <h2 class="lone-header">数缘科技 - AES-CBC-MAC密码算法</h2>
+        </div>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="docs-nav" id="menu-left">
+                <li><strong>实验介绍</strong></li>
+                <li><a class=" " href="#AES-CBC-MAC算法实验说明">AES-CBC-MAC算法实验说明</a></li>
+                <li><a class=" " href="#AES-CBC-MAC示例卡说明">AES-CBC-MAC示例卡说明</a></li>
+                <li class="separator"></li>
+                <li><strong>AES-CBC-MAC算法介绍</strong></li>
+                <li><a class=" " href="#AES-CBC-MAC算法概述">AES-CBC-MAC算法概述</a></li>
+                <li><a class=" " href="#AES-CBC-MAC算法描述"> AES-CBC-MAC算法描述</a></li>
+                <li class="separator"></li>
+            </ul>
+            <div class="docs-content">
+                <h3 id="AES-CBC-MAC算法实验说明"> AES-CBC-MAC算法实验说明</h3>
+                <p>本实验支持自定义明文进行AES-CBC-MAC Hash运算，且支持两种方式：PC端Hash和智能卡端Hash。</p>
+                <p>对于PC端，本实验支持消息长度可变的Hash运算，必须为16字节整数倍，且可显示Hash过程中关键步骤的中间值；对于智能卡端，本实验支持密钥和消息长度在
+                    <emphasis>16-128字节</emphasis>
+                    以内的Hash运算，必须为16字节整数倍，在已定义消息的情况下，一键与智能卡进行通信并获取加密结果的方式，也支持通过手动输入APDU指令与智能卡通信的方式。
+                </p>
+                <p>以下为本实验的重要提示：</p>
+                <ul>
+                    <li>连接智能卡：本实验用到的智能卡为“
+                        <emphasis>教学卡2：AES算法</emphasis>
+                        ”，需要通过读卡器连接电脑和智能卡。具体做法是：将智能卡读卡器的USB插口插入电脑的USB接口，并将智能卡插入读卡器中。
+                    </li>
+                    <li>消息输入：消息输入框已填入默认值，可参考默认值进行修改。</li>
+                    <li>PC端Hash：PC端的Hash长度可变的Hash运算，可在正确输入后，点击交互栏部分的 “Hash (PC)” 按钮，获取Hash值。在运算过程中，可以切换到 “Intermediate
+                        Value” 页面，查看关键步骤的中间值。
+                    </li>
+                    <li>智能卡端Hash：我们可通过两种方式进行智能卡的Hash运算：既可以通过点击 “Hash (Card)” 按钮直接获取运算结果，也可以切换到 “Smart Card”
+                        页面，通过手动输入APDU指令进行智能卡通信，这部分我们将在“<a class=" " href="#AES-CBC-MAC示例卡说明">AES-CBC-MAC示例卡说明</a>”一节进行详细介绍。
+                    </li>
+                    <li>数据格式：AES-CBC-MAC算法的数据格式均以
+                        <emphasis>16进制</emphasis>
+                        的格式进行输入，并在每个字节之间加入一个空格作为分隔符。
+                    </li>
+                </ul>
+                <h3 id="AES-CBC-MAC示例卡说明"> AES-CBC-MAC示例卡说明</h3>
+                <p>下面我们对AES-CBC-MAC示例卡的APDU指令进行说明，AES-CBC-MAC示例卡的Command APDU如下：</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>CLA</p></td>
+                            <td class=formLable0><p class=formLableText>INS</p></td>
+                            <td class=formLable0><p class=formLableText>P1</p></td>
+                            <td class=formLable0><p class=formLableText>P2</p></td>
+                            <td class=formLable0><p class=formLableText>Lc/Le</p></td>
+                            <td class=formLable1><p class=formLableText>Data</p></td>
+                            <td class=formLable1><p class=formLableText>功能</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>11</p></td>
+                            <td class=formContentLable00><p class=formContentText>02</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>10+10的倍数</p></td>
+                            <td class=formContentLable01><p class=formContentText>10字节密钥+10整数倍字节消息</p></td>
+                            <td class=formContentLable01><p class=formContentText>进行Hash运算</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>C0</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>10</p></td>
+                            <td class=formContentLable11><p class=formContentText></p></td>
+                            <td class=formContentLable11><p class=formContentText>读取Hash结果</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p><u><i>注：上表中的数字均为16进制表示。</i></u></p>
+                <p>Response APDU的SW1、SW2我们定义如下：</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>SW1</p></td>
+                            <td class=formLable0><p class=formLableText>SW2</p></td>
+                            <td class=formLable1><p class=formLableText>状态</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>90</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>成功</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>61</p></td>
+                            <td class=formContentLable10><p class=formContentText>xx</p></td>
+                            <td class=formContentLable11><p class=formContentText>有 “xx” 字节数据可读取</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>6E</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>CLA错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>6D</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText>INS错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>6B</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>P1或P2错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>67</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText>Lc或Le错误</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p>我们对卡内的指令进行说明，用Key表示密钥，用Message表示待Hash消息，令：</p>
+                <p>Key=
+                    <emphasis>2B 7E 15 16 28 AE D2 A6 AB F7 15 88 09 CF 4F 3C </emphasis>。
+                </p>
+                <p>Message=
+                    <emphasis>32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34 32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34 32 43 F6 A8 88 5A 30 8D
+                        31 31 98 A2 E0 37 07 34 32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34 32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34 32 43
+                        F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34 32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34 32 43 F6 A8 88 5A 30 8D 31 31 98 A2
+                        E0 37 07 34
+                    </emphasis>。
+                </p>
+                <p>那么我们要发送的完整APDU指令顺序为：</p>
+                <p>1）设置智能卡AES-CBC-MAC算法密钥
+                    <emphasis>00 11 02 00 90 2B 7E 15 16 28 AE D2 A6 AB F7 15 88 09 CF 4F 3C 32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34 32 43 F6
+                        A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34 32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34 32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0
+                        37 07 34 32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34 32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34 32 43 F6 A8 88 5A 30
+                        8D 31 31 98 A2 E0 37 07 34 32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34
+                    </emphasis>
+                    ，注意消息长度必须为16字节整数倍，
+                </p>
+                <p>当加密状态正常时，会返回
+                    <emphasis>61 10</emphasis>
+                    ；
+                </p>
+                <p>2）读取Hash值
+                    <emphasis>00 C0 00 00 10</emphasis>
+                    。
+                <p>学员可切换至“Smart Card”页面，尝试与智能卡发送指令以进行学习。此处需要注意，当插入我们配套的读卡器后，右侧交互栏的读卡器列表将有一项值为“ACS ACR1281 1S Dual Reader
+                    ICC 0”的元素，选择该项，然后在“Smart Card”页面的“Command
+                    (Hex)”文本框内输入命令，并点击“Send”按钮，即可发送APDU指令给智能卡。智能卡的返回数据将显示在“Receive (Hex)”文本框内。</p>
+                <hr>
+                <h3 id="CBC-MAC算法概述"> CBC-MAC算法概述</h3>
+                <p>CBC-MAC是最为广泛使用的消息认证算法之一，同时它也是一个ANSI标准（X9.17）。CBC-MAC实际上就是对消息使用CBC模式进行加密，取密文的最后一块作为认证码。</p>
+                <p>当取AES作为加密的分组密码时，称为基于AES的CBC-MAC。</p>
+                <p style="text-align:center"><img alt="CBC-MAC" class="img-responsive" src="images/1-CBC-MAC.png"
+                                                  style="width: 50em;height:18.2em"></p>
+                <p style="text-align:center">图1 CBC-MAC流程图</p>
+                <p class="separator"></p>
+                <p><a href="#"> 回到顶部</a></p>
+                <p></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="vibrant centered">
+        <div class="container">
+            <h6> &copy; 北京数缘科技有限公司，鲁ICP备09017473号，Copyright （c） 2015 MathMagic Technology Co., Ltd. All Rights
+                Reserved.</h6>
+            <h6>地址：北京市海淀区中关村南大街9号理工科技大厦1412室，邮编：100081，电话：+86-15253166443，邮箱：sales@mathmagic.cn。</h6>
+        </div>
+    </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,372 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="" name="description">
+    <meta content="True" name="HandheldFriendly">
+    <meta content="320" name="MobileOptimized">
+    <meta content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>Hmac-MD5算法 - Documentation</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+MathJax = {    
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    //tags: 'ams'  // should be 'ams', 'none', or 'all'
+  }
+};
+
+
+
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <h2 class="lone-header">数缘科技 - HMAC-MD5密码算法</h2>
+        </div>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="docs-nav" id="menu-left">
+                <li><strong>实验介绍</strong></li>
+                <li><a class=" " href="#HMAC-MD5算法实验说明">HMAC-MD5算法实验说明</a></li>
+                <li><a class=" " href="#HMAC-MD5示例卡说明">HMAC-MD5示例卡说明</a></li>
+                <li class="separator"></li>
+                <li><strong>HMAC算法介绍</strong></li>
+                <li><a class=" " href="#HMAC算法概述">HMAC算法概述</a></li>
+                <li><a class=" " href="#HMAC算法描述"> HMAC算法描述</a></li>
+                <li class="separator"></li>
+                <li><strong>MD5算法介绍</strong></li>
+                <li><a class=" " href="#MD5算法概述">MD5算法概述</a></li>
+                <li><a class=" " href="#填充">填充</a></li>
+                <li><a class=" " href="#缓冲区初始化">缓冲区初始化</a></li>
+                <li><a class=" " href="#循环压缩">循环压缩</a></li>
+                <ul>
+                    <li><a class=" " href="#轮函数">轮函数</a></li>
+                    <li><a class=" " href="#迭代运算">迭代运算</a></li>
+                    <li><a class=" " href="#各轮循环的 $X[k]$">各轮循环的 $X[k]$</a></li>
+                    <li><a class=" " href="#$T$ 表的生成">$T$ 表的生成</a></li>
+                    <li><a class=" " href="#左循环移位的 $s$ 值">左循环移位的 $s$ 值</a></li>
+                </ul>
+            </ul>
+            <div class="docs-content">
+                <h3 id="HMAC-MD5算法实验说明"> HMAC-MD5算法实验说明</h3>
+                <p>本实验支持自定义明文进行HMAC-MD5 Hash运算，且支持两种方式：PC端Hash和智能卡端Hash。</p>
+                <p>对于PC端，本实验支持消息长度可变的Hash运算，且可显示Hash过程中关键步骤的中间值；对于智能卡端，本实验支持密钥和消息长度在
+                    <emphasis>32字节</emphasis>
+                    以内的Hash运算，在已定义消息的情况下，一键与智能卡进行通信并获取加密结果的方式，也支持通过手动输入APDU指令与智能卡通信的方式。
+                </p>
+                <p>以下为本实验的重要提示：</p>
+                <ul>
+                    <li>连接智能卡：本实验用到的智能卡为“
+                        <emphasis>教学卡6：MD5算法</emphasis>
+                        ”，需要通过读卡器连接电脑和智能卡。具体做法是：将智能卡读卡器的USB插口插入电脑的USB接口，并将智能卡插入读卡器中。
+                    </li>
+                    <li>消息输入：消息输入框已填入默认值，可参考默认值进行修改。</li>
+                    <li>PC端Hash：PC端的Hash支持任意长度消息，可在正确输入后，点击交互栏部分的 “Hash (PC)” 按钮，获取Hash值。在运算过程中，可以切换到 “Intermediate
+                        Value” 页面，查看关键步骤的中间值。
+                    </li>
+                    <li>智能卡端Hash：我们可通过两种方式进行智能卡的加解密运算：既可以通过点击 “Hash (Card)” 按钮直接获取运算结果，也可以切换到 “Smart Card”
+                        页面，通过手动输入APDU指令进行智能卡通信，这部分我们将在“<a class=" " href="#HMAC-MD5示例卡说明">Hmac-MD5示例卡说明</a>”一节进行详细介绍。
+                    </li>
+                    <li>数据格式：MD5算法的数据格式均以
+                        <emphasis>16进制</emphasis>
+                        的格式进行输入，并在每个字节之间加入一个空格作为分隔符。
+                    </li>
+                </ul>
+                <h3 id="HMAC-MD5示例卡说明"> HMAC-MD5示例卡说明</h3>
+                <p>下面我们对HMAC-MD5示例卡的APDU指令进行说明，HMAC-MD5示例卡的Command APDU如下：</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>CLA</p></td>
+                            <td class=formLable0><p class=formLableText>INS</p></td>
+                            <td class=formLable0><p class=formLableText>P1</p></td>
+                            <td class=formLable0><p class=formLableText>P2</p></td>
+                            <td class=formLable0><p class=formLableText>Lc/Le</p></td>
+                            <td class=formLable1><p class=formLableText>Data</p></td>
+                            <td class=formLable1><p class=formLableText>功能</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>40</p></td>
+                            <td class=formContentLable00><p class=formContentText>01</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>Lc</p></td>
+                            <td class=formContentLable01><p class=formContentText>Lc字节消息</p></td>
+                            <td class=formContentLable01><p class=formContentText>设置HMAC-MD5密钥</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>40</p></td>
+                            <td class=formContentLable10><p class=formContentText>01</p></td>
+                            <td class=formContentLable10><p class=formContentText>01</p></td>
+                            <td class=formContentLable10><p class=formContentText>Lc</p></td>
+                            <td class=formContentLable11><p class=formContentText>Lc字节消息</p></td>
+                            <td class=formContentLable11><p class=formContentText>HMAC-MD5 Hash</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>C0</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>10</p></td>
+                            <td class=formContentLable01><p class=formContentText></p></td>
+                            <td class=formContentLable01><p class=formContentText>读取Hash结果</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p>Response APDU的SW1、SW2我们定义如下：</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>SW1</p></td>
+                            <td class=formLable0><p class=formLableText>SW2</p></td>
+                            <td class=formLable1><p class=formLableText>状态</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>90</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>成功</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>61</p></td>
+                            <td class=formContentLable10><p class=formContentText>xx</p></td>
+                            <td class=formContentLable11><p class=formContentText>有 “xx” 字节数据可读取</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>6E</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>CLA错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>6D</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText>INS错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>6B</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>P1或P2错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>67</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText>Lc或Le错误</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p>我们对卡内的指令进行说明，用Key表示密钥，用Message表示待Hash消息，令：</p>
+                <p>Key=
+                    <emphasis>61 62 63 </emphasis>，
+                </p>
+                <p>Message=
+                    <emphasis>61 62 63 </emphasis>。
+                </p>
+                <p>那么我们要发送的完整APDU指令顺序为:：</p>
+                <p>1）设置智能卡HMAC-MD5算法密钥
+                    <emphasis>00 40 01 00 03 61 62 63</emphasis>
+                    ，注意消息长度范围为[1,64]字节，
+                </p>
+                <p>2）智能卡HMAC-MD5算法Hash
+                    <emphasis>00 40 01 01 03 61 62 63</emphasis>
+                    ，注意消息长度范围为[1,32]字节，
+                </p>
+                <p>当加密状态正常时，会返回
+                    <emphasis>61 10</emphasis>
+                    ；
+                </p>
+                <p>3）读取Hash值
+                    <emphasis>00 C0 00 00 10</emphasis>
+                    。
+                <p>学员可切换至“Smart Card”页面，尝试与智能卡发送指令以进行学习。此处需要注意，当插入我们配套的读卡器后，右侧交互栏的读卡器列表将有一项值为“ACS ACR1281 1S Dual Reader
+                    ICC 0”的元素，选择该项，然后在“Smart Card”页面的“Command
+                    (Hex)”文本框内输入命令，并点击“Send”按钮，即可发送APDU指令给智能卡。智能卡的返回数据将显示在“Receive (Hex)”文本框内。</p>
+                <hr>
+                <h3 id="HMAC算法概述"> HMAC算法概述</h3>
+                <p>HMAC是密钥相关的Hash运算消息认证码（Hash-based Message Authentication Code）的缩写，由H.Krawezyk，M.Bellare，
+                    R.Canetti于1996年提出的一种基于Hash函数和密钥进行消息认证的方法，并于1997年作为RFC2104被公布，
+                    并在IPSec和其他网络协议（如SSL）中得以广泛应用，现在已经成为事实上的Internet安全标准。它可以与任何迭代散列函数捆绑使用。</p>
+                <p>在HMAC规划之初，就有以下设计目标：</p>
+                <p>1.不必修改而直接套用已知的散列函数，并且很容易得到软件上执行速度较快的散列函数及其代码。</p>
+                <p>2.若找到或需要更快或更安全的散列函数，能够容易地代替原来嵌入的散列函数。</p>
+                <p>3.应保持散列函数的原来性能，不能因为嵌入在HMAC中而过分降低其性能。</p>
+                <p>4.对密钥的使用和处理比较简单。</p>
+                <p>5.如果已知嵌入的散列函数强度，则完全可以推断出认证机制抵抗密码分析的强度。</p>
+                <h3 id="HMAC算法描述"> HMAC算法描述</h3>
+                <p>
+                    在HMAC的定义中用到一个密码散列函数H和一个密钥K。假设H是一个能够对明文进行分组循环压缩的散列函数，B为散列函数的明文分组长度（byte），在上述的散列函数中B=64，L为散列函数的输出长度（byte），MD5中L=16，SHA-1中L=20。认证密钥K可以为任意长度，一般密钥长度应大于明文分组的长度，将密钥的第一次散列值作为HMAC真正使用的密钥，密钥的最小推荐长度为Lbytes。</p>
+                <p>再定义两个不同的固定字符串$ipad$和$opad$如下（“i”和“o”表示内部和外部）：</p>
+                <p>$ipad$=一个字节（byte）的0x36重复B次；</p>
+                <p>$opad$=一个字节（byte）的0x5C重复B次。</p>
+                <p>若以“text”作为要计算HMAC的明文，则作如下操作：</p>
+                <p align="center">$H(K\oplus opad,H(K\oplus ipad，text))$</p>
+                <p style="text-align:center"><img alt="HMAC" class="img-responsive" src="images/1-HMAC.png"
+                                                  style="width: 50em;height:25em"></p>
+                <p style="text-align:center">图1 HMAC流程图</p>
+                <hr>
+                <h3 id="MD5算法概述"> MD5算法概述</h3>
+                <p>MD5信息摘要算法（英语：MD5 Message-Digest
+                    Algorithm），是一种被广泛使用的密码散列函数，用于确保信息传输完整一致，具有灵活和不可恢复的加密特点。算法保证了输入任意长度的信息，经过处理，输出为128位的信息（数字指纹）；
+                    不同的输入得到的不同的结果（唯一性）。</p>
+                <p>MD5算法主要包括
+                    <emphasis>填充</emphasis>
+                    、
+                    <emphasis>缓冲区初始化</emphasis>
+                    、
+                    <emphasis>循环压缩</emphasis>
+                    三部分组成，基本流程图如下：
+                </p>
+                <p style="text-align:center"><img alt="总流程图" class="img-responsive" src="images/2-总流程图.png"
+                                                  style="width: 50em;height:28em"></p>
+                <p style="text-align:center">图2 总流程图</p>
+                <h3 id="填充">填充</h3>
+                <p>在长度为 $K$ 比特的原始消息数据尾部填充长度为 $P$ 比特的标识 $100 \cdots 0$，$1 \leq P \leq 512$（即至少填充1个：），使得填充后的消息位数为：$K +
+                    P\equiv 448\bmod 512$。注意当 $K\equiv 448\bmod 512$ ，需要 $P = 512$。
+                    再向上述填充好的消息尾部附加一个以64位二进制表示的填充前信息长度，如果二进制表示的填充前信息长度超过64位，则取 $K$ 值的低64位（即 $K \bmod~2^{64}$），最后得到一个长度位数为
+                    $K + P + 64 \equiv 0 \bmod 512$的消息。</p>
+                <p>把填充后的消息结果分割为 $L$ 个512比特的分组：$Y_0$，$Y_1$，$\cdots$，$Y_{L-1}$。分组结果也可表示成 $N$ 个32比特字
+                    $M_0$，$M_1$，$\cdots$，$M_{N-1}$，$N=L\times16$。</p>
+                <h3 id="缓冲区初始化">缓冲区初始化</h3>
+                <p>初始化一个128比特的MD缓冲区，记为 $\mathrm{CV}_q$ ，表示成4个32比特寄存器（$A$，$B$，$C$，$D$）；$\mathrm{CV}_0=
+                    \mathrm{IV}$。迭代在MD缓冲区进行，最后一步的128比特输出即为算法结果。
+                    寄存器（$A$，$B$，$C$，$D$）置16进制初值作为初始向量 $\mathrm{IV}$，并采用小端存储（little-endian）的存储结构：
+                <p>
+                    A=0x67452301<br>
+                    B=0xEFCDAB89<br>
+                    C=0x98BADCFE<br>
+                    D=0x10325476<br>
+                </p>
+
+                <h3 id="循环压缩">循环压缩</h3>
+                <p>每一分组的算法流程如下：第一分组需要将上面四个链接变量复制到另外四个变量中，$A$ 到 $a$，$B$ 到 $b$，$C$ 到 $c$，$D$ 到 $d$。
+                    从第二分组开始的变量为上一分组的运算结果，即 $A$ = $a$， $B$ = $b$， $C$ = $c$， $D$ = $d$。</p>
+                <ol>
+                    <h4 id="轮函数">1. 轮函数</h4>
+                    <p>轮函数 $\mathrm{H_{MD5}}$ 从 $\mathrm{CV}$ 输入128位，从消息分组输入512位，完成4轮循环后，输出128位，用于下一轮循环输入的
+                        $\mathrm{CV}$值。
+                        每轮循环分别固定不同的生成函数 $\mathrm{F}$，$\mathrm{G}$，$\mathrm{H}$，$\mathrm{I}$，结合指定的 $T$ 表元素和消息分组 $X$
+                        的不同部分做16次迭代运算，生成下一轮循环的输入。
+                        4轮循环总共有64次迭代运算。 4轮循环中使用的生成函数（轮函数） $\mathrm{g}$ 是一个32位非线性逻辑函数，在相应各轮的定义如下：</p>
+
+                    <div align=center>
+                        <table cellpadding=0 cellspacing=0 class=TableGrid
+                               style='border-collapse:collapse;border:none'>
+                            <tr>
+                                <td class=formLable0 style="width: 8em"><p class=formLableText>轮次</p></td>
+                                <td class=formLable0 style="width: 10em"><p class=formLableText>Function
+                                    $\mathrm{g}$</p></td>
+                                <td class=formLable0 style="width: 10em"><p class=formLableText>$\mathrm{g}~( b,c,d
+                                    )$</p></td>
+                            </tr>
+                            <!--^ land, v vee, oplus ~sim-->
+                            <tr>
+                                <td class=formContentLable00><p class=formContentText>1</p></td>
+                                <td class=formContentLable00><p class=formContentText>$\mathrm{F}~( b,c,d )$</p></td>
+                                <td class=formContentLable01><p class=formContentText>$ (b\wedge c) \vee (\sim b \wedge
+                                    d)$</p></td>
+                            </tr>
+                            <tr>
+                                <td class=formContentLable10><p class=formContentText>2</p></td>
+                                <td class=formContentLable10><p class=formContentText>$\mathrm{G}~( b,c,d )$</p></td>
+                                <td class=formContentLable11><p class=formContentText>$ (b\wedge d) \vee ( c \wedge \sim
+                                    d)$</p></td>
+                            </tr>
+                            <tr>
+                                <td class=formContentLable00><p class=formContentText>3</p></td>
+                                <td class=formContentLable00><p class=formContentText>$\mathrm{H}~( b,c,d )$</p></td>
+                                <td class=formContentLable01><p class=formContentText>$ b \oplus c \oplus d$</p></td>
+                            </tr>
+                            <tr>
+                                <td class=formContentLable10><p class=formContentText>4</p></td>
+                                <td class=formContentLable10><p class=formContentText>$\mathrm{I}~( b,c,d )$</p></td>
+                                <td class=formContentLable11><p class=formContentText>$ c \oplus (b \vee \sim d)$</p>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+                    <h4 id="迭代运算">2. 迭代运算</h4>
+                    <p>每轮循环中的一次迭代运算逻辑，对A迭代：$a\leftarrow b + ((a+\mathrm{g}(b,c,d)+X[k]+T[j]) <<< s)$；
+                        缓冲区 $(A,B,C,D)$ 作循环轮换：$(B,C,D,A)\leftarrow (A,B,C,D)$，如下图所示：</p>
+                    <p style="text-align:center"><img alt="迭代运算" class="img-responsive" src="images/3-迭代运算.png"
+                                                      style="width: 17em;height:25em"></p>
+                    <p style="text-align:center">图3 一次迭代运算</p>
+                    <p>说明：</p>
+                    <ul>
+                        <li>$a, b, c, d$：MD 缓冲区 $(A, B, C, D)$ 的当前值。</li>
+                        <li>$\mathrm{g}$：轮函数 ($\mathrm{F, G, H, I}$ 中的一个)。</li>
+                        <li>$<<< s$：将32位输入循环左移（CLS）$s$ 位。</li>
+                        <li>$X[k]$：当前处理消息分组的第 $k$ 个（$k = 0,\cdots,15$）32位字，即 $M_{q\times 16+k}$ 。</li>
+                        <li>$T[i]$：$T$ 表的第 $i$ 个元素，32位字；$T$ 表总共有64个元素，也称为加法常数。</li>
+                        <li>+: 模 $2^{32}$ 加法</li>
+                    </ul>
+
+                    <h4 id="各轮循环的 $X[k]$">3. 各轮循环的 $X[k]$</h4>
+                    <p>各轮循环中第 $i$ 次迭代（$i = 1, \cdots ,16$）使用的 $X[k]$ 的确定，设 $j = i -1$。</p>
+                    <p>第1轮迭代：$k = j$。顺序使用 $X[0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15]$</p>
+                    <p>第2轮迭代：$k = (1 + 5\times j) \bmod 16$。顺序使用 $X [1,6,11,0,5,10,15,4,9,14,3,8,13,2,7,12]$</p>
+                    <p>第3轮迭代：$k = (5 + 3\times j) \bmod 16$。顺序使用 $X [5,8,11,14,1, 4, 7,10,13, 0, 3, 6, 9,12,15, 2]$</p>
+                    <p>第4轮迭代：$k = 7\times j \bmod 16$。顺序使用 $X [0, 7,14, 5,12, 3,10, 1, 8,15, 6,13 , 4,11, 2, 9]$</p>
+
+                    <h4 id="$T$ 表的生成">4. $T$ 表的生成 </h4>
+                    <p>$T[i]$ = $ 2^{32} \times |sin(i)|$，用到的64个常量 $T_i$ 如下 （16进制表示）：</p>
+                    <p>
+                        D76AA478 E8C7B756 242070DB C1BDCEEE <br>
+                        F57C0FAF 4787C62A A8304613 FD469501 <br>
+                        698098D8 8B44F7AF FFFF5BB1 895CD7BE <br>
+                        6B901122 FD987193 A679438E 49B40821 <br>
+                        F61E2562 C040B340 265E5A51 E9B6C7AA <br>
+                        D62F105D 02441453 D8A1E681 E7D3FBC8 <br>
+                        21E1CDE6 C33707D6 F4D50D87 455A14ED <br>
+                        A9E3E905 FCEFA3F8 676F02D9 8D2A4C8A <br>
+                        FFFA3942 8771F681 6D9D6122 FDE5380C <br>
+                        A4BEEA44 4BDECFA9 F6BB4B60 BEBFBC70 <br>
+                        289B7EC6 EAA127FA D4EF3085 04881D05 <br>
+                        D9D4D039 E6DB99E5 1FA27CF8 C4AC5665 <br>
+                        F4292244 432AFF97 AB9423A7 FC93A039 <br>
+                        655B59C3 8F0CCC92 FFEFF47D 85845DD1 <br>
+                        6FA87E4F FE2CE6E0 A3014314 4E0811A1 <br>
+                        F7537E82 BD3AF235 2AD7D2BB EB86D391 <br>
+                    </p>
+                    <h4 id="左循环移位的 $s$ 值">5. 左循环移位的 $s$ 值 </h4>
+                    <p>各次迭代运算采用的左循环移位的 $s$ 值如下：</p>
+                    \begin{equation}
+                    \begin{split}
+                    &s[ 1\cdots 16] = \{ 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22 \} \\
+                    &\\
+                    &s[ 17\cdots 32] = \{ 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20 \} \\
+                    &\\
+                    &s[ 33\cdots 48] = \{ 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23 \} \\
+                    &\\
+                    &s[ 49\cdots 64] = \{ 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21 \} \\
+                    \end{split}
+                    \end{equation}
+                </ol>
+                <p>最后的输出是a、b、c和d的级联。以上是对MD5算法的全部介绍。</p>
+                <p class="separator"></p>
+                <p><a href="#"> 回到顶部</a></p>
+                <p></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="vibrant centered">
+        <div class="container">
+            <h6> &copy; 北京数缘科技有限公司，鲁ICP备09017473号，Copyright （c） 2015 MathMagic Technology Co., Ltd. All Rights
+                Reserved.</h6>
+            <h6>地址：北京市海淀区中关村南大街9号理工科技大厦1412室，邮编：100081，电话：+86-15253166443，邮箱：sales@mathmagic.cn。</h6>
+        </div>
+    </section>
+</div>
+</body>
+</html>

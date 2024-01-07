@@ -1,0 +1,299 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="" name="description">
+    <meta content="True" name="HandheldFriendly">
+    <meta content="320" name="MobileOptimized">
+    <meta content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>SHA-1算法 - Documentation</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+MathJax = {    
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    //tags: 'ams'  // should be 'ams', 'none', or 'all'
+  }
+};
+
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <h2 class="lone-header">数缘科技 - SHA-1密码算法</h2>
+        </div>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="docs-nav" id="menu-left">
+                <li><strong>实验介绍</strong></li>
+                <li><a class=" " href="#SHA-1算法实验说明">SHA-1算法实验说明</a></li>
+                <li><a class=" " href="#SHA-1示例卡说明">SHA-1示例卡说明</a></li>
+                <li class="separator"></li>
+                <li><strong>SHA-1算法介绍</strong></li>
+                <li><a class=" " href="#算法概述">算法概述</a></li>
+                <li><a class=" " href="#信息预处理">信息预处理</a></li>
+                <li><a class=" " href="#信息分组处理">信息分组处理</a></li>
+                <li><a class=" " href="#初始化缓存">初始化缓存</a></li>
+                <li><a class=" " href="#计算消息摘要">计算消息摘要</a></li>
+            </ul>
+            <div class="docs-content">
+                <h3 id="SHA-1算法实验说明"> SHA-1算法实验说明</h3>
+                <p>本实验支持自定义明文进行SHA-1 Hash运算，且支持两种方式：PC端Hash和智能卡端Hash。</p>
+                <p>对于PC端，本实验支持消息长度可变的Hash运算，且可显示Hash过程中关键步骤的中间值；对于智能卡端，本实验支持消息长度在
+                    <emphasis>32字节</emphasis>
+                    以内的Hash运算，在已定义消息的情况下，支持一键与智能卡进行通信并获取加密结果的方式，也支持通过手动输入APDU指令与智能卡通信的方式。
+                </p>
+                <p>以下为本实验的重要提示：</p>
+                <ul>
+                    <li>连接智能卡：本实验用到的智能卡为“
+                        <emphasis>教学卡16：SHA-1算法</emphasis>
+                        ”，需要通过读卡器连接电脑和智能卡。具体做法是：将智能卡读卡器的USB插口插入电脑的USB接口，并将智能卡插入读卡器中。
+                    </li>
+                    <li>消息输入：消息输入框已填入默认值，可参考默认值进行修改。对于PC端，本实验支持任意长度的Hash运算，对于智能卡端，本实验支持32字节以内的Hash运算。</li>
+                    <li>PC端Hash：PC端的Hash支持任意长度消息，可在正确输入后，点击交互栏部分的 “Hash （PC）” 按钮，获取Hash值。在运算过程中，可以切换到 “Intermediate
+                        Value” 页面，查看关键步骤的中间值。
+                    </li>
+                    <li>我们可通过两种方式进行智能卡的加解密运算：既可以通过点击 “Hash （Card）” 按钮直接获取运算结果，也可以切换到 “Smart Card”
+                        页面，通过手动输入APDU指令进行智能卡通信，这部分我们将在“<a class=" " href="#SHA-1示例卡说明">SHA-1示例卡说明"</a>”一节进行详细介绍。
+                    </li>
+                    <li>数据格式：SHA-1算法的数据格式均以
+                        <emphasis>16进制</emphasis>
+                        的格式进行输入，并在每个字节之间加入一个空格作为分隔符。
+                    </li>
+                </ul>
+                <h3 id="SHA-1示例卡说明"> SHA-1示例卡说明</h3>
+                <p>下面我们对SHA-1示例卡的APDU指令进行说明，SHA-1示例卡的Command APDU如下：</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>CLA</p></td>
+                            <td class=formLable0><p class=formLableText>INS</p></td>
+                            <td class=formLable0><p class=formLableText>P1</p></td>
+                            <td class=formLable0><p class=formLableText>P2</p></td>
+                            <td class=formLable0><p class=formLableText>Lc/Le</p></td>
+                            <td class=formLable1><p class=formLableText>Data</p></td>
+                            <td class=formLable1><p class=formLableText>功能</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>41</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>Lc</p></td>
+                            <td class=formContentLable01><p class=formContentText>Lc字节消息</p></td>
+                            <td class=formContentLable01><p class=formContentText>SHA-1 Hash</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>C0</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>Lc</p></td>
+                            <td class=formContentLable11><p class=formContentText></p></td>
+                            <td class=formContentLable11><p class=formContentText>读取Hash结果</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p><u><i>注：上表中的数字均为16进制表示。</i></u></p>
+                <p>Response APDU的SW1、SW2我们定义如下：</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>SW1</p></td>
+                            <td class=formLable0><p class=formLableText>SW2</p></td>
+                            <td class=formLable1><p class=formLableText>状态</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>90</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>成功</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>61</p></td>
+                            <td class=formContentLable10><p class=formContentText>xx</p></td>
+                            <td class=formContentLable11><p class=formContentText>有 “xx” 字节数据可读取</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>6E</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>CLA错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>6D</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText>INS错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>6B</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>P1或P2错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>67</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText>Lc或Le错误</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p><u><i>注：上表中的数字均为16进制表示。</i></u></p>
+                <p>我们对卡内的指令进行说明，用Message表示待Hash消息，令：</p>
+                <p>Message=
+                    <emphasis>61 62 63</emphasis>
+                    ，
+                </p>
+                <p>那么我们要发送的完整APDU指令顺序为：</p>
+                <p>1）智能卡SHA-1算法Hash
+                    <emphasis>00 41 00 00 03 61 62 63</emphasis>
+                    ，注意消息长度范围为[1,32]字节，
+                </p>
+                <p>当加密状态正常时，会返回
+                    <emphasis>90 00</emphasis>
+                    ；
+                </p>
+                <p>2）读取Hash值
+                    <emphasis>00 C0 00 00 14</emphasis>
+                    。
+                <p>学员可切换至“Smart Card”页面，尝试与智能卡发送指令以进行学习。此处需要注意，当插入我们配套的读卡器后，右侧交互栏的读卡器列表将有一项值为“ACS ACR1281 1S Dual Reader
+                    ICC 0”的元素，选择该项，然后在“Smart Card”页面的“Command （Hex）”文本框内输入命令，并点击 “Send”
+                    按钮，即可发送APDU指令给智能卡。智能卡的返回数据将显示在“Receive （Hex）”文本框内。</p>
+                <hr>
+                <h3 id="算法概述"> 算法概述</h3>
+                <p>
+                    SHA-1是一种密码散列函数，美国国家安全局设计，并由美国国家标准技术研究所（NIST）发布为联邦数据处理标准（FIPS）。SHA-1可以生成一个被称为消息摘要的160位（20字节）散列值，散列值通常的呈现形式为40个十六进制数。SHA-1有如下特性：不可以从消息摘要中复原信息；两个不同的消息不会产生同样的消息摘要。</p>
+                <p>SHA-1算法主要包括
+                    <emphasis>信息预处理</emphasis>
+                    、
+                    <emphasis>信息分组处理</emphasis>
+                    、
+                    <emphasis>初始化缓存</emphasis>
+                    、
+                    <emphasis>计算消息摘要</emphasis>
+                    四部分。
+                </p>
+                <h3 id="信息预处理">信息预处理</h3>
+                <p>SHA-1算法中的预处理就在消息 $M$ 后面补充需要的信息，使整个消息满足指定的结构。信息的预处理分为两个步骤：附加填充比特和附加长度。</p>
+                <h4>附加填充比特</h4>
+                <p>填充是这样进行的：先补第一个比特为1，然后都补0，直到长度满足对512取模后余数是448。以信息 “abc”
+                    为例显示补位的过程。a,b,c对应的ASCII码分别是97,98,99，于是原始信息的二进制编码为：$01100001 01100010 01100011$。</p>
+                <p>1）补位第一步，首先补一个 “1”： $0110000101100010 01100011 1$，</p>
+                <p>2）补位第二步,补423个 “0”：$01100001 01100010 01100011 10000000 00000000 \cdots 00000000$。</p>
+                <h4>附加长度值</h4>
+                <p>附加长度值就是将原始数据（第一步填充前的消息）的长度信息补到已经进行了填充操作的消息后面。SHA-1用一个64位的数据来表示原始消息的长度。消息 “abc”，3个字符，占用24个比特。</p>
+                <p>因此，填充后的消息就变为（16进制格式）：</p>
+                \begin{multline}
+                \begin{split}
+                &61626380\quad 00000000\quad 00000000\quad 00000000\\
+                &00000000\quad 00000000\quad 00000000\quad 00000000\\
+                &00000000\quad 00000000\quad 00000000\quad 00000000\\
+                &00000000\quad 00000000\quad 00000000\quad 00000018\\
+                \end{split}
+                \end{multline}
+                <h3 id="信息分组处理">信息分组处理</h3>
+                <p>经过信息预处理的明文，其长度正好为512位的整数倍，然后按512位的长度进行分组，可以得到一定数量的明文分组，用$M_0$，$M_1$，$\cdots$, $M_{N-1}$表示这些明文分组。</p>
+                <p style="text-align:center"><img alt="消息填充" class="img-responsive" src="images/1-分块.png"
+                                                  style="width: 44.42em;height:12.87em"></p>
+                <p style="text-align:center">图1 信息分组处理</p>
+                <p>而对于每个512位的明文分组，SHA-1将其再分成16份更小的明文分组，称为子明文分组。每个子明文分组为32位，用$M[t]$（$t= 0,
+                    1,\cdots,15$）来表示这16个子明文分组。然后需要将这16个子明文分组扩充到80个子明文分组，将其记为$W[t]$（$t= 0, 1,\cdots ,79$），扩充的具体方法如下：</p>
+                \begin{multline}
+                \begin{split}
+                &W_t=M_t,0\le t\le 15\\ \\
+                &W_t=(W_{t-3}\oplus W_{t-8}\oplus W_{t-14}\oplus W_{t-16})\lll 1 , 16\le t\le 79\\ \\
+                \end{split}
+                \end{multline}
+                <p>从而得到80个子明文分组。</p>
+                <h3 id="初始化缓存">初始化缓存</h3>
+                <p>初始化缓存就是为链接变量赋初值。SHA-1采用160位的信息摘要，以32位为计算长度，需要5个链接变量,记为$A$、$B$、$C$、$D$、$E$。其初始赋值分别为：</p>
+                \begin{multline}
+                \begin{split}
+                &A = \mbox{0x67452301}\\ \\
+                &B = \mbox{0xEFCDAB89}\\ \\
+                &C = \mbox{0x98BADCFE}\\ \\
+                &D = \mbox{0x10325476}\\ \\
+                &E = \mbox{0xC3D2E1F0}\\ \\
+                \end{split}
+                \end{multline}
+                <h3 id="计算消息摘要">计算消息摘要</h3>
+                <p>SHA-1有4轮运算，每一轮包括20个步骤，一共80步，最终产生160位的信息摘要，这160位的摘要存放在5个32位的链接变量中，4轮运算如下图所示：</p>
+                <p style="text-align:center"><img alt="消息填充" class="img-responsive" src="images/2-4轮运算.png"
+                                                  style="width: 38em;height:40.86em"></p>
+                <p style="text-align:center">图2 SHA-1的4轮运算</p>
+                <p>
+                    在SHA-1的4轮运算中，虽然进行的就具体操作函数不同，但逻辑过程却是一致的。首先，定义5个变量，假设为$H_0$、$H_1$、$H_2$、$H_3$、$H_4$，对其分别进行如下操作：
+                </p>
+                <p>（1）将$A$左移5与$f_t$函数的结果求和，再与对应的子明文分组、$E$以及计算常数求和后的结果赋予$H_0$。</p>
+                <p>（2）将$A$的值赋予$H_1$。</p>
+                <p>（3）将$B$左移30位，并赋予$H_2$。</p>
+                <p>（4）将$C$的值赋予$H_3$。</p>
+                <p>（5）将$D$的值赋予$H_4$。</p>
+                <p>这一过程表示如下：</p>
+                <center>$H_0,H_1,H_2,H_3,H_4 \leftarrow [(A\lll 5)+ f_t(B,C,D)+E+W_t+K_t],A,(B\lll 30),C,D $</center>
+                <p>而在4轮80步的计算中使用到的函数和固定常数如下表所示：</p>
+                <div align="center">
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0 style="width: 16em"><p class=formLableText>轮次</p></td>
+                            <td class=formLable0 style="width: 16em"><p class=formLableText>步数</p></td>
+                            <td class=formLable0 style="width: 16em"><p class=formLableText>函数</p></td>
+                            <td class=formLable0 style="width: 16em"><p class=formLableText>常数</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>1</p></td>
+                            <td class=formContentLable00><p class=formContentText>$0 \le t \le 19$</p></td>
+                            <td class=formContentLable00><p class=formContentText>$f_t(B,C,D) = (B\& C)|(\verb'~' B \&
+                                D)$</p></td>
+                            <td class=formContentLable00><p class=formContentText>$K_t=\mbox{0x5A827999}$</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>2</p></td>
+                            <td class=formContentLable00><p class=formContentText>$20 \le t \le 39$</p></td>
+                            <td class=formContentLable00><p class=formContentText>$f_t(B,C,D)=B\oplus C\oplus D$</p>
+                            </td>
+                            <td class=formContentLable00><p class=formContentText>$K_t=\mbox{0x6ED9EBA1}$</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>3</p></td>
+                            <td class=formContentLable00><p class=formContentText>$40 \le t \le 59$</p></td>
+                            <td class=formContentLable00><p class=formContentText>$f_t(B,C,D)=(B\&C)|(B\&D)|(C\&D)$</p>
+                            </td>
+                            <td class=formContentLable00><p class=formContentText>$K_t=\mbox{0x8F188CDC}$</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>4</p></td>
+                            <td class=formContentLable00><p class=formContentText>$60 \le t \le 79$</p></td>
+                            <td class=formContentLable00><p class=formContentText>$f_t(B,C,D)=B\oplus C\oplus D$</p>
+                            </td>
+                            <td class=formContentLable00><p class=formContentText>$K_t=\mbox{0xCA62C1D6}$</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p>
+                    经过4论80步计算后得到的结果，再与各链接变量的初始值求和，就得到了最终的信息摘要。而对于有多个明文分组的，则将前面所得到的结果作为初始值进行下一明文分组的计算，最终计算全部的明文分组就得到了最终的结果。</p>
+                <p class="separator"></p>
+                <p><a href="#"> 回到顶部</a></p>
+                <p></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="vibrant centered">
+        <div class="container">
+            <h6> &copy; 北京数缘科技有限公司，鲁ICP备09017473号，Copyright （c） 2015 MathMagic Technology Co., Ltd. All Rights
+                Reserved.</h6>
+            <h6>地址：北京市海淀区中关村南大街9号理工科技大厦1412室，邮编：100081，电话：+86-15253166443，邮箱：sales@mathmagic.cn。</h6>
+        </div>
+    </section>
+</div>
+</body>
+</html>

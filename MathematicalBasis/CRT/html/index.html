@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="" name="description">
+    <meta content="True" name="HandheldFriendly">
+    <meta content="320" name="MobileOptimized">
+    <meta content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>中国剩余定理 - Documentation</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+MathJax = {    
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    //tags: 'ams'  // should be 'ams', 'none', or 'all'
+  }
+};
+
+
+
+
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <h2 class="lone-header">数缘科技 - 中国剩余定理</h2>
+        </div>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="docs-nav" id="menu-left">
+                <li><strong>实验介绍</strong></li>
+                <li><a class=" " href="#Euclidean算法实验说明">中国剩余定理实验说明</a></li>
+                <li class="separator"></li>
+                <li><strong>中国剩余定理</strong></li>
+                <li><a class=" " href="#算法简介">定理简介</a></li>
+                <li><a class=" " href="#示例">应用示例</a></li>
+            </ul>
+            <div class="docs-content">
+                <!-- <h2> 实验介绍</h2> -->
+                <h3 id="Euclidean算法实验说明"> 中国剩余定理实验说明</h3>
+                <p>本实验支持自定义三个一元线性同余方程构成的一元线性同余方程组进行PC端的中国剩余定理实验。
+                </p>
+                <p>以下为本实验的重要提示：</p>
+                <ul>
+                    <li>数据格式：软件右侧交互栏部分可以进行中国剩余定理实验中三个余数$a_1$、$a_2$和$a_3$以及三个模$m_1$、$m_2$和$m_3$的输入。本实验中支持
+                        <emphasis>任意长度</emphasis>
+                        的整数输入。输入框内已填入默认值，可参考默认值进行设置。
+                    </li>
+                    <li>余数 $a_1$ 输入：可通过交互栏的“a1 (Int)”文本框输入。</li>
+                    <li>余数 $a_2$ 输入：可通过交互栏的“a2 (Int)”文本框输入。</li>
+                    <li>余数 $a_3$ 输入：可通过交互栏的“a3 (Int)”文本框输入。</li>
+                    <li>模 $m_1$ 输入：可通过交互栏的“m1 (Int)”文本框输入。</li>
+                    <li>模 $m_2$ 输入：可通过交互栏的“m2 (Int)”文本框输入。</li>
+                    <li>模 $m_3$ 输入：可通过交互栏的“m3 (Int)”文本框输入。</li>
+                    <li>计算结果：交互栏部分包含一个“Solve”按钮，点击即可求得此一元同余方程组的解。</li>
+                </ul>
+                <p class="separator"></p>
+                <h3 id="定理简介"> 定理简介</h3>
+                <p>一元线性同余方程组问题最早可见于中国南北朝时期（公元5世纪）的数学著作《孙子算经》卷下第二十六题，叫做“物不知数”问题，原文如下：</p>
+                <p align="center">有物不知其数，三三数之剩二，五五数之剩三，七七数之剩二。问物几何？</p>
+                <p>即，一个整数除以三余二，除以五余三，除以七余二，求这个整数。《孙子算经》中首次提到了同余方程组问题，以及以上具体问题的解法，因此在中文数学文献中也会将中国剩余定理称为孙子定理。</p>
+                <p>中国剩余定理说明：假设整数 $m_1$，$m_2$，$\cdots$，$m_n$ 两两互质，则对任意的整数：
+                    $a_1$，$a_2$，$\cdots$，$a_n$方程组（$S$）有解。</p>
+                $$ f(x)=\left\{
+                \begin{aligned}
+                &x \equiv a_1\left( \bmod m_1 \right) \\
+                &x \equiv a_2 \left(\bmod m_2 \right) \\
+                &~~~~~~~~~~~~~~~~~~\vdots\\
+                &x \equiv a_n \left( \bmod m_n \right) \\
+                \end{aligned}
+                \right.\quad\quad(S)
+                $$
+                <p>并且通解可以用如下方式构造得到：</p>
+                <p>设</p>
+                $$M=m_1 \times m_2 \times \cdots m_n= \prod^n_{i=1} m_i$$
+                <p>是整数$m_1$，$m_2$，$\cdots$，$m_n$乘积，并设</p>
+                $$M_i=\frac{M}{m_i},{\forall}i \in \{1,2,\cdots,n\}$$
+                <p>是除了 $m_i$ 以外的 $n-1$ 个整数的乘积。</p>
+                <p>设 $t_i=M_i^{-1}$ 为 $M_i$ 模 $m_i$ 的数论倒数（ $t_i$ 为 $M_i$ 模 $m_i$ 意义下的逆元），
+                    $$M_i \times t_i=1 \bmod m_i, ,{\forall}i \in \{1,2,\cdots,n\}.$$
+                <p>方程组（$S$）的通解形式为</p>
+                $$x=a_1t_1M_1+a_1t_1M_1+\cdots+a_1t_1M_1+kM=\sum^n_{t=1}a_it_iM_i,k\in \mathbb{Z}.$$
+                <p>在模 $M$ 的意义下，方程组（$S$）只有一个解：</p>
+                $$x=\left( \sum_{i=1}^n a_it_iM_i \right) \bmod M$$
+                <h3 id="示例"> 应用示例</h3>
+                <p>宋朝数学家秦九韶于1247年《数书九章》卷一、二《大衍类》对“物不知数”问题做出了完整系统的解答。明朝数学家程大位将解法编成易于上口的《孙子歌诀》：</p>
+                <p align="center">三人同行七十稀，五树梅花廿一支，七子团圆正半月，除百零五使得知</p>
+                <p>
+                    这个歌诀给出了模数为3、5、7时候的同余方程的秦九韶解法。意思是：将除以3得到的余数乘以70，将除以5得到的余数乘以21，将除以7得到的余数乘以15，全部加起来后除以105（或者105的倍数），得到的余数就是答案。比如说在以上的物不知数问题里面，按歌诀求出的结果就是23。</p>
+                <p>在使用RSA算法签名时，签名一方计算 $S=m^d \bmod N$, 其中 $N=p\times q$，且 $\mathrm{gcd}(p,q)=1$。这相当于求解</p>
+                $$ \left\{
+                \begin{aligned}
+                &x \equiv b_1 \bmod p \\
+                &x \equiv b_2 \bmod q \\
+                \end{aligned}
+                \right.,
+                $$
+                <p>其中 $b_1=m^d \bmod p \equiv (m \bmod p)^d \bmod p$，记 $m_p=m \bmod p$，$d_p=d \bmod (p-1)$。</p>
+                <p>由欧拉定理</p>
+                $$b_1\equiv m_p^{d_p} \bmod p,$$
+                <p>同理可得</p>
+                $$b_2\equiv m_q^{d_q} \bmod q.$$
+                <p>记$S_p=b_1$，$S_q=b_2$，则</p>
+                $$S=qq^{-1}S_p+pp^{-1}S_q(\bmod N).$$
+                <p><a href="#"> 回到顶部</a></p>
+                <p></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="vibrant centered">
+        <div class="container">
+            <h6> &copy; 北京数缘科技有限公司，鲁ICP备09017473号，Copyright (c) 2015 MathMagic Technology Co., Ltd. All Rights
+                Reserved.</h6>
+            <h6>地址：北京市海淀区中关村南大街9号理工科技大厦1412室，邮编：100081，电话：+86-15253166443，邮箱：sales@mathmagic.cn。</h6>
+        </div>
+    </section>
+</div>
+</body>
+</html>

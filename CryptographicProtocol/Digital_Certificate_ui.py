@@ -3,11 +3,9 @@ from cryptography.exceptions import InvalidSignature
 from . import Digital_Certificate
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
-from PyQt5.QtWidgets import QApplication, QVBoxLayout, QLabel, QPushButton, QWidget, QComboBox
 
-
-from Util.Modules import Button, PlainTextEdit, Key, KeyGroup, Group, ErrorType, TextEdit, ComboBox
-from Util.Modules import CryptographyWidget
+from Modules import Button, PlainTextEdit, Group, ErrorType
+from Modules import CryptographyWidget
 from Util import TypeConvert, Path
 
 

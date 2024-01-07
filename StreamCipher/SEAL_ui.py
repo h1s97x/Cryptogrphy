@@ -1,9 +1,9 @@
-from PyQt5.QtWidgets import QApplication, QVBoxLayout, QLabel, QPushButton, QWidget, QComboBox
+from PyQt5.QtWidgets import QApplication
 
 from StreamCipher import SEAL
-from Util.Modules import Button, PlainTextEdit, Key, KeyGroup, Group, ErrorType, TextEdit, ComboBox
-from Util.Modules import CryptographyWidget
-from Util import Path, TypeConvert
+from Modules import Button, PlainTextEdit, Key, KeyGroup, Group, ErrorType
+from Modules import CryptographyWidget
+from Util import TypeConvert
 
 class SEALWidget(CryptographyWidget):
     def __init__(self):

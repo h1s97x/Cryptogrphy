@@ -1,0 +1,271 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="" name="description">
+    <meta content="True" name="HandheldFriendly">
+    <meta content="320" name="MobileOptimized">
+    <meta content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>SPECK算法 - Documentation</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+MathJax = {    
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    //tags: 'ams'  // should be 'ams', 'none', or 'all'
+  }
+};
+
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <h2 class="lone-header">数缘科技 - SPECK密码算法</h2>
+        </div>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="docs-nav" id="menu-left">
+                <li><strong>实验介绍</strong></li>
+                <li><a class=" " href="#SPECK算法实验说明">SPECK算法实验说明</a></li>
+                <li><a class=" " href="#智能卡通信介绍">智能卡通信介绍</a></li>
+                <li><a class=" " href="#SPECK示例卡说明">SPECK示例卡说明</a></li>
+                <li class="separator"></li>
+                <li><strong>SPECK算法介绍</strong></li>
+                <li><a class=" " href="#SPECK算法的历史">SPECK算法的历史</a></li>
+                <li><a class=" " href="#SPECK算法">SPECK算法</a></li>
+                <ul>
+                    <li><a class=" " href="#SPECK">SPECK</a></li>
+                    <li><a class=" " href="#SPECK算法总体结构">SPECK算法总体结构</a></li>
+                </ul>
+            </ul>
+            <div class="docs-content">
+                <h3 id="SPECK算法实验说明"> SPECK算法实验说明</h3>
+                <p>本实验支持自定义明密文和密钥进行
+                    <emphasis>64比特</emphasis>
+                    的SPECK加解密，且支持两种方式：PC端加解密和智能卡加解密。
+                </p>
+                <p>
+                    对于PC端进行加密，本实验可显示加密过程中关键步骤的中间值；对于智能卡加密，本实验支持在已定义明文和密钥的情况下，一键与智能卡进行通信并获取加密结果的方式，也支持通过手动输入APDU指令（智能卡读卡器和智能卡之间传送的信息单元，将在“<a
+                        class=" " href="#智能卡通信介绍">智能卡通信介绍</a>”一节进行介绍）与智能卡通讯的方式。这几种情景同样适用于SPECK解密。</p>
+                <p>以下为本实验的重要提示：</p>
+                <ul>
+                    <li>连接智能卡：本实验用到的智能卡为“
+                        <emphasis>教学卡10：SIMON/SPECK算法</emphasis>
+                        ”，需要通过读卡器连接电脑和智能卡。具体做法是：将智能卡读卡器的USB插口插入电脑的USB接口，并将智能卡插入读卡器中。
+                    </li>
+                    <li>密钥输入：SPECK加解密密钥相同，可通过交互栏的“Key (Hex)”文本框输入。</li>
+                    <li>明密文输入：若进行SPECK加密，则密钥和明文是必需的，明文可通过“Plaintext (Hex)”文本框输入；若进行SPECK解密，则密钥和密文是必需的，密文可通过“Ciphertext
+                        (Hex)”文本框输入。
+                    </li>
+                    <li>PC端加解密：交互栏部分包含一个“Encrypt (PC)”按钮和一个“Decrypt”
+                        (PC)按钮，两者分别对应PC端的SPECK加密和PC端的SPECK解密。在加解密过程中，可以切换到“Intermediate Value”页面，查看加解密过程关键步骤的中间值。
+                    </li>
+                    <li>智能卡加解密：我们可通过两种方式进行智能卡的加解密：既可以通过点击“Encrypt (Card)”按钮或“Decrypt (Card)”按钮直接获取加解密结果，也可以切换到“Smart
+                        Card”页面，通过手动输入APDU指令进行智能卡通讯，这部分我们将在“<a class=" " href="#SPECK示例卡说明">SPECK示例卡说明</a>”一节进行详细介绍。
+                    </li>
+                    <li>数据格式：软件右侧交互栏部分可以进行SPECK明密文和密钥的输入。本实验中支持SPECK128/64加解密，明密文为
+                        <emphasis>8字节</emphasis>
+                        、密钥为
+                        <emphasis>16字节</emphasis>
+                        数据。注意请以
+                        <emphasis>16进制</emphasis>
+                        的格式进行输入，并在每个字节之间加入一个空格作为分隔符。明密文和密钥输入框内已填入默认值，可参考默认值进行设置。
+                    </li>
+                </ul>
+                <h3 id="智能卡通信介绍"> 智能卡通信介绍</h3>
+                <p>智能卡读卡器和智能卡之间传送的信息单元为APDU（Application Protocol Data Unit）指令，APDU指令的规范依据
+                    <emphasis>ISO7816</emphasis>
+                    有着严格的规定，根据规定，指令通常以16进制的形式表示。以下指令均以16进制的形式进行表示。
+                </p>
+                <p>
+                    <emphasis>Command APDU</emphasis>
+                    为发送给智能卡的指令，其满足以下格式：
+                </p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>CLA</p></td>
+                            <td class=formLable0><p class=formLableText>INS</p></td>
+                            <td class=formLable0><p class=formLableText>P1</p></td>
+                            <td class=formLable0><p class=formLableText>P2</p></td>
+                            <td class=formLable0><p class=formLableText>[Lc]</p></td>
+                            <td class=formContentLable01><p class=formContentText>[Data]</p></td>
+                            <td class=formLable0><p class=formLableText>[Le]</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p>
+                    其中CLA为指令类别；INS为指令码；P1、P2为参数；Lc为Data的字节数；Data为数据部分；Le为希望响应时回答的数据字节数。其中LC、Data、Le为可选命令，指令的每个部分都需要遵循一定的规范，比如INS=88通常指内部认证、INS=82通常指外部认证。</p>
+                <p>
+                    <emphasis>Response APDU</emphasis>
+                    为智能卡返回的指令，其满足以下格式：
+                </p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formContentLable01><p class=formContentText>[Data]</p></td>
+                            <td class=formLable0><p class=formLableText>SW1</p></td>
+                            <td class=formLable0><p class=formLableText>SW2</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p>这里的Data为智能卡返回的数据，其长度与Command APDU中Le相等，SW1和SW2为智能卡数据处理的状态标志，我们可以根据状态标志判断智能卡内数据处理的情况。</p>
+                <h3 id="SPECK示例卡说明"> SPECK示例卡说明</h3>
+                <p>下面我们对SPECK示例卡的APDU指令进行说明，SPECK示例卡的Command APDU如下：</p>
+                <div align=center>
+                    <table align="center" cellpadding=0 cellspacing=0
+                           class=TableGrid style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>CLA</p></td>
+                            <td class=formLable0><p class=formLableText>INS</p></td>
+                            <td class=formLable0><p class=formLableText>P1</p></td>
+                            <td class=formLable0><p class=formLableText>P2</p></td>
+                            <td class=formLable0><p class=formLableText>Lc/Le</p></td>
+                            <td class=formLable1><p class=formLableText>Data</p></td>
+                            <td class=formLable1><p class=formLableText>功能</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>14</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>18</p></td>
+                            <td class=formContentLable01><p class=formContentText>10字节密钥+08字节明文</p></td>
+                            <td class=formContentLable01><p class=formContentText>SPECK加密</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>14</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>01</p></td>
+                            <td class=formContentLable10><p class=formContentText>18</p></td>
+                            <td class=formContentLable11><p class=formContentText>10字节密钥+08字节密文</p></td>
+                            <td class=formContentLable11><p class=formContentText>SPECK解密</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>C0</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>08</p></td>
+                            <td class=formContentLable01><p class=formContentText></p></td>
+                            <td class=formContentLable01><p class=formContentText>读取SPECK加/解密结果</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p>Response APDU的SW1、SW2我们定义如下：</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>SW1</p></td>
+                            <td class=formLable0><p class=formLableText>SW2</p></td>
+                            <td class=formLable1><p class=formLableText>状态</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>90</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>成功</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>61</p></td>
+                            <td class=formContentLable10><p class=formContentText>xx</p></td>
+                            <td class=formContentLable11><p class=formContentText>有“xx”字节数据可读取</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>6E</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>CLA错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>6D</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText>INS错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>6B</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>P1或P2错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>67</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText>Lc或Le错误</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p>我们以加密为例对卡内的指令进行说明，用Key表示密钥，plaintext表示明文，令：</p>
+                <p>key =
+                    <emphasis>0F 0E 0D 0C 0B 0A 09 08 07 06 05 04 03 02 01 00 </emphasis>，
+                </p>
+                <p>plaintext =
+                    <emphasis>63 73 65 64 20 73 72 65 </emphasis>。
+                </p>
+                <p>那么我们要发送的APDU指令为
+                    <emphasis>00 14 00 00 18 0F 0E 0D 0C 0B 0A 09 08 07 06 05 04 03 02 01 00 63 73 65 64 20 73 72 65 </emphasis>。
+                </p>
+                <p>当智能卡内程序正确时，卡会返回
+                    <emphasis>61 08</emphasis>
+                    ，表示SPECK加密正常，有0x08个字节的数据可读取。此时如果我们想要获得智能卡的加密结果，可以发送APDU指令
+                    <emphasis>00 C0 00 00 08</emphasis>
+                    以读取加密结果。
+                </p>
+                <p>学员可切换至Smart Card页面，尝试与智能卡发送指令以进行学习。此处需要注意，当插入我们配套的读卡器后，右侧交互栏的读卡器列表将有一项值为“ACS ACR1281 1S Dual Reader
+                    ICC 0”的元素，选择该项，然后在Smart Card页面的Command (Hex)文本框内输入命令，并点击“Send”按钮，即可发送APDU指令给智能卡。智能卡的返回数据将显示在Receive
+                    (Hex)文本框内。</p>
+                <hr>
+                <h3 id="SPECK算法的历史"> SPECK算法的历史</h3>
+                <p>美国国家安全局（NSA）预计，美国联邦政府中的某些机构将需要一种能够在各种物联网设备上良好运行并保持可接受的安全级别的密码。因此NSA从2011年开始研究SPECK和SIMON密码。</p>
+                <p>
+                    SPECK是国家安全局（NSA）于2013年6月公开发布的轻量级分组密码族，族中另一姊妹密码为SIMON。两种密码的区别在于SPECK已针对硬件实现的性能进行了优化，而其姊妹算法SIMON已针对软件进行了优化</p>
+                <h3 id="SPECK算法"> SPECK算法</h3>
+                <p></p>
+                <ol>
+                    <h4 id="SPECK">
+                        <li>SPECK</li>
+                    </h4>
+                    <p>SPECK算法支持多种分组及密钥长度，不同的分组与密钥长度想组合需要进行的迭代次数可能是不同的，具体见下表：</p>
+                    <p style="text-align:center"><img alt="SPECK组合" class="img-responsive" src="images/组合.png"
+                                                      style="width: 25em;height:26em"></p>
+                    <p align="center">图2 SPECK加密结构</p>
+
+                    <h4 id="SPECK总体结构">
+                        <li>SPECK算法总体结构</li>
+                    </h4>
+                    <p>SPECK算法是基于平衡Feistel的迭代算法。明文数据经过多轮次的转换后方能生成密文，每个轮次的转换操作由是相同的。</p>
+                    <p style="text-align:center"><img alt="SPECK加密结构" class="img-responsive" src="images/SPECK.png"
+                                                      style="width: 50em;height:30em"></p>
+                    <p align="center">图2 SPECK加密结构</p>
+                    <p>
+                        SPECK标准算法明文分为明文大端（PT1）、明文小端（PT2）。新一轮的大端（CT1）是PT1的左移1位与左移8位的数据进行位与操作，再与PT1的左移2位的数据、PT2、轮密钥（Kr）进行异或操作得到。新一轮的小端（CT2）即是PT1</p>
+                    <p>密钥生成依照公式得到$\begin{aligned} \ell_{i+m-1} &=\left(k_{i}+S^{-\alpha} \ell_{i}\right) \oplus i \text
+                        { and } \\ k_{i+1} &=S^{\beta} k_{i} \oplus \ell_{i+m-1} \end{aligned}$</p>
+                </ol>
+
+                <p class="separator"></p>
+                <p><a href="#"> 回到顶部</a></p>
+                <p></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="vibrant centered">
+        <div class="container">
+            <h6> &copy; 北京数缘科技有限公司，鲁ICP备09017473号，Copyright (c) 2015 MathMagic Technology Co., Ltd. All Rights
+                Reserved.</h6>
+            <h6>地址：北京市海淀区中关村南大街9号理工科技大厦1412室，邮编：100081，电话：+86-15253166443，邮箱：sales@mathmagic.cn。</h6>
+        </div>
+    </section>
+</div>
+</body>
+</html>

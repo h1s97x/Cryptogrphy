@@ -1,0 +1,231 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="" name="description">
+    <meta content="True" name="HandheldFriendly">
+    <meta content="320" name="MobileOptimized">
+    <meta content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>使用密钥的单表代替密码 - Documentation</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+MathJax = {    
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    //tags: 'ams'  // should be 'ams', 'none', or 'all'
+  }
+};
+
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <h2 class="lone-header">数缘科技 - 使用密钥的单表代替密码算法</h2>
+        </div>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="docs-nav" id="menu-left">
+                <li><strong>实验介绍</strong></li>
+                <li><a class=" " href="#单表代替密码实验说明">单表代替密码实验说明</a></li>
+                <li class="separator"></li>
+                <li><strong>单表代替密码介绍</strong></li>
+                <li><a class=" " href="#背景">背景</a></li>
+                <li><a class=" " href="#说明">说明</a></li>
+                <li><a class=" " href="#示例">示例</a></li>
+            </ul>
+
+            <div class="docs-content">
+                <!-- <h2> 实验介绍</h2> -->
+                <h3 id="使用密钥的单表代替密码实验说明"> 使用密钥的单表代替密码实验说明</h3>
+                <p>本实验支持自定义明密文和密钥进行PC端
+                    <emphasis>任意长度</emphasis>
+                    的使用密钥的单表代替加解密。
+                </p>
+                <p>以下为本实验的重要提示：</p>
+                <ul>
+                    <li>密钥输入：单表代替加解密密钥相同，可通过交互栏的“Key (Int)”文本框输入。</li>
+                    <li>明密文输入：若进行单表代替加密，则密钥和明文是必需的，明文可通过“Plaintext (Str)”文本框输入，也可通过“File Path（Text）”文本框输入存储明文的txt文件路径；若进行单表代替解密，则密钥和密文是必需的，密文可通过“Ciphertext
+                        (Str)”文本框输入，也可通过“File Path（Text）”文本框输入存储密文的txt文件路径。
+                    </li>
+                    <li>加密：交互栏部分包含一个“Encrypt (PC)”按钮和一个“Encrypt Text (PC)”按钮，两者分别对应PC端的单表代替直接加密和PC端的单表代替文件加密。</li>
+                    <li>解密：交互栏部分包含一个“Decrypt (PC)”按钮和一个“Decrypt Text (PC)”按钮，两者分别对应PC端的单表代替直接解密和PC端的单表代替文件解密。</li>
+                    <li>数据格式：软件右侧交互栏部分可以进行单表代替密码的明密文和密钥的输入。本实验中支持
+                        <emphasis>任意长度</emphasis>
+                        明密文输入的单表代替加解密，明密文以
+                        <emphasis>字符串</emphasis>
+                        的形式输入，只对其中的字母进行加解密，非字母的字符直接输出，不支持中文输入。密钥文本框输入的字符串去掉重复字符，得到一个新的字符串，再将字母表中其他字母依次写于此字符串之后，即可构造出一个字母替换表。明密文和密钥输入框内已填入默认值，可参考默认值进行设置。
+                    </li>
+                    <li>加密结果文件会生成在明文文件的同目录下，解密结果文件会生成在密文文件的同目录下。</li>
+                    <li>密文结果与输入明文的大小写有关，例如大写字母A的加密结果为D，则小写字母a的加密结果对应为d。</li>
+                </ul>
+                <p class="separator"></p>
+                <h3 id="背景"> 背景</h3>
+                <p>
+                    单表代替密码对明文中所有字母都使用同一个映射，即。为了保证加密的可逆性，要求映射是一一映射。下面分析使用密钥的单表代替密码。
+                    这种密码选用一个英文短语或单词串作为密钥，去掉其中重复的字母得到一个无重复字母的字母串，然后再将字母表中的其他字母依次写于此字符串之后，就可构造出一个字母代替表。这种单表代替泄露给破译者的信息更少，而且密钥可以随时更改，增加了灵活性。
+                    </p>
+                <h3 id="说明"> 说明</h3>
+                <p>
+                    Caesar密码仅有25种可能的密钥，是远不够安全的。通过允许任意代替，密钥空间将会急剧增大。在继续之前，我们先定义术语置换。有限元素的集合S的置换是S的所有元素的有序排列，且每个元素只出现一次。例如，如果S={a，b，c}，则S有6个置换：abc，acb，bac，bca，cab，cba。
+                    一般地，具有n个元素的集合含有n!个置换，因为第一个元素有n种选择方式，第二个有n-1种方式，以此下去得到结论。
+                <p>
+                    回忆Caesar密码的对应：</p>
+                <p align="center">表1 明文与密文对应表</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>明文</p></td>
+                            <td class=formLable0><p class=formLableText>A</p></td>
+                            <td class=formLable0><p class=formLableText>B</p></td>
+                            <td class=formLable0><p class=formLableText>C</p></td>
+                            <td class=formLable0><p class=formLableText>D</p></td>
+                            <td class=formLable0><p class=formLableText>E</p></td>
+                            <td class=formLable0><p class=formLableText>F</p></td>
+                            <td class=formLable0><p class=formLableText>G</p></td>
+                            <td class=formLable0><p class=formLableText>H</p></td>
+                            <td class=formLable0><p class=formLableText>I</p></td>
+                            <td class=formLable0><p class=formLableText>J</p></td>
+                            <td class=formLable0><p class=formLableText>K</p></td>
+                            <td class=formLable0><p class=formLableText>L</p></td>
+                            <td class=formLable0><p class=formLableText>M</p></td>
+                            <td class=formLable0><p class=formLableText>N</p></td>
+                            <td class=formLable0><p class=formLableText>O</p></td>
+                            <td class=formLable0><p class=formLableText>P</p></td>
+                            <td class=formLable0><p class=formLableText>Q</p></td>
+                            <td class=formLable0><p class=formLableText>R</p></td>
+                            <td class=formLable0><p class=formLableText>S</p></td>
+                            <td class=formLable0><p class=formLableText>T</p></td>
+                            <td class=formLable0><p class=formLableText>U</p></td>
+                            <td class=formLable0><p class=formLableText>V</p></td>
+                            <td class=formLable0><p class=formLableText>W</p></td>
+                            <td class=formLable0><p class=formLableText>X</p></td>
+                            <td class=formLable0><p class=formLableText>Y</p></td>
+                            <td class=formLable0><p class=formLableText>Z</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>密文</p></td>
+                            <td class=formContentLable00><p class=formContentText>D</p></td>
+                            <td class=formContentLable00><p class=formContentText>E</p></td>
+                            <td class=formContentLable00><p class=formContentText>F</p></td>
+                            <td class=formContentLable00><p class=formContentText>G</p></td>
+                            <td class=formContentLable00><p class=formContentText>H</p></td>
+                            <td class=formContentLable00><p class=formContentText>I</p></td>
+                            <td class=formContentLable00><p class=formContentText>J</p></td>
+                            <td class=formContentLable00><p class=formContentText>K</p></td>
+                            <td class=formContentLable00><p class=formContentText>L</p></td>
+                            <td class=formContentLable00><p class=formContentText>M</p></td>
+                            <td class=formContentLable00><p class=formContentText>N</p></td>
+                            <td class=formContentLable00><p class=formContentText>O</p></td>
+                            <td class=formContentLable00><p class=formContentText>P</p></td>
+                            <td class=formContentLable00><p class=formContentText>Q</p></td>
+                            <td class=formContentLable00><p class=formContentText>R</p></td>
+                            <td class=formContentLable00><p class=formContentText>S</p></td>
+                            <td class=formContentLable00><p class=formContentText>T</p></td>
+                            <td class=formContentLable00><p class=formContentText>U</p></td>
+                            <td class=formContentLable00><p class=formContentText>V</p></td>
+                            <td class=formContentLable00><p class=formContentText>W</p></td>
+                            <td class=formContentLable00><p class=formContentText>X</p></td>
+                            <td class=formContentLable00><p class=formContentText>Y</p></td>
+                            <td class=formContentLable00><p class=formContentText>Z</p></td>
+                            <td class=formContentLable00><p class=formContentText>A</p></td>
+                            <td class=formContentLable00><p class=formContentText>B</p></td>
+                            <td class=formContentLable00><p class=formContentText>C</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p>如果密文行是26个字母的任意置换，那就有更多种可能的密钥，可以更好地抵挡穷举攻击。</p>
+                
+                <h3 id="示例"> 示例</h3>
+                <p>设明文为China，密钥为key，则明密文对应表如下：</p>
+                <p align="center">表1 明文与密文对应表</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>明文</p></td>
+                            <td class=formLable0><p class=formLableText>A</p></td>
+                            <td class=formLable0><p class=formLableText>B</p></td>
+                            <td class=formLable0><p class=formLableText>C</p></td>
+                            <td class=formLable0><p class=formLableText>D</p></td>
+                            <td class=formLable0><p class=formLableText>E</p></td>
+                            <td class=formLable0><p class=formLableText>F</p></td>
+                            <td class=formLable0><p class=formLableText>G</p></td>
+                            <td class=formLable0><p class=formLableText>H</p></td>
+                            <td class=formLable0><p class=formLableText>I</p></td>
+                            <td class=formLable0><p class=formLableText>J</p></td>
+                            <td class=formLable0><p class=formLableText>K</p></td>
+                            <td class=formLable0><p class=formLableText>L</p></td>
+                            <td class=formLable0><p class=formLableText>M</p></td>
+                            <td class=formLable0><p class=formLableText>N</p></td>
+                            <td class=formLable0><p class=formLableText>O</p></td>
+                            <td class=formLable0><p class=formLableText>P</p></td>
+                            <td class=formLable0><p class=formLableText>Q</p></td>
+                            <td class=formLable0><p class=formLableText>R</p></td>
+                            <td class=formLable0><p class=formLableText>S</p></td>
+                            <td class=formLable0><p class=formLableText>T</p></td>
+                            <td class=formLable0><p class=formLableText>U</p></td>
+                            <td class=formLable0><p class=formLableText>V</p></td>
+                            <td class=formLable0><p class=formLableText>W</p></td>
+                            <td class=formLable0><p class=formLableText>X</p></td>
+                            <td class=formLable0><p class=formLableText>Y</p></td>
+                            <td class=formLable0><p class=formLableText>Z</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>密文</p></td>
+                            <td class=formContentLable00><p class=formContentText>K</p></td>
+                            <td class=formContentLable00><p class=formContentText>E</p></td>
+                            <td class=formContentLable00><p class=formContentText>Y</p></td>
+                            <td class=formContentLable00><p class=formContentText>A</p></td>
+                            <td class=formContentLable00><p class=formContentText>B</p></td>
+                            <td class=formContentLable00><p class=formContentText>C</p></td>
+                            <td class=formContentLable00><p class=formContentText>D</p></td>
+                            <td class=formContentLable00><p class=formContentText>F</p></td>
+                            <td class=formContentLable00><p class=formContentText>G</p></td>
+                            <td class=formContentLable00><p class=formContentText>H</p></td>
+                            <td class=formContentLable00><p class=formContentText>I</p></td>
+                            <td class=formContentLable00><p class=formContentText>J</p></td>
+                            <td class=formContentLable00><p class=formContentText>L</p></td>
+                            <td class=formContentLable00><p class=formContentText>M</p></td>
+                            <td class=formContentLable00><p class=formContentText>N</p></td>
+                            <td class=formContentLable00><p class=formContentText>O</p></td>
+                            <td class=formContentLable00><p class=formContentText>P</p></td>
+                            <td class=formContentLable00><p class=formContentText>Q</p></td>
+                            <td class=formContentLable00><p class=formContentText>R</p></td>
+                            <td class=formContentLable00><p class=formContentText>S</p></td>
+                            <td class=formContentLable00><p class=formContentText>T</p></td>
+                            <td class=formContentLable00><p class=formContentText>U</p></td>
+                            <td class=formContentLable00><p class=formContentText>V</p></td>
+                            <td class=formContentLable00><p class=formContentText>W</p></td>
+                            <td class=formContentLable00><p class=formContentText>X</p></td>
+                            <td class=formContentLable00><p class=formContentText>Z</p></td>
+                            
+                        </tr>
+                    </table>
+                </div>
+                <p>即“China”加密后的密文为“Yfgmk”。</p>
+                <p class="separator"></p>
+                <p><a href="#"> 回到顶部</a></p>
+                <p></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="vibrant centered">
+        <div class="container">
+            <h6> &copy; 北京数缘科技有限公司，鲁ICP备09017473号，Copyright (c) 2015 MathMagic Technology Co., Ltd. All Rights
+                Reserved.</h6>
+            <h6>地址：北京市海淀区中关村南大街9号理工科技大厦1412室，邮编：100081，电话：+86-15253166443，邮箱：sales@mathmagic.cn。</h6>
+        </div>
+    </section>
+</div>
+</body>
+</html>

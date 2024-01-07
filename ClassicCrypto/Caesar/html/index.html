@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="" name="description">
+    <meta content="True" name="HandheldFriendly">
+    <meta content="320" name="MobileOptimized">
+    <meta content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>Caesar密码 - Documentation</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+MathJax = {    
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    //tags: 'ams'  // should be 'ams', 'none', or 'all'
+  }
+};
+
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <h2 class="lone-header">数缘科技 - Caesar密码算法</h2>
+        </div>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="docs-nav" id="menu-left">
+                <li><strong>实验介绍</strong></li>
+                <li><a class=" " href="#Caesar密码实验说明">Caesar密码实验说明</a></li>
+                <li class="separator"></li>
+                <li><strong>Caesar密码介绍</strong></li>
+                <li><a class=" " href="#背景">背景</a></li>
+                <li><a class=" " href="#加解密">加解密</a></li>
+                <li><a class=" " href="#示例">示例</a></li>
+            </ul>
+
+            <div class="docs-content">
+                <!-- <h2> 实验介绍</h2> -->
+                <h3 id="Caesar密码实验说明"> Caesar密码实验说明</h3>
+                <p>本实验支持自定义明密文和密钥进行PC端
+                    <emphasis>任意长度</emphasis>
+                    的Caesar加解密。
+                </p>
+                <p>以下为本实验的重要提示：</p>
+                <ul>
+                    <li>密钥输入：Caesar加解密密钥相同，可通过交互栏的“Key (Int)”文本框输入。</li>
+                    <li>明密文输入：若进行Caesar加密，则密钥和明文是必需的，明文可通过“Plaintext (Str)”文本框输入，也可通过“File Path（Text）”文本框输入存储明文的txt文件路径；若进行Caesar解密，则密钥和密文是必需的，密文可通过“Ciphertext
+                        (Str)”文本框输入，也可通过“File Path（Text）”文本框输入存储密文的txt文件路径。
+                    </li>
+                    <li>加密：交互栏部分包含一个“Encrypt (PC)”按钮和一个“Encrypt Text (PC)”按钮，两者分别对应PC端的Caesar直接加密和PC端的Caesar文件加密。</li>
+                    <li>解密：交互栏部分包含一个“Decrypt (PC)”按钮和一个“Decrypt Text (PC)”按钮，两者分别对应PC端的Caesar直接解密和PC端的Caesar文件解密。</li>
+                    <li>数据格式：软件右侧交互栏部分可以进行Caesar的明密文和密钥的输入。本实验中支持
+                        <emphasis>任意长度</emphasis>
+                        明密文输入的Caesar加解密，明密文以
+                        <emphasis>字符串</emphasis>
+                        的形式输入，只对其中的字母进行加解密，非字母的字符直接输出，不支持中文输入。密钥即循环移位的偏移量，以
+                        <emphasis>整数</emphasis>
+                        的形式输入。明密文和密钥输入框内已填入默认值，可参考默认值进行设置。
+                    </li>
+                    <li>txt文件大小最好不超过
+                        <emphasis>50</emphasis>
+                        K，可以比较快地生成含有加解密结果的文件。</li>
+                    <li>加密结果文件会生成在明文文件的同目录下，解密结果文件会生成在密文文件的同目录下。</li>
+                </ul>
+                <p class="separator"></p>
+                <h3 id="背景"> 背景</h3>
+                <p>
+                    在密码学中，Caesar密码，或称Caesar加密、Caesar变换、变换加密，是一种最简单且最广为人知的加密技术。它是一种替换加密的技术，明文中的所有字母都在字母表上向后（或向前）按照一个固定数目进行偏移后被替换成密文。例如，当偏移量是3的时候，所有的字母A将被替换成D，B变成E，以此类推。这个加密方法据史书记载，最早约在公元前50年，被罗马大帝Julius
+                    Caesar用于和他的军队指挥官之间进行保密通信。</p>
+                <h3 id="加解密"> 加解密</h3>
+                <p>
+                    设$P=C=K=Z_{26}$，这里$P$、$C$、$K$、$Z_{26}$分别表示明文空间、密文空间、密钥空间和26个整数（对应26个英文字母）组成的空间。很明显，明文、密文和密钥的取值范围是一样的，它们的空间大小也是相同的。</p>
+                <p>
+                    在使用如下加解密方法时，要求26个英文字母与模26的剩余类集合$\{0，1，2，\cdots，25\}$建立一一对应关系，如A对应0，B对应1，$\cdots$，Z对应25（如表1所示），不区分大小写。</p>
+                <p align="center">表1 字母与数字对应表</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse；border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>字母</p></td>
+                            <td class=formLable0><p class=formLableText>A</p></td>
+                            <td class=formLable0><p class=formLableText>B</p></td>
+                            <td class=formLable0><p class=formLableText>C</p></td>
+                            <td class=formLable0><p class=formLableText>D</p></td>
+                            <td class=formLable0><p class=formLableText>E</p></td>
+                            <td class=formLable0><p class=formLableText>F</p></td>
+                            <td class=formLable0><p class=formLableText>G</p></td>
+                            <td class=formLable0><p class=formLableText>H</p></td>
+                            <td class=formLable0><p class=formLableText>I</p></td>
+                            <td class=formLable0><p class=formLableText>J</p></td>
+                            <td class=formLable0><p class=formLableText>K</p></td>
+                            <td class=formLable0><p class=formLableText>L</p></td>
+                            <td class=formLable0><p class=formLableText>M</p></td>
+                            <td class=formLable0><p class=formLableText>N</p></td>
+                            <td class=formLable0><p class=formLableText>O</p></td>
+                            <td class=formLable0><p class=formLableText>P</p></td>
+                            <td class=formLable0><p class=formLableText>Q</p></td>
+                            <td class=formLable0><p class=formLableText>R</p></td>
+                            <td class=formLable0><p class=formLableText>S</p></td>
+                            <td class=formLable0><p class=formLableText>T</p></td>
+                            <td class=formLable0><p class=formLableText>U</p></td>
+                            <td class=formLable0><p class=formLableText>V</p></td>
+                            <td class=formLable0><p class=formLableText>W</p></td>
+                            <td class=formLable0><p class=formLableText>X</p></td>
+                            <td class=formLable0><p class=formLableText>Y</p></td>
+                            <td class=formLable0><p class=formLableText>Z</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>数字</p></td>
+                            <td class=formContentLable00><p class=formContentText>0</p></td>
+                            <td class=formContentLable00><p class=formContentText>1</p></td>
+                            <td class=formContentLable00><p class=formContentText>2</p></td>
+                            <td class=formContentLable00><p class=formContentText>3</p></td>
+                            <td class=formContentLable00><p class=formContentText>4</p></td>
+                            <td class=formContentLable00><p class=formContentText>5</p></td>
+                            <td class=formContentLable00><p class=formContentText>6</p></td>
+                            <td class=formContentLable00><p class=formContentText>7</p></td>
+                            <td class=formContentLable00><p class=formContentText>8</p></td>
+                            <td class=formContentLable00><p class=formContentText>9</p></td>
+                            <td class=formContentLable00><p class=formContentText>10</p></td>
+                            <td class=formContentLable00><p class=formContentText>11</p></td>
+                            <td class=formContentLable00><p class=formContentText>12</p></td>
+                            <td class=formContentLable00><p class=formContentText>13</p></td>
+                            <td class=formContentLable00><p class=formContentText>14</p></td>
+                            <td class=formContentLable00><p class=formContentText>15</p></td>
+                            <td class=formContentLable00><p class=formContentText>16</p></td>
+                            <td class=formContentLable00><p class=formContentText>17</p></td>
+                            <td class=formContentLable00><p class=formContentText>18</p></td>
+                            <td class=formContentLable00><p class=formContentText>19</p></td>
+                            <td class=formContentLable00><p class=formContentText>20</p></td>
+                            <td class=formContentLable00><p class=formContentText>21</p></td>
+                            <td class=formContentLable00><p class=formContentText>22</p></td>
+                            <td class=formContentLable00><p class=formContentText>23</p></td>
+                            <td class=formContentLable00><p class=formContentText>24</p></td>
+                            <td class=formContentLable00><p class=formContentText>25</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p>对于任意的$k \in K$，定义加密：</p>
+                <p align="center">$e_{k}(x)=x+k(\bmod 26)=y \in C$</p>
+                <p>解密：</p>
+                <p align="center">$x=d_{k}(y)=y-k(\bmod26)$</p>
+
+                <h3 id="示例"> 示例</h3>
+                <p>设明文为China，密钥即偏移量为3，明文对应数字为2 7 8 13 0。</p>
+                <p>下面分析加密过程：</p>
+                <p>C：$e_3(2)=2+3(\bmod 26)=5$，对应着字母F；</p>
+                <p>h：$e_3(7)=7+3(\bmod 26)=10$，对应着字母K；</p>
+                <p>i：$e_3(8)=8+3(\bmod 26)=11$，对应着字母l；</p>
+                <p>n：$e_3(13)=13+3(\bmod 26)=16$，对应着字母q；</p>
+                <p>a：$e_3(0)=0+3(\bmod 26)=3$，对应着字母d；</p>
+                <p>所以明文“China”基于Caesar密码被加密为“Fklqd”。</p>
+                <p>解密过程是加密过程的逆过程，下面具体分析：</p>
+                <p>F：$e_3(5)=5-3(\bmod 26)=2$， 对应着字母C；</p>
+                <p>k：$e_3(10)=10-3(\bmod 26)=7$，对应着字母h；</p>
+                <p>l：$e_3(11)=11-3(\bmod 26)=8$，对应着字母i；</p>
+                <p>q：$e_3(16)=16-3(\bmod 26)=13$，对应着字母n；</p>
+                <p>d：$e_3(3)=3-3(\bmod 26)=0$，对应着字母a；</p>
+                <p>即“Fklqd”经Caesar密码解密恢复为“China”。</p>
+                <p class="separator"></p>
+                <p><a href="#"> 回到顶部</a></p>
+                <p></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="vibrant centered">
+        <div class="container">
+            <h6> &copy; 北京数缘科技有限公司，鲁ICP备09017473号，Copyright (c) 2015 MathMagic Technology Co.， Ltd. All Rights
+                Reserved.</h6>
+            <h6>地址：北京市海淀区中关村南大街9号理工科技大厦1412室，邮编：100081，电话：+86-15253166443，邮箱：sales@mathmagic.cn。</h6>
+        </div>
+    </section>
+</div>
+</body>
+</html>

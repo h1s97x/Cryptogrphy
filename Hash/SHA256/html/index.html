@@ -1,0 +1,332 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="" name="description">
+    <meta content="True" name="HandheldFriendly">
+    <meta content="320" name="MobileOptimized">
+    <meta content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>SHA-256算法 - Documentation</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+MathJax = {    
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    //tags: 'ams'  // should be 'ams', 'none', or 'all'
+  }
+};
+
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <h2 class="lone-header">数缘科技 - SHA-256密码算法</h2>
+        </div>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="docs-nav" id="menu-left">
+                <li><strong>实验介绍</strong></li>
+                <li><a class=" " href="#SHA-256算法实验说明">SHA-256算法实验说明</a></li>
+                <li><a class=" " href="#SHA-256示例卡说明">SHA-256示例卡说明</a></li>
+                <li class="separator"></li>
+                <li><strong>SHA-256算法介绍</strong></li>
+                <li><a class=" " href="#算法概述">算法概述</a></li>
+                <li><a class=" " href="#常量的初始化">常量的初始化</a></li>
+                <li><a class=" " href="#信息预处理">信息预处理</a></li>
+                <li><a class=" " href="#逻辑运算">逻辑运算</a></li>
+                <li><a class=" " href="#计算消息摘要">计算消息摘要</a></li>
+            </ul>
+            <div class="docs-content">
+                <h3 id="SHA-256算法实验说明"> SHA-256算法实验说明</h3>
+                <p>本实验支持自定义明文进行SHA-256 Hash运算，且支持两种方式：PC端Hash和智能卡端Hash。</p>
+                <p>对于PC端，本实验支持消息长度可变的Hash运算，且可显示Hash过程中关键步骤的中间值；对于智能卡端，本实验支持消息长度在
+                    <emphasis>32字节</emphasis>
+                    以内的Hash运算，在已定义消息的情况下，支持一键与智能卡进行通信并获取加密结果的方式，也支持通过手动输入APDU指令与智能卡通信的方式。
+                </p>
+                <p>以下为本实验的重要提示：</p>
+                <ul>
+                    <li>连接智能卡：本实验用到的智能卡为“
+                        <emphasis>教学卡7：SHA-256算法</emphasis>
+                        ”，需要通过读卡器连接电脑和智能卡。具体做法是：将智能卡读卡器的USB插口插入电脑的USB接口，并将智能卡插入读卡器中。
+                    </li>
+                    <li>消息输入：消息输入框已填入默认值，可参考默认值进行修改。对于PC端，本实验支持任意长度的Hash运算，对于智能卡端，本实验支持32字节以内的Hash运算。</li>
+                    <li>PC端Hash：PC端的Hash支持任意长度消息，可在正确输入后，点击交互栏部分的 “Hash （PC）” 按钮，获取Hash值。在运算过程中，可以切换到 “Intermediate
+                        Value” 页面，查看关键步骤的中间值。
+                    </li>
+                    <li>我们可通过两种方式进行智能卡的加解密运算：既可以通过点击 “Hash （Card）” 按钮直接获取运算结果，也可以切换到 “Smart Card”
+                        页面，通过手动输入APDU指令进行智能卡通信，这部分我们将在“<a class=" " href="#SHA-256示例卡说明">SHA-256示例卡说明"</a>”一节进行详细介绍。
+                    </li>
+                    <li>数据格式：SHA-256算法的数据格式均以
+                        <emphasis>16进制</emphasis>
+                        的格式进行输入，并在每个字节之间加入一个空格作为分隔符。
+                    </li>
+                </ul>
+                <h3 id="SHA-256示例卡说明"> SHA-256示例卡说明</h3>
+                <p>下面我们对SHA-256示例卡的APDU指令进行说明，SHA-256示例卡的Command APDU如下：</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>CLA</p></td>
+                            <td class=formLable0><p class=formLableText>INS</p></td>
+                            <td class=formLable0><p class=formLableText>P1</p></td>
+                            <td class=formLable0><p class=formLableText>P2</p></td>
+                            <td class=formLable0><p class=formLableText>Lc/Le</p></td>
+                            <td class=formLable1><p class=formLableText>Data</p></td>
+                            <td class=formLable1><p class=formLableText>功能</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>42</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>Lc</p></td>
+                            <td class=formContentLable01><p class=formContentText>Lc字节消息</p></td>
+                            <td class=formContentLable01><p class=formContentText>SHA-256 Hash</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>C0</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>Lc</p></td>
+                            <td class=formContentLable11><p class=formContentText></p></td>
+                            <td class=formContentLable11><p class=formContentText>读取Hash结果</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p><u><i>注：上表中的数字均为16进制表示。</i></u></p>
+                <p>Response APDU的SW1、SW2我们定义如下：</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>SW1</p></td>
+                            <td class=formLable0><p class=formLableText>SW2</p></td>
+                            <td class=formLable1><p class=formLableText>状态</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>90</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>成功</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>61</p></td>
+                            <td class=formContentLable10><p class=formContentText>xx</p></td>
+                            <td class=formContentLable11><p class=formContentText>有 “xx” 字节数据可读取</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>6E</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>CLA错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>6D</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText>INS错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>6B</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>P1或P2错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>67</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText>Lc或Le错误</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p><u><i>注：上表中的数字均为16进制表示。</i></u></p>
+                <p>我们对卡内的指令进行说明，用Message表示待Hash消息，令：</p>
+                <p>Message=
+                    <emphasis>61 62 63</emphasis>
+                    ，
+                </p>
+                <p>那么我们要发送的完整APDU指令顺序为：</p>
+                <p>1）智能卡SHA-256算法Hash
+                    <emphasis>00 42 00 00 03 61 62 63</emphasis>
+                    ，注意消息长度范围为[1,32]字节，
+                </p>
+                <p>当加密状态正常时，会返回
+                    <emphasis>90 00</emphasis>
+                    ；
+                </p>
+                <p>2）读取Hash值
+                    <emphasis>00 C0 00 00 20</emphasis>
+                    。
+                <p>学员可切换至“Smart Card”页面，尝试与智能卡发送指令以进行学习。此处需要注意，当插入我们配套的读卡器后，右侧交互栏的读卡器列表将有一项值为“ACS ACR1281 1S Dual Reader
+                    ICC 0”的元素，选择该项，然后在“Smart Card”页面的“Command （Hex）”文本框内输入命令，并点击 “Send”
+                    按钮，即可发送APDU指令给智能卡。智能卡的返回数据将显示在“Receive （Hex）”文本框内。</p>
+                <hr>
+                <h3 id="算法概述"> 算法概述</h3>
+                <p>SHA-256是SHA-2下细分出的一种算法。SHA-2，名称来自于安全散列算法2（英语：Secure Hash Algorithm
+                    2）的缩写，一种密码散列函数算法标准，由美国国家安全局研发，属于SHA算法之一，是SHA-1的后继者。
+                    SHA-2下又可再分为六个不同的算法标准，包括了：SHA-224、SHA-256、SHA-384、SHA-512、SHA-512/224、SHA-512/256。 这些变体除了生成摘要的长度
+                    、循环运行的次数等一些微小差异外，算法的基本结构是一致的。
+                    本实验以SHA-2算法中的SHA-256为例，进行介绍。</p>
+                <p>SHA-256算法主要包括
+                    <emphasis>常量的初始化</emphasis>
+                    、
+                    <emphasis>信息预处理</emphasis>
+                    、
+                    <emphasis>逻辑运算</emphasis>
+                    、
+                    <emphasis>计算消息摘要</emphasis>
+                    四部分。
+                </p>
+                <h3 id="常量的初始化">常量的初始化</h3>
+                <p>SHA-256算法中用到了8个Hash初值以及64个Hash常量。</p>
+                <p>其中，SHA-256算法的8个Hash初值如下（16进制表示）：</p>
+                <p>
+                    0x6A09E667<br>
+                    0xBB67AE85<br>
+                    0x3C6EF372<br>
+                    0xA54FF53A<br>
+                    0x510E527F<br>
+                    0x9B05688C<br>
+                    0x1F83D9AB<br>
+                    0x5BE0CD19<br>
+                </p>
+                <p>用到的64个常量 $K_i$ 如下（16进制表示）：</p>
+                <p>
+                    0x428A2F98 71374491 B5C0FBCF E9B5DBA5<br>
+                    0x3956C25B 59F111F1 923F82A4 AB1C5ED5<br>
+                    0xD807AA98 12835B01 243185BE 550C7DC3<br>
+                    0x72BE5D74 80DEB1FE 9BDC06A7 C19BF174<br>
+                    0xE49B69C1 EFBE4786 0FC19DC6 240CA1CC<br>
+                    0x2DE92C6F 4A7484AA 5CB0A9DC 76F988DA<br>
+                    0x983E5152 A831C66D B00327C8 BF597FC7<br>
+                    0xC6E00BF3 D5A79147 06CA6351 14292967<br>
+                    0x27B70A85 2E1B2138 4D2C6DFC 53380D13<br>
+                    0x650A7354 766A0ABB 81C2C92E 92722C85<br>
+                    0xA2BFE8A1 A81A664B C24B8B70 C76C51A3<br>
+                    0xD192E819 D6990624 F40E3585 106AA070<br>
+                    0x19A4C116 1E376C08 2748774C 34b0BCB5<br>
+                    0x391C0CB3 4ED8AA4A 5B9CCA4F 682E6FF3<br>
+                    0x748F82EE 78A5636F 84C87814 8CC70208<br>
+                    0x90BEFFFA A4506CEB BEF9A3F7 C67178F2<br>
+                </p>
+
+                <h3 id="信息预处理">信息预处理</h3>
+                <p>SHA-256算法中的预处理就在消息 $M$ 后面补充需要的信息，使整个消息满足指定的结构。信息的预处理分为两个步骤：附加填充比特和附加长度。</p>
+                <h4>附加填充比特</h4>
+                <p>填充是这样进行的：先补第一个比特为1，然后都补0，直到长度满足对512取模后余数是448。以信息 “abc”
+                    为例显示补位的过程。a,b,c对应的ASCII码分别是97,98,99，于是原始信息的二进制编码为：$01100001 01100010 01100011$。</p>
+                <p>1）补位第一步，首先补一个 “1”： $0110000101100010 01100011 1$，</p>
+                <p>2）补位第二步,补423个 “0”：$01100001 01100010 01100011 10000000 00000000 \cdots 00000000$。</p>
+                <h4>附加长度值</h4>
+                <p>附加长度值就是将原始数据（第一步填充前的消息）的长度信息补到已经进行了填充操作的消息后面。SHA-256用一个64位的数据来表示原始消息的长度。消息 “abc”，3个字符，占用24个比特。</p>
+                <p>因此，填充后的消息就变为（16进制格式）：</p>
+                \begin{multline}
+                \begin{split}
+                &61626380\quad 00000000\quad 00000000\quad 00000000\\
+                &00000000\quad 00000000\quad 00000000\quad 00000000\\
+                &00000000\quad 00000000\quad 00000000\quad 00000000\\
+                &00000000\quad 00000000\quad 00000000\quad 00000018\\
+                \end{split}
+                \end{multline}
+                <h3 id="逻辑运算">逻辑运算</h3>
+                <p>SHA-256散列函数中涉及的操作全部是逻辑的
+                    <emphasis>位运算</emphasis>
+                    ，
+                    包括如下的逻辑函数：
+                </p>
+                \begin{multline}
+                \begin{split}
+                &Ch(x,y,z)=(x\wedge y)\oplus (\neg x\wedge z)\\ \\
+                &Ma(x,y,z)=(x\wedge y)\oplus (x\wedge z)\oplus (y\wedge z)\\ \\
+                &\sum\nolimits_{0}(x)=S^2(x)\oplus S^{13}(x) \oplus S^{22}(x)\\ \\
+                &\sum\nolimits_{1}(x)=S^6(x)\oplus S^{11}(x) \oplus S^{25}(x)\\ \\
+                & \sigma_{0}(x)=S^7(x)\oplus S^{8}(x) \oplus R^{3}(x)\\ \\
+                & \sigma_{1}(x)=S^{17}(x)\oplus S^{19}(x) \oplus R^{10}(x)\\ \\
+                \end{split}
+                \end{multline}
+                <p>其中：</p>
+                <div align="center">
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0 style="width: 16em"><p class=formLableText>逻辑运算</p></td>
+                            <td class=formLable0 style="width: 16em"><p class=formLableText>含义</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>$\wedge$</p></td>
+                            <td class=formContentLable00><p class=formContentText>按位 “与”</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>$\neg$</p></td>
+                            <td class=formContentLable00><p class=formContentText>按位 “补”</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>$\oplus$</p></td>
+                            <td class=formContentLable00><p class=formContentText>按位 “异或”</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>$S^n$</p></td>
+                            <td class=formContentLable00><p class=formContentText>循坏右移$n$个比特</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>$R^n$</p></td>
+                            <td class=formContentLable00><p class=formContentText>右移$n$个比特</p></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <h3 id="计算消息摘要">计算消息摘要</h3>
+                现在介绍SHA-256算法的主体部分，即消息摘要是如何计算的。
+                <h4>将消息分解成512比特大小的块。</h4>
+
+                <p style="text-align:center"><img alt="消息填充" class="img-responsive" src="images/1-分块.png"
+                                                  style="width: 44.42em;height:12.87em"></p>
+                <p style="text-align:center">图1 填充后消息分块</p>
+
+                <p>假设消息 $M$ 可以被分解为 $n$ 个块，于是整个算法需要做的就是完成 $n$ 次迭代，$n$ 次迭代的结果就是最终的Hash值，即256比特的数字摘要。</p>
+                <p>
+                    一个256-比特的摘要的初始值 $H_0$，经过第一个数据块进行运算，得到 $H_1$，即完成了第一次迭代，
+                    $H_1$ 经过第二个数据块得到 $H_2$，$\cdots$，依次处理，最后得到 $H_n$，$H_n$ 即为最终的256-比特消息摘要。
+                    将每次迭代进行的映射用 $\mathrm{Map}(H_{i-1}) = H_{i}$ 表示，于是迭代可以更形象的展示为：
+                </p>
+                <p style="text-align:center"><img alt="消息填充" class="img-responsive" src="images/2-迭代.png"
+                                                  style="width: 38em;height:28.57em"></p>
+                <p style="text-align:center">图2 迭代压缩</p>
+                <p>第一次迭代中，映射的初值设置为前面介绍的8个Hash初值。</p>
+                <h4>构造64个字</h4>
+                <p>对于每一块，将块分解为16个32比特的字，记为 $w[0]$, $\cdots$ ,$w[15]$。</p>
+                <p>也就是说，前16个字直接由消息的第i个块分解得到，剩余48个字由如下迭代公式得到：</p>
+                <p align="center">$W_t=\sigma_1(W_{t-2})+ W_{t-7}+ \sigma_0(W_{t-15}+W_{t-16})$</p>
+                <h4>进行64次循环</h4>
+                <p>映射 $ \mathrm{Map}(H_{i-1}) = H_{i} $ 包含了64次加密循环，即进行64次加密循环即可完成一次迭代。</p>
+                <p>每次加密循环可以由下图描述：</p>
+                <p style="text-align:center"><img alt="消息填充" class="img-responsive" src="images/3-循环加密.png"
+                                                  style="width: 50em;height:25.25em"></p>
+                <p style="text-align:center">图3 循环加密</p>
+                <p>图中，$ABCDEFGH$ 这8个字在按照一定的规则进行更新，其中，加号方块代表 $\bmod 2^{32}$ addition，</p>
+                <p>$ABCDEFGH$ 一开始的初始值分别为 $H_{i-1}(0)$, $H_{i-1}(1)$, $\cdots$, $H_{i-1}(7)$，$K_t$ 是第 $t$
+                    个密钥，对应我们上文提到的64个常量。$W_t$ 是本区块产生第 $t$ 个word。原消息被切成固定长度512-比特的区块，对每一个区块，产生64个word，通过重复运行循环 $n$ 次对
+                    $ABCDEFGH$ 这八个字循环加密。</p>
+                <p class="separator"></p>
+                <p><a href="#"> 回到顶部</a></p>
+                <p></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="vibrant centered">
+        <div class="container">
+            <h6> &copy; 北京数缘科技有限公司，鲁ICP备09017473号，Copyright （c） 2015 MathMagic Technology Co., Ltd. All Rights
+                Reserved.</h6>
+            <h6>地址：北京市海淀区中关村南大街9号理工科技大厦1412室，邮编：100081，电话：+86-15253166443，邮箱：sales@mathmagic.cn。</h6>
+        </div>
+    </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="" name="description">
+    <meta content="True" name="HandheldFriendly">
+    <meta content="320" name="MobileOptimized">
+    <meta content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>Hill密码 - Documentation</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+MathJax = {    
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    //tags: 'ams'  // should be 'ams', 'none', or 'all'
+  }
+};
+
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <h2 class="lone-header">数缘科技 - Hill密码算法</h2>
+        </div>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="docs-nav" id="menu-left">
+                <li><strong>实验介绍</strong></li>
+                <li><a class=" " href="#Hill密码实验说明">Hill密码实验说明</a></li>
+                <li class="separator"></li>
+                <li><strong>Hill密码介绍</strong></li>
+                <li><a class=" " href="#背景">背景</a></li>
+                <li><a class=" " href="#加解密">加解密</a></li>
+                <li><a class=" " href="#示例">示例</a></li>
+            </ul>
+
+            <div class="docs-content">
+                <!-- <h2> 实验介绍</h2> -->
+                <h3 id="Hill密码实验说明"> Hill密码实验说明</h3>
+                <p>本实验支持自定义明密文和密钥进行PC端的Hill加解密。</p>
+                <p>以下为本实验的重要提示：</p>
+                <ul>
+                    <li>密钥输入：Hill加解密密钥相同，可通过交互栏的“Key (Str)”文本框输入。</li>
+                    <li>明密文输入：若进行Hill加密，则密钥和明文是必需的，明文可通过“Plaintext (Str)”文本框输入；若进行Hill解密，则密钥和密文是必需的，密文可通过“Ciphertext
+                        (Str)”文本框输入。
+                    </li>
+                    <li>加解密：交互栏部分包含一个“Encrypt (PC)”按钮和一个“Decrypt
+                        (PC)”按钮，两者分别对应PC端的Hill加密和PC端的Hill解密。加密时如果明文分组后最后一个分组需要填充，在本实验中填充的字母为a。
+                    </li>
+                    <li>数据格式：软件右侧交互栏部分可以进行Hill的明密文和密钥的输入。本实验中支持
+                        <emphasis>任意长度</emphasis>
+                        明文输入的Hill加密，支持
+                        <emphasis>包含字母数是密钥矩阵行数的整数倍</emphasis>
+                        的
+                        <emphasis>任意长度</emphasis>
+                        密文输入的Hill解密，不支持中文输入。当密钥矩阵为
+                        <emphasis>可逆矩阵</emphasis>
+                        时，才可以进行Hill解密。明密文都以
+                        <emphasis>字符串</emphasis>
+                        的形式输入，密钥以
+                        <emphasis>整数矩阵</emphasis>
+                        的形式输入，每行数之间不允许有空行。只对其中的字母进行加解密，字母的大小写一一对应，非字母的字符直接输出。明密文和密钥输入框内已填入默认值，可参考默认值进行设置。
+                        <p><u><i>注：若明文不是矩阵行数的整数倍，则解密后的明文会自动填充'a'至矩阵行数的整数倍。</i></u></p>
+                    </li>
+                </ul>
+                <p class="separator"></p>
+                <h3 id="背景"> 背景</h3>
+                <p>Hill密码是一种多字母代替密码，它是由数学家Lester
+                    Hill于1929年研制的。Hill密码要求首先将明文分成同等规模的若干个分组（最后一个分组可能涉及填充），每一个分组被整体加密变换，即Hill密码属于分组加密。</p>
+                <h3 id="加解密"> 加解密</h3>
+                <p>
+                <p>Hill密码算法的基本思想：将一个分组中的 $d$ 个连续的明文字母通过线性变换为 $d$ 个密文字母。这种变换由 $d$
+                    个线性方程决定，其中每个字母被分配一个数值（0，1，2，$\cdots$，25），解密只需要做一次逆变换就可以了。密钥就是变换矩阵本身。即：</p>
+                <p>明文：</p>
+                <p align="center">$p=p_1p_2 \cdots p_d$</p>
+                <p>密文：</p>
+                <p align="center">$c=e_k(p)=c_1c_2 \cdots c_d$</p>
+                <p>其中，</p>
+                <p align="center">$c_1=k_{11}p_1+k_{21}p_2+ \cdots +k_{d1}p_d(\bmod26)$</p>
+                <p align="center">$c_2=k_{12}p_1+k_{22}p_2+\cdots +k_{d2}p_d(\bmod26)$</p>
+                <p align="center">$\vdots$</p>
+                <p align="center">$c_{[d]}=k_{1d}p_1+k_{2d}p_2+ \cdots +k_{dd}p_d(\bmod26)$</p>
+                <p>写成矩阵形式：</p>
+                <p align="center">$c_{[1 &times d]}=p_{[1 &times d]} &times k_{[d &times d]}(\bmod26)$</p>
+                \begin{equation}
+                (c_1,c_2, \cdots ,c_d)=(p_1,p_2 \cdots ,p_d) \cdot
+                \left[ \begin{array}{cccc}
+                k_{11} & k_{12} & \cdots & k_{1d}\\
+                \vdots & \vdots & & \vdots\\
+                k_{d1} & k_{d2} & \cdots & k_{dd}
+                \end{array}
+                \right ]
+                (\bmod26)
+                \end{equation}
+                <p>即密文分组=明文分组$&times$密钥矩阵</p>
+                <p>解密为加密的逆变换，即：</p>
+                \begin{equation}
+                (p_1,p_2, \cdots ,p_d)=(c_1,c_2 \cdots ,c_d) \cdot
+                \left[ \begin{array}{cccc}
+                k_{11} & k_{12} & \cdots & k_{1d}\\
+                \vdots & \vdots & & \vdots\\
+                k_{d1} & k_{d2} & \cdots & k_{dd}
+                \end{array}
+                \right ]^{-1}
+                (\bmod26)
+                \end{equation}
+                <h3 id="示例"> 示例</h3>
+                <p>设明文为 $p$ = hill，使用的密钥为：</p>
+                \begin{equation}
+                k=\left[ \begin{array}{cccc}
+                8 & 6 & 9 & 5\\
+                6 & 9 & 5 & 10\\
+                5 & 8 & 4 & 9\\
+                10 & 6 & 11 & 4
+                \end{array}
+                \right ]
+                \end{equation}
+                <p>hill被数字化后的4个数字是7,8,11,11。</p>
+                <p>所以，</p>
+                \begin{equation}
+                c=(7 \quad 8 \quad 11 \quad 11)\cdot
+                \left[ \begin{array}{cccc}
+                8 & 6 & 9 & 5\\
+                6 & 9 & 5 & 10\\
+                5 & 8 & 4 & 9\\
+                10 & 6 & 11 & 4
+                \end{array}
+                \right ]
+                \bmod26=(9 \quad 8 \quad 8 \quad 24)
+                \end{equation}
+                <p>解密有：</p>
+                \begin{equation}
+                p=c\cdot k^{-1}=(9 \quad 8 \quad 8 \quad 24)\cdot
+                \left[ \begin{array}{cccc}
+                23 & 20 & 5 & 1\\
+                2 & 11 & 18 & 1\\
+                2 & 20 & 6 & 25\\
+                25 & 2 & 22 & 25
+                \end{array}
+                \right ]
+                \bmod26=(7 \quad 8 \quad 11 \quad 11)
+                \end{equation}
+                <p>7,8,11,11对应的字母是hill。</p>
+                <p class="separator"></p>
+                <p><a href="#"> 回到顶部</a></p>
+                <p></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="vibrant centered">
+        <div class="container">
+            <h6> &copy; 北京数缘科技有限公司，鲁ICP备09017473号，Copyright (c) 2015 MathMagic Technology Co., Ltd. All Rights
+                Reserved.</h6>
+            <h6>地址：北京市海淀区中关村南大街9号理工科技大厦1412室，邮编：100081，电话：+86-15253166443，邮箱：sales@mathmagic.cn。</h6>
+        </div>
+    </section>
+</div>
+</body>
+</html>

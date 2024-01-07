@@ -1,0 +1,458 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="" name="description">
+    <meta content="True" name="HandheldFriendly">
+    <meta content="320" name="MobileOptimized">
+    <meta content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>SHA-3算法 - Documentation</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+MathJax = {    
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    //tags: 'ams'  // should be 'ams', 'none', or 'all'
+  }
+};
+
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <h2 class="lone-header">数缘科技 - SHA-3密码算法</h2>
+        </div>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="docs-nav" id="menu-left">
+                <li><strong>实验介绍</strong></li>
+                <li><a class=" " href="#SHA-3算法实验说明">SHA-3算法实验说明</a></li>
+                <li><a class=" " href="#SHA-3示例卡说明">SHA-3示例卡说明</a></li>
+                <li class="separator"></li>
+                <li><strong>SHA-3算法介绍</strong></li>
+                <li><a class=" " href="#算法概述">算法概述</a></li>
+                <li><a class=" " href="#填充阶段">填充阶段</a></li>
+                <li><a class=" " href="#吸收阶段">吸收阶段</a></li>
+                <li><a class=" " href="#挤压阶段">挤压阶段</a></li>
+                <li><a class=" " href="#SHA-3算法族">SHA-3算法族</a></li>
+            </ul>
+            <div class="docs-content">
+                <h3 id="SHA-3算法实验说明"> SHA-3算法实验说明</h3>
+                <p>本实验支持自定义明文进行SHA-3加密运算，且支持两种方式：PC端Hash和智能卡端Hash。</p>
+                <p>对于PC端，本实验支持消息长度可变的、任意Hash长度的Hash运算，且可显示Hash过程中关键步骤的中间值；对于智能卡端，本实验支持消息长度小于
+                    <emphasis>1148比特</emphasis>
+                    以内的Hash运算，在已定义消息的情况下，支持一键与智能卡进行通信并获取加密结果的方式，也支持通过手动输入APDU指令与智能卡通信的方式。
+                </p>
+                <p>以下为本实验的重要提示：</p>
+                <ul>
+                    <li>连接智能卡：本实验用到的智能卡为“
+                        <emphasis>教学卡15：SHA-3算法</emphasis>
+                        ”，需要通过读卡器连接电脑和智能卡。具体做法是：将智能卡读卡器的USB插口插入电脑的USB接口，并将智能卡插入读卡器中。
+                    </li>
+                    <li>Hash长度选择：本实验提供<emphasis>SHA3-224</emphasis>，<emphasis>SHA3-256</emphasis>，<emphasis>SHA3-384</emphasis>，<emphasis>SHA3-512</emphasis>，四种Hash算法，可以在“Select”一栏中选择Hash算法。</li>
+                    <li>消息输入：消息输入框已填入默认值，可参考默认值进行修改。对于PC端，本实验支持任意长度的Hash运算，对于智能卡端，本实验支持32字节以内的Hash运算。</li>
+                    <li>PC端Hash：PC端的Hash支持任意长度消息，可在正确输入后，点击交互栏部分的 “Hash （PC）” 按钮，获取Hash值。在运算过程中，可以切换到 “Intermediate
+                        Value” 页面，查看关键步骤的中间值。
+                    </li>
+                    <li>我们可通过两种方式进行智能卡的加解密运算：既可以通过点击 “Hash （Card）” 按钮直接获取运算结果，也可以切换到 “Smart Card”
+                        页面，通过手动输入APDU指令进行智能卡通信，这部分我们将在“<a class=" " href="#SHA-3示例卡说明">SHA-3示例卡说明"</a>”一节进行详细介绍。
+                    </li>
+                    <li>数据格式：SHA-3算法的数据格式均以
+                        <emphasis>2进制</emphasis>
+                        的格式进行输入，并在4个比特之间加入一个空格作为分隔符。
+                    </li>
+                </ul>
+                <h3 id="SHA-3示例卡说明"> SHA-3示例卡说明</h3>
+                <p>下面我们对SHA-3示例卡的APDU指令进行说明，SHA-3示例卡的Command APDU如下：</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>CLA</p></td>
+                            <td class=formLable0><p class=formLableText>INS</p></td>
+                            <td class=formLable0><p class=formLableText>P1</p></td>
+                            <td class=formLable0><p class=formLableText>P2</p></td>
+                            <td class=formLable0><p class=formLableText>Lc/Le</p></td>
+                            <td class=formLable1><p class=formLableText>Data</p></td>
+                            <td class=formLable1><p class=formLableText>功能</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>43</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>Lc+3</p></td>
+                            <td class=formContentLable01><p class=formContentText>Hash长度+消息长度/8+消息长度%8+Lc字节消息</p></td>
+                            <td class=formContentLable01><p class=formContentText>SHA-3 Hash</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>C0</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>Lc</p></td>
+                            <td class=formContentLable11><p class=formContentText></p></td>
+                            <td class=formContentLable11><p class=formContentText>读取Lc长度的Hash结果</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p><u><i>注：上表中的数字均为16进制表示。</i></u></p>
+                <p>Response APDU的SW1、SW2我们定义如下：</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>SW1</p></td>
+                            <td class=formLable0><p class=formLableText>SW2</p></td>
+                            <td class=formLable1><p class=formLableText>状态</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>90</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>成功</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>61</p></td>
+                            <td class=formContentLable10><p class=formContentText>xx</p></td>
+                            <td class=formContentLable11><p class=formContentText>有 “xx” 字节数据可读取</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>6E</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>CLA错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>6D</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText>INS错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>6B</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>P1或P2错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>67</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText>Lc或Le错误</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p><u><i>注：上表中的数字均为16进制表示。</i></u></p>
+                <p>我们对卡内的指令进行说明，用Message表示待Hash消息，令：</p>
+                <p>Message=
+                    <emphasis>1100 1</emphasis>
+                    ，
+                </p>
+                <p>那么我们要发送的完整APDU指令顺序为：</p>
+                <p>1）智能卡SHA-3算法Hash
+                    <emphasis>00 43 00 00 04 20 00 05 C8</emphasis>
+                    ，注意消息长度范围最长为1148比特，
+                </p>
+                <p>当加密状态正常时，会返回
+                    <emphasis>90 00</emphasis>
+                    ；
+                </p>
+                <p>2）读取Hash值
+                    <emphasis>00 C0 00 00 20</emphasis>
+                    。
+                <p>学员可切换至“Smart Card”页面，尝试与智能卡发送指令以进行学习。此处需要注意，当插入我们配套的读卡器后，右侧交互栏的读卡器列表将有一项值为“ACS ACR1281 1S Dual Reader
+                    ICC 0”的元素，选择该项，然后在“Smart Card”页面的“Command （Hex）”文本框内输入命令，并点击 “Send”
+                    按钮，即可发送APDU指令给智能卡。智能卡的返回数据将显示在“Receive （Hex）”文本框内。</p>
+                <hr>
+                <h3 id="算法概述"> 算法概述</h3>
+                <p>SHA-3第三代安全散列算法(Secure Hash Algorithm 3)，之前名为Keccak算法，由Guido Bertoni，Joan Daemen，
+                    Michaël Peeters，以及Gilles Van Assche在RadioGatún上设计。2012年10月2日，Keccak
+                    被选为NIST散列函数竞赛的胜利者。SHA-3并不是要取代SHA-2，因为SHA-2并没有出现明显的弱点。由于对MD5、SHA-0和
+                    SHA-1出现成功的破解，NIST感觉需要一个与之前算法不同的，可替换的加密散列算法，也就是SHA-3。
+                    SHA-3算法族有多个算法，包括SHA3-224，SHA3-256，SHA3-384，SHA3-512，SHAKE128，SHAKE256。以SHA3系列算法为例，对SHA-3算法族的原理进行说明。
+                </p>
+                <p>SHA-3算法主要包括
+                    <emphasis>填充阶段</emphasis>
+                    、
+                    <emphasis>吸收阶段</emphasis>
+                    、
+                    <emphasis>挤压阶段</emphasis>
+                    三部分。
+                </p>
+                <h3 id="填充阶段">填充阶段</h3>
+                <p>SHA-3算法的填充非常简单，只在消息M后填充$10\cdots01$，使消息的比特长度补全到$r$的整数倍。
+                   填充的比特长度最短为2比特（$11$）最长为$r+1$比特。
+                </p>
+                <p>填充函数为：</p>
+                \begin{multline}
+                \begin{split}
+                &pad10*1(x,m)\{\\
+                &\hspace{2em}j=(-m-2)\bmod x\\
+                &\hspace{2em}\text{Return }P=1||0^j||1\\
+                &\}
+                \end{split}
+                \end{multline}
+
+                <h3 id="吸收阶段">吸收阶段</h3>
+                <p>记填充后的长度为$P$，将$P$每$r$比特分一段，可以分为$n$段，可以分成$P=P_0||P_1||\cdots||P_{n-1}$。</p>
+                $$S_{i+1}=f(S_i\oplus(P_i||0^c))$$
+                <p>在吸收阶段，将$S$初始化为零，记为$S_0$，在进行n次这样的运算后输出。具体函数如下所示：</p>
+                \begin{multline}
+                \begin{split}
+                &SPONGE[f,pad,r](N,d)\{ \\
+                &\hspace{2em}P=N||pad(r,len(N))\\
+                &\hspace{2em}n=len(P)/r\\
+                &\hspace{2em}c=b-r\\
+                &\hspace{2em}P\text{按长度}r\text{分成}P_0||\cdots|P_{n-1}\\
+                &\hspace{2em}S=0^b\\
+                &\hspace{2em}\text{for } i \text{ from } 0 \text{ to } n-1\\
+                &\hspace{4em}S=f(S\oplus(P_i||0^c))\\
+                &\hspace{2em}Z=''\\
+                &\hspace{2em}\text{while(1)}\{\\
+                &\hspace{4em}Z=Z||Trunc_r(S)\\
+                &\hspace{4em}\text{if} d\leqslant|Z|\\
+                &\hspace{6em}\text{Return }Trunc_d(Z)\\
+                &\hspace{4em}\text{else}\\
+                &\hspace{6em}S=f(S)\}\\
+                &\}
+                \end{split}
+                \end{multline}
+                <p>其中，$f$函数为吸收函数，$Trunc_d$表示截取比特串的前$d$比特。</p>
+                <p>在介绍$f$函数之前，首先介绍SHA-3算法中储存结构的转换，将$S$转换为一个三维数组$A[x,y,z]$。其中</p>
+                $$A[x,y,z]=S[w(5y+x)+z]$$
+                <p style="text-align:center"><img alt="储存结构" class="img-responsive"
+                                                      src="images/1-储存结构.png" style="width: 50em;height:27em">
+                </p>
+                <p>在这里，$w$为算法的一个定值，在SHA-3中，$w=64$，此外$w$和$b$有所关系，如表所示：</p>
+                <div align="center">
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0 style="width: 12em"><p class=formLableText>$b=25w$</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>25</p></td>
+                            <td class=formContentLable10 style="width: 12em"><p class=formContentText>50</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>100</p></td>
+                            <td class=formContentLable10 style="width: 12em"><p class=formContentText>200</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>400</p></td>
+                            <td class=formContentLable10 style="width: 12em"><p class=formContentText>800</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>1600</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formLable0 style="width: 12em"><p class=formLableText>$w=2^l$</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>1</p></td>
+                            <td class=formContentLable10 style="width: 12em"><p class=formContentText>2</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>4</p></td>
+                            <td class=formContentLable10 style="width: 12em"><p class=formContentText>8</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>16</p></td>
+                            <td class=formContentLable10 style="width: 12em"><p class=formContentText>32</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>64</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formLable0 style="width: 12em"><p class=formLableText>$l$</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>0</p></td>
+                            <td class=formContentLable10 style="width: 12em"><p class=formContentText>1</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>2</p></td>
+                            <td class=formContentLable10 style="width: 12em"><p class=formContentText>3</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>4</p></td>
+                            <td class=formContentLable10 style="width: 12em"><p class=formContentText>5</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>6</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p>当将A[x,y,z]转换为S时，为：</p>
+                <p style="text-align:center"><img alt="存储变换" class="img-responsive"
+                                                      src="images/2-存储变换.png" style="width: 50em;height:35em">
+                </p>
+                <p>接下来，介绍吸收函数$f$。在SHA-3中$f$函数也被称为$KECCPK-p$函数，主要进行若干轮的运算。</p>
+                \begin{multline}
+                \begin{split}
+                &KECCAK-p[b,n_r](S)\{\\
+                &\hspace{2em}S\to A\\
+                &\hspace{2em}\text{for } i_r \text{ from } 12+2l-n_r \text{ to } 12+2l-1\\
+                &\hspace{4em}A=Rnd(A,i_r)\\
+                &\hspace{2em}A\to S'\\
+                &\hspace{2em}\text{Return }S'\\
+                &\}
+                \end{split}
+                \end{multline}
+                <p>而轮函数为$Rnd(A,i_r)=\iota(\chi(\pi(\rho(\theta(A)))),i_r)$。</p>
+                <p>$\theta$函数为</p>
+                \begin{multline}
+                \begin{split}
+                &\theta(A)\{\\
+                &\hspace{2em}\text{for } x \text{ from } 0 \text{ to } 4\\
+                &\hspace{4em}\text{for } z \text{ from } 0 \text{ to } w-1\\
+                &\hspace{6em}C[x,z]=A[x,0,z]\oplus A[x,1,z]\oplus A[x,2,z]\oplus A[x,3,z]\oplus A[x,4,z]\\
+                &\hspace{2em}\text{for } x \text{ from } 0 \text{ to } 4\\
+                &\hspace{4em}\text{for } z \text{ from } 0 \text{ to } w-1\\
+                &\hspace{6em}D[x,z]=C[(x-1)\bmod5,z]\oplus C[(x+1)\bmod5,(z-1)\bmod w]\\
+                &\hspace{2em}\text{for } x \text{ from } 0 \text{ to } 4\\
+                &\hspace{4em}\text{for } y \text{ from } 0 \text{ to } 4\\
+                &\hspace{6em}\text{for } z \text{ from } 0 \text{ to } w-1\\
+                &\hspace{8em}A'[x,y,z]=A[x,y,z]\oplus D[x,z]\\
+                &\hspace{2em}\text{Return }A'\\
+                &\}\\
+                \end{split}
+                \end{multline}
+                <p>$\rho$函数为</p>
+                \begin{multline}
+                \begin{split}
+                &\rho(A)\{\\
+                &\hspace{2em}\text{for } z \text{ from } 0 \text{ to } w-1\\
+                &\hspace{4em}A'[0,0,z]=A[0,0,z]\\
+                &\hspace{2em}(x,y)=(1,0)\\
+                &\hspace{2em}\text{for } t \text{ from } 0 \text{ to } 23\\
+                &\hspace{4em}\text{for } z \text{ from } 0 \text{ to } w-1\\
+                &\hspace{6em}(x,y)=(y,(2x+3y)\bmod5)\\
+                &\hspace{2em}\text{Return }A'\\
+                &\}
+                \end{split}
+                \end{multline}
+                <p>$\rho$函数相当于进行了循环左移，对于每个$x$和$y$，循环左移的位数是可以确定的。</p>
+                <div align="center">
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0 style="width: 12em"><p class=formLableText></p></td>
+                            <td class=formLable0 style="width: 12em"><p class=formLableText>$x=3$</p></td>
+                            <td class=formLable0 style="width: 12em"><p class=formLableText>$x=4$</p></td>
+                            <td class=formLable0 style="width: 12em"><p class=formLableText>$x=0$</p></td>
+                            <td class=formLable0 style="width: 12em"><p class=formLableText>$x=1$</p></td>
+                            <td class=formLable0 style="width: 12em"><p class=formLableText>$x=2$</p></td>
+
+                        </tr>
+                        <tr>
+                            <td class=formLable0 style="width: 12em"><p class=formLableText>$y=2$</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>153</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>231</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>3</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>10</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>171</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formLable0 style="width: 12em"><p class=formLableText>$y=1$</p></td>
+                            <td class=formContentLable01 style="width: 12em"><p class=formContentText>55</p></td>
+                            <td class=formContentLable01 style="width: 12em"><p class=formContentText>276</p></td>
+                            <td class=formContentLable01 style="width: 12em"><p class=formContentText>36</p></td>
+                            <td class=formContentLable01 style="width: 12em"><p class=formContentText>300</p></td>
+                            <td class=formContentLable01 style="width: 12em"><p class=formContentText>6</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formLable0 style="width: 12em"><p class=formLableText>$y=0$</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>28</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>91</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>0</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>1</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>190</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formLable0 style="width: 12em"><p class=formLableText>$y=4$</p></td>
+                            <td class=formContentLable01 style="width: 12em"><p class=formContentText>120</p></td>
+                            <td class=formContentLable01 style="width: 12em"><p class=formContentText>78</p></td>
+                            <td class=formContentLable01 style="width: 12em"><p class=formContentText>210</p></td>
+                            <td class=formContentLable01 style="width: 12em"><p class=formContentText>66</p></td>
+                            <td class=formContentLable01 style="width: 12em"><p class=formContentText>253</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formLable0 style="width: 12em"><p class=formLableText>$y=3$</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>21</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>136</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>105</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>45</p></td>
+                            <td class=formContentLable00 style="width: 12em"><p class=formContentText>15</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p>$\pi$函数为</p>
+                \begin{multline}
+                \begin{split}
+                &\pi(A)\{\\
+                &\hspace{2em}\text{for } x \text{ from } 0 \text{ to } 4\\
+                &\hspace{4em}\text{for } y \text{ from } 0 \text{ to } 4\\
+                &\hspace{6em}\text{for } z \text{ from } 0 \text{ to } w-1\\
+                &\hspace{8em}A'[x,y,z]=A[(x+3y)\bmod5,x,z]\\
+                &\hspace{2em}\text{Return }A'\\
+                &\}
+                \end{split}
+                \end{multline}
+                <p>$\pi$函数相当于把三维数组$A$上的点沿着中心轴线进行中心对称变化。</p>
+                <p>$\chi$函数为</p>
+                \begin{multline}
+                \begin{split}
+                &\pi(A)\{\\
+                &\hspace{2em}\text{for } x \text{ from } 0 \text{ to } 4\\
+                &\hspace{4em}\text{for } y \text{ from } 0 \text{ to } 4\\
+                &\hspace{6em}\text{for } z \text{ from } 0 \text{ to } w-1\\
+                &\hspace{8em}A'[x,y,z]=A[x,y,z]\oplus((A[(x+1)\bmod5,y,z]\oplus)\cdot A[(x+2)\bmod5,y,z])\\
+                &\hspace{2em}\text{Return }A'\\
+                &\}
+                \end{split}
+                \end{multline}
+                <p>在介绍$\iota$函数之前，先介绍%rc%函数。</p>
+                \begin{multline}
+                \begin{split}
+                &rc(A)\{\\
+                &\hspace{2em}\text{if } t\bmod 255=0\\
+                &\hspace{4em}\text{Return } 1\\
+                &\hspace{2em}R=10000000\\
+                &\hspace{2em}\text{for } i \text{ from } 0 \text{to} t \bmod 255\\<!--文档这里应该是1 to t mod 255，但是跟测试样例对不上-->
+                &\hspace{4em}R=0||R\\
+                &\hspace{4em}R[0]=R[0]\oplus R[8]\\
+                &\hspace{4em}R[4]=R[4]\oplus R[8]\\
+                &\hspace{4em}R[5]=R[5]\oplus R[8]\\
+                &\hspace{4em}R[6]=R[6]\oplus R[8]\\
+                &\hspace{4em}R=Trunc_8[R]\\
+                &\hspace{2em}\text{Return }R[0]\\
+                &\}
+                \end{split}
+                \end{multline}
+                \begin{multline}
+                \begin{split}
+                &\iota(A,i_r)\{\\
+                &\hspace{2em}\text{for } x \text{ from } 0 \text{ to } 4\\
+                &\hspace{4em}\text{for } y \text{ from } 0 \text{ to } 4\\
+                &\hspace{6em}\text{for } z \text{ from } 0 \text{ to } w-1\\
+                &\hspace{8em}A'[x,y,z]=A[x,y,z]\\
+                &\hspace{2em}RC=0^w\\
+                &\hspace{2em}\text{for } j \text{ from } 0 \text{ to } l\\
+                &\hspace{4em}RC[2^j-1]=rc(j+7i_r)\\
+                &\hspace{2em}\text{for } z \text{ from } 0 \text{ to } w-1\\
+                &\hspace{4em}A'[0,0,z]=A[0,0,z]\oplus RC[z]\\
+                &\hspace{2em}\text{Return }A'\\
+                &\}
+                \end{split}
+                \end{multline}
+                <h3 id="挤压阶段">挤压阶段</h3>
+                <p>SHA-3的挤压阶段十分简单，继续使用相同的函数$f$，也就是$KECCAK-p$函数进行挤压。</p>
+                <h3 id="SHA-3算法族">SHA-3算法族</h3>
+                <p>通过上述函数，我们可以给出整个SHA-3算法族的算法。</p>
+                \begin{multline}
+                \begin{split}
+                &KECCAK[c](N,d)=SPONGE[KECCAK-p[1600,24],pad10*1,1600-c](N,d)\\
+                &SHA3-224(M)=KECCAK[448](M||01,224)\\
+                &SHA3-256(M)=KECCAK[512](M||01,256)\\
+                &SHA3-384(M)=KECCAK[768](M||01,384)\\
+                &SHA3-512(M)=KECCAK[1024](M||01,512)
+                \end{split}
+                \end{multline}
+                <p class="separator"></p>
+                <p><a href="#"> 回到顶部</a></p>
+                <p></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="vibrant centered">
+        <div class="container">
+            <h6> &copy; 北京数缘科技有限公司，鲁ICP备09017473号，Copyright （c） 2015 MathMagic Technology Co., Ltd. All Rights
+                Reserved.</h6>
+            <h6>地址：北京市海淀区中关村南大街9号理工科技大厦1412室，邮编：100081，电话：+86-15253166443，邮箱：sales@mathmagic.cn。</h6>
+        </div>
+    </section>
+</div>
+</body>
+</html>

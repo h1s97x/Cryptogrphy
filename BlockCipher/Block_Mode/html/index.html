@@ -1,0 +1,313 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="" name="description">
+    <meta content="True" name="HandheldFriendly">
+    <meta content="320" name="MobileOptimized">
+    <meta content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>分组密码的工作模式 - Documentation</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+MathJax = {    
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    //tags: 'ams'  // should be 'ams', 'none', or 'all'
+  }
+};
+
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <h2 class="lone-header">数缘科技 - 分组密码的工作模式</h2>
+        </div>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="docs-nav" id="menu-left">
+                <li><strong>实验介绍</strong></li>
+                <li><a class=" " href="#分组密码模式实验说明">分组密码模式实验说明</a></li>
+                <li><a class=" " href="#分组密码模式示例卡说明">分组密码模式示例卡说明</a></li>
+                <li class="separator"></li>
+                <li><strong>分组密码的工作模式</strong></li>
+                <li><a class=" " href="#概述">概述</a></li>
+                <li><a class=" " href="#电子密码本模式（ECB）">电子密码本模式 (ECB)</a></li>
+                <ul>
+                    <li><a class=" " href="#基本思想">基本思想</a></li>
+                    <li><a class=" " href="#特点">特点</a></li>
+                </ul>
+                <li><a class=" " href="#密码分组链接模式（CBC）">密码分组链接模式 (CBC)</a></li>
+                <ul>
+                    <li><a class=" " href="#基本思想">基本思想</a></li>
+                    <li><a class=" " href="#特点">特点</a></li>
+                </ul>
+            </ul>
+            <div class="docs-content">
+                <h3 id="分组密码模式实验说明"> 分组密码模式实验说明</h3>
+                <p>本实验支持自定义明密文和密钥进行ECB和CBC两种模式下的AES加解密，AES明密文长度支持
+                    <emphasis>16-128字节</emphasis>
+                    ，必须为16字节整数倍，每种模式支持两种方式：PC端加解密和智能卡加解密。
+                </p>
+                <p>
+                    对于PC端进行加密，本实验可显示加密过程中关键步骤的中间值；对于智能卡加密，本实验支持在已定义明文和密钥的情况下，一键与智能卡进行通信并获取加密结果的方式，也支持通过手动输入APDU指令与智能卡通信的方式。这几种情景同样适用于AES在两种工作模式下的解密。</p>
+                <p>以下为本实验的重要提示：</p>
+                <ul>
+                    <li>连接智能卡：本实验用到的智能卡为“
+                        <emphasis>教学卡2：AES算法</emphasis>
+                        ”，需要通过读卡器连接电脑和智能卡。具体做法是：将智能卡读卡器的USB插口插入电脑的USB接口，并将智能卡插入读卡器中。
+                    </li>
+                    <li>密钥输入：AES加解密密钥相同，可通过交互栏的“Key (Hex)”文本框输入。</li>
+                    <li>明密文输入：若进行AES加密，则密钥和明文是必需的，明文可通过“Plaintext (Hex)”文本框输入；若进行AES解密，则密钥和密文是必需的，密文可通过“Ciphertext
+                        (Hex)”文本框输入。
+                    </li>
+                    <li>工作模式的选择：通过下拉菜单选择“ECB”模式或者“CBC”模式，“CBC”模式在加解密时的初始变量
+                        <emphasis>$IV$ = 12 23 34 45 56 67 78 89 9A AB BC CD DE EF 12 23</emphasis>
+                        。
+                    </li>
+                    <li>PC端加解密：交互栏部分包含一个“Encrypt (PC)”按钮和一个“Decrypt”
+                        (PC)按钮，两者分别对应PC端的AES加密和PC端的AES解密。在加解密过程中，可以切换到“Intermediate Value”页面，查看加解密过程关键步骤的中间值。
+                    </li>
+                    <li>智能卡加解密：我们可通过两种方式进行智能卡的加解密：既可以通过点击“Encrypt (Card)”按钮或“Decrypt (Card)”按钮直接获取加解密结果，也可以切换到“Smart
+                        Card”页面，通过手动输入APDU指令进行智能卡通信，这部分我们将在“<a class=" " href="#分组密码模式示例卡说明">分组密码模式示例卡说明</a>”一节进行详细介绍。
+                    </li>
+                    <li>数据格式：软件右侧交互栏部分可以进行AES明密文和密钥的输入。本实验中支持128-1024比特的AES加解密，明密文为
+                        <emphasis>16字节整数倍</emphasis>
+                        数据、密钥以及中间值均为
+                        <emphasis>16字节</emphasis>
+                        数据。注意请以
+                        <emphasis>16进制</emphasis>
+                        的格式进行输入，并在每个字节之间加入一个空格作为分隔符。明密文和密钥输入框内已填入默认值，可参考默认值进行设置。
+                    </li>
+                    <li>数据填充：在本实验中，我们只支持16字节倍数明文的加解密，因此省略掉了数据填充这一步。</li>
+                </ul>
+                <h3 id="分组密码模式示例卡说明"> 分组密码模式示例卡说明</h3>
+                <p>下面我们对AES示例卡的APDU指令进行说明，AES示例卡的Command APDU如下：</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>CLA</p></td>
+                            <td class=formLable0><p class=formLableText>INS</p></td>
+                            <td class=formLable0><p class=formLableText>P1</p></td>
+                            <td class=formLable0><p class=formLableText>P2</p></td>
+                            <td class=formLable0><p class=formLableText>Lc/Le</p></td>
+                            <td class=formLable1><p class=formLableText>Data</p></td>
+                            <td class=formLable1><p class=formLableText>功能</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>11</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>10+10的倍数</p></td>
+                            <td class=formContentLable01><p class=formContentText>10字节密钥+10整数倍字节明文</p></td>
+                            <td class=formContentLable01><p class=formContentText>ECB模式下的AES加密</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>11</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>01</p></td>
+                            <td class=formContentLable11><p class=formContentText>10+10的倍数</p></td>
+                            <td class=formContentLable11><p class=formContentText>10字节密钥+10整数倍字节密文</p></td>
+                            <td class=formContentLable11><p class=formContentText>ECB模式下的AES解密</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>11</p></td>
+                            <td class=formContentLable00><p class=formContentText>01</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>10+10的倍数</p></td>
+                            <td class=formContentLable01><p class=formContentText>10字节密钥+10整数倍字节明文</p></td>
+                            <td class=formContentLable01><p class=formContentText>CBC模式下的AES加密</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>11</p></td>
+                            <td class=formContentLable10><p class=formContentText>01</p></td>
+                            <td class=formContentLable10><p class=formContentText>01</p></td>
+                            <td class=formContentLable11><p class=formContentText>10+10的倍数</p></td>
+                            <td class=formContentLable11><p class=formContentText>10字节密钥+10整数倍字节密文</p></td>
+                            <td class=formContentLable11><p class=formContentText>CBC模式下的AES解密</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>C0</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>10</p></td>
+                            <td class=formContentLable01><p class=formContentText></p></td>
+                            <td class=formContentLable01><p class=formContentText>读取AES加/解密结果</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p><u><i>注：上表中的数字均为16进制表示。</i></u></p>
+                <p>Response APDU的SW1、SW2我们定义如下：</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>SW1</p></td>
+                            <td class=formLable0><p class=formLableText>SW2</p></td>
+                            <td class=formLable1><p class=formLableText>状态</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>90</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>成功</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>61</p></td>
+                            <td class=formContentLable10><p class=formContentText>xx</p></td>
+                            <td class=formContentLable11><p class=formContentText>有“xx”字节数据可读取</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>6E</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>CLA错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>6D</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText>INS错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>6B</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>P1或P2错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>67</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText>Lc或Le错误</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p><u><i>注：上表中的数字均为16进制表示。</i></u></p>
+                <p>我们以ECB模式的加密对卡内的指令进行说明，用Key表示密钥，Plaintext表示明文，选择“ECB”模式，令：</p>
+                <p>Key =
+                    <emphasis>2B 7E 15 16 28 AE D2 A6 AB F7 15 88 09 CF 4F 0x3C</emphasis>
+                    ，
+                </p>
+                <p>Plaintext =
+                    <emphasis>32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34
+                        32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34
+                        32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34
+                        32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34
+                        32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34
+                        32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34
+                        32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34
+                        32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34
+                    </emphasis>
+                    。
+                </p>
+                <p>那么我们要发送的APDU指令为
+                    <emphasis>00 11 00 00 90 2B 7E 15 16 28 AE D2 A6 AB F7 15 88 09 CF 4F 3C 32 43 F6 A8 88 5A 30 8D 31
+                        31 98 A2 E0 37 07 34 32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34 32 43 F6 A8 88 5A 30 8D 31
+                        31 98 A2 E0 37 07 34 32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34 32 43 F6 A8 88 5A 30 8D 31
+                        31 98 A2 E0 37 07 34 32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34 32 43 F6 A8 88 5A 30 8D 31
+                        31 98 A2 E0 37 07 34 32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34
+                    </emphasis>
+                    。
+                </p>
+                <p>当智能卡内程序正确时，卡会返回
+                    <emphasis>61 80</emphasis>
+                    ，表示AES加密正常，有0x80个字节的数据可读取。此时如果我们想要获得智能卡的加密结果，可以发送APDU指令
+                    <emphasis>00 C0 00 00 80</emphasis>
+                    以读取加密结果。
+                </p>
+                <p>
+                    学员可切换至“Smart Card”页面，尝试与智能卡发送指令以进行学习。此处需要注意，当插入我们配套的读卡器后，右侧交互栏的读卡器列表将有一项值为“ACS ACR1281 1S Dual Reader ICC 0”的元素，选择该项，然后在“Smart Card”页面的“Command (Hex)”文本框内输入命令，并点击“Send”按钮，即可发送APDU指令给智能卡。智能卡的返回数据将显示在“Receive (Hex)”文本框内。</p>
+                <hr>
+                <h3 id="概述"> 概述</h3>
+                <p>
+                    通常，分组密码算法是提供数据安全的一个基本构件，它以固定长度的分组作为基本的处理单位（如典型的AES以128位作为一个分组的大小），但我们要保密传输的消息内容不一定刚好是一个分组，对于一个长报文根据密码算法的明文长度要求需要分成多个明文分组的情形，如果必要的话对最后一个分组进行填充，为了在各种各样的应用中使用这些基本构件，定义了一些工作模式。下面以AES算法为例介绍两种常用的工作模式：电子密码本模式（ECB）和密码分组链接模式（CBC）。</p>
+                <h3 id="填充"> 填充</h3>
+                <p>
+                    由于分组密码只能对确定长度的数据块进行处理，而消息的长度通常是可变的。因此部分模式（即ECB和CBC）需要最后一块在加密前进行填充。有数种填充方法，其中最简单的一种是在明文的最后填充空字符以使其长度为块长度的整数倍，但必须保证可以恢复明文的原始长度；例如，若明文是C语言风格的字符串，则只有串尾会有空字符。稍微复杂一点的方法则是原始的DES使用的方法，即在数据后添加一个1位，再添加足够的0位直到满足块长度的要求；若消息长度刚好符合块长度，则添加一个填充块。最复杂的则是针对CBC的方法，例如密文窃取，残块终结等，不会产生额外的密文，但会增加一些复杂度。布鲁斯·施奈尔和尼尔斯·弗格森提出了两种简单的可能性：添加一个值为128的字节（十六进制的80），再以0字节填满最后一个块；或向最后一个块填充n个值均为n的字节。</p>
+                <h3 id="电子密码本模式（ECB）"> 电子密码本模式（ECB）</h3>
+                <p>最简单的方式是电子密码本模式（Electronic Cdode Book
+                    Mode，简称为ECB模式），如图1所示。在这种模式下，明文以128位为单位进行分组，并且每一个明文分组都用同一个密钥进行加密。128位的明文对应一个唯一的密文，可以想象有一个巨大的密码本，其中对每一个可能的128位明文分组都有一个密文项与之对应。故称“密码本”模式。</p>
+                <p style="text-align:center"><img alt="密钥扩展算法" class="img-responsive" src="images/1-ECB模式.png"
+                                                  style="width: 50em;height:18.2em"></p>
+                <p style="text-align:center">图1 电子密码本模式（ECB）</p>
+                <ol>
+                    <!--suppress XmlDuplicatedId -->
+                    <h4 id="基本思想">
+                        <li>基本思想</li>
+                    </h4>
+                    <p>
+                        对于长于128位的明文，整个加密过程就是把这个明文分成若干个128位的分组，如果必要的话对最后一个分组进行填充，以保证其作为一个处理单元的128位分组大小。加密时每次处理一个分组，每次总用同一个密钥。</p>
+                    <p>ECB模式的加密算法逻辑如下：</p>
+                    <p align="center">$C_j = E_k(P_j)(j=1,2,\cdots,N)$</p>
+                    <p>ECB模式的解密算法逻辑如下：</p>
+                    <p align="center">$P_j = D_k(C_j)(j=1,2,\cdots,N)$</p>
+                    <p>
+                        ECB模式对于少量的数据（如一个会话密钥）来说很理想。ECB模式的一个最大的特点就是在整个明文中同一个128位明文分组如果出现多次，那么它们产生的密文总是一样的，因此，ECB模式可能并不安全。</p>
+                    <!--suppress XmlDuplicatedId -->
+                    <h4 id="特点">
+                        <li>特点</li>
+                    </h4>
+                    <p>ECB模式具有如下特点：</p>
+                    <p>（1）模式操作简单，不同的分组可以并行处理。</p>
+                    <p>（2）明文中的重复内容将在密文中表现出来，特别对于图像数据（有固定的数据格式设定说明）和明文变化较少的数据。弱点源于每个明文分组是分离处理的。</p>
+                    <p>（3）不仅具有错误传播性，即如果一个分组中出现传输错误不会影响其他分组。</p>
+                    <p>（4）主要用于内容较短的明文的加密传递。</p>
+                </ol>
+
+                <h3 id="密码分组链接模式（CBC）"> 密码分组链接模式（CBC）</h3>
+                <p>为了克服ECB模式的安全缺陷，设计了密码分组链接模式（Cipher Block Chaining
+                    Mode，简称为CBC模式），它使得当同一个明文分组重复出现时产生不同的密文分组，如图2所示。在这种方案中，加密函数的输入是当前的明文分组和前一个密文分组的异或；对每个分组使用相同的密钥（如图2所示）。从效果上看，将明文分组序列的处理连接起来了。每个明文分组加密函数的输入与明文分组之间不再有固定的关系，因此不会再出现同一段报文中先攻的明文得到相同的密文。这种改善有助于将CBC模式用于加密长消息（如长度大于128位的消息）。</p>
+                <p style="text-align:center"><img alt="密钥扩展算法" class="img-responsive" src="images/2-CBC模式.png"
+                                                  style="width: 50em;height:18.2em"></p>
+                <p style="text-align:center">图2 密码分组链接模式（CBC）</p>
+                <ol>
+                    <!--suppress XmlDuplicatedId -->
+                    <h4 id="基本思想">
+                        <li>基本思想</li>
+                    </h4>
+                    <p>为了产生第一个密文分组，要用到一个初始向量（Initial Vecyor,
+                        IV）。IV必须被发送方和接收方都知道，尽管不必对IV保密，但IV的完整性非常重要，必须保证IV不被改变。解密时，每个密文分组通过解密变换函数所得的结果与前一个密文分组相异或，从而恢复明文分组；对于第一个密文分组的解密，统一需要使用IV。</p>
+                    <p>CBC模式的加密算法逻辑如下：</p>
+                    <p align="center">$C_1 = E_k(P_1 \oplus IV) \quad \quad C_j = E_k(P_j \oplus C_{j=1}(j=2, \cdots
+                        ,N)$</p>
+                    <p>CBC模式的解密算法逻辑如下：</p>
+                    <p align="center">$P_1 = D_k(C_1) \oplus IV \quad \quad P_j = D_k(C_j) \oplus C_{j=1}(j=2, \cdots
+                        ,N)$</p>
+                    <!--suppress XmlDuplicatedId -->
+                    <h4 id="特点">
+                        <li>特点</li>
+                    </h4>
+                    <p>CBC模式具有如下特点：</p>
+                    <p>（1）同一个消息中的两个相同的明文被加密成不同的密文。</p>
+                    <p>（2）不同消息的前若干个分组相同，且加密时使用相同的 $IV$，这些分组的加密结果将一致，此时以时间戳作为 $IV$ 较好。</p>
+                    <p>（3）如果密文分组 $C_j$ 有一位传输错误，解密时可能导致对应明文分组 $P_j$ 中多位出错，但密文分组中的这一位出错只会导致明文分组 $P_{j+1}$
+                        中对应位置的一位出错，其后的明文分组不再受影响，因此，密文分组的一位出错具有自恢复能力。</p>
+                    <p>（4）CBC模式可用于加密和认证。用于加密时不能并行处理，也不能用于加密或解密可随机访问的文件记录（因为CBC模式需要访问以前的记录）。</p>
+                </ol>
+
+                <p class="separator"></p>
+                <p><a href="#"> 回到顶部</a></p>
+                <p></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="vibrant centered">
+        <div class="container">
+            <h6> &copy; 北京数缘科技有限公司，鲁ICP备09017473号，Copyright (c) 2015 MathMagic Technology Co., Ltd. All Rights
+                Reserved.</h6>
+            <h6>地址：北京市海淀区中关村南大街9号理工科技大厦1412室，邮编：100081，电话：+86-15253166443，邮箱：sales@mathmagic.cn。</h6>
+        </div>
+    </section>
+</div>
+</body>
+</html>

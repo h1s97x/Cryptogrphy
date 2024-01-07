@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="" name="description">
+    <meta content="True" name="HandheldFriendly">
+    <meta content="320" name="MobileOptimized">
+    <meta content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>Vigenere密码 - Documentation</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+MathJax = {    
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    //tags: 'ams'  // should be 'ams', 'none', or 'all'
+  }
+};
+
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <h2 class="lone-header">数缘科技 - Vigenere密码算法</h2>
+        </div>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="docs-nav" id="menu-left">
+                <li><strong>实验介绍</strong></li>
+                <li><a class=" " href="#Caesar密码实验说明">Vigenere密码实验说明</a></li>
+                <li class="separator"></li>
+                <li><strong>Vigenere密码介绍</strong></li>
+                <li><a class=" " href="#背景">背景</a></li>
+                <li><a class=" " href="#加解密">加解密</a></li>
+                <li><a class=" " href="#示例">示例</a></li>
+            </ul>
+
+            <div class="docs-content">
+                <!-- <h2> 实验介绍</h2> -->
+                <h3 id="Caesar密码实验说明"> Vigenere密码实验说明</h3>
+                <p>本实验支持自定义明密文和密钥进行PC端
+                    <emphasis>任意长度</emphasis>
+                    的Vigenere加解密。
+                </p>
+                <p>以下为本实验的重要提示：</p>
+                <ul>
+                    <li>密钥输入：Vigenere加解密密钥相同，可通过交互栏的“Key (Str)”文本框输入。</li>
+                    <li>明密文输入：若进行Vigenere加密，则密钥和明文是必需的，明文可通过“Plaintext
+                        (Str)”文本框输入；若进行Vigenere解密，则密钥和密文是必需的，密文可通过“Ciphertext (Str)”文本框输入。
+                    </li>
+                    <li>加解密：交互栏部分包含一个“Encrypt (PC)”按钮和一个“Decrypt (PC)”按钮，两者分别对应PC端的Vigenere加密和PC端的Vigenere解密。</li>
+                    <li>数据格式：软件右侧交互栏部分可以进行Vigenere的明密文和密钥的输入。本实验中支持
+                        <emphasis>任意长度</emphasis>
+                        明密文输入的Vigenere加解密，明密文和密钥都以
+                        <emphasis>字符串</emphasis>
+                        的形式输入，只对其中的字母进行加解密，字母的大小写一一对应，非字母的字符直接输出，不支持中文输入。明密文和密钥输入框内已填入默认值，可参考默认值进行设置。
+                    </li>
+                </ul>
+                <p class="separator"></p>
+                <h3 id="背景"> 背景</h3>
+                <p>Vigenere密码是16世纪法国数学家Blaise de
+                    Vigenere于1568年发明的，它是最著名的多表代替的例子。在一个Vigenere密码中，字母表中的每一字母都会作一定的偏移，例如偏移量为3时，A就转换为了D、B转换为了E，而维吉尼亚密码则是由一些偏移量不同的恺撒密码组成。</p>
+                <p>Vigenere密码使用一个词组作为密钥，密钥中的每一个字母用来确定一个代替表，每一个密钥字母被用来加密一个明文字母，第一个密钥字母加密第一个明文字母，第二个密钥字母加密第二个明文字母，
+                    等所有密钥字母使用完后，密钥又再循环使用。</p>
+                <h3 id="加解密"> 加解密</h3>
+                <p>
+                    为了生成密文，可以构造一个表格（如图1所示）。这一表格包括了26行字母表，每一行都由前一行向左偏移一位得到。26个密文的字母都是水平排列的，最左边一列为密钥字母，最上面一行为明文字母。具体使用哪一行字母表进行编译是基于密钥进行的，在过程中会不断地变换。</p>
+                <p style="text-align:center"><img alt="Vigenere表" class="img-responsive" src="images/1-Vigenere表.jpg"
+                                                  style="width: 34.5em;height:34.5em"></p>
+                <p align="center">图1 Vigenere表</p>
+                <p>加密过程：给定一个密钥字母 $k$ 和一个明文字母 $p$，密文字母就是位于 $k$ 所在的行与 $p$ 所在的列的交叉点上的那个字母。</p>
+                <p>解密过程：由密钥字母决定行，在该行中找到密文字母，密文字母所在列的列首对应的明文字母就是相应的明文。</p>
+
+                <p>用数字0-25代替字母A-Z，Vigenere密码的加密文法可以写成同余的形式。设密钥 $k=(k_1,k_2,...,k_d)$，明文 $p=(p_1,p_2,...,p_n)$，密文
+                    $c=(c_1,c_2,...,c_n)$，</p>
+                <p>加密变换：</p>
+                <p align="center">$c_i=f_{k_{i}}(p_i)=e_{k_{i}}(p_i)=p_i+k_i(\bmod 26)$</p>
+                <p>解密变换：</p>
+                <p align="center">$c_i=f_{k_{i}}(p_i)=d_{k_{i}}(c_i)=c_i-k_i(\bmod26)$</p>
+
+
+                <h3 id="示例"> 示例</h3>
+                <p>设明文为 $p$=data security，密钥 $k$=best。</p>
+                <p>下面分析加密过程：</p>
+                <p>根据密钥的长度，首先将明文分解成长度为4的序列：data secu rity。每一个序列利用密钥best进行加密</p>
+                <p>d：$c_1=p_1+k_1(\bmod 26)=3+1(\bmod 26)=4$,对应着字母e；</p>
+                <p>a：$c_2=p_2+k_2(\bmod 26)=0+4(\bmod 26)=4$,对应着字母e；</p>
+                <p>t：$c_3=p_3+k_3(\bmod26)=19+18(\bmod 26)=11$，对应着字母l；</p>
+                <p>a：$c_4=p_4+k_4(\bmod26)=0+19(\bmod 26)=19$,对应着字母t；</p>
+                <p>s：$c_5=p_5+k_1(\bmod26)=18+1(\bmod 26)=19$,对应着字母t；</p>
+                <p>e：$c_6=p_6+k_2(\bmod26)=4+4(\bmod 26)=8$,对应着字母i；</p>
+                <p>c：$c_7=p_7+k_3(\bmod26)=2+18(\bmod 26)=20$,对应着字母u；</p>
+                <p>u：$c_8=p_8+k_4(\bmod26)=20+19(\bmod 26)=13$,对应着字母n；</p>
+                <p>r：$c_9=p_9+k_1(\bmod26)=17+1(\bmod 26)=18$,对应着字母s；</p>
+                <p>i：$c_{10}=p_10+k_2(\bmod26)=8+4(\bmod 26)=12$,对应着字母m；</p>
+                <p>t：$c_{11}=p_11+k_3(\bmod26)=19+18(\bmod 26)=11$,对应着字母l；</p>
+                <p>y：$c_{12}=p_12+k_4(\bmod26)=24+19(\bmod 26)=17$,对应着字母r；</p>
+                <p>所以明文“data security”基于Vigenere密码被加密为“eelt tiun smlr”。</p>
+                <p>解密过程是加密过程的逆过程，下面具体分析：</p>
+                <p>e：$p_1=c_1-k_1(\bmod26)=4-1(\bmod 26)=3$,对应着字母d；</p>
+                <p>e：$p_2=c_1-k_2(\bmod26)=4-4(\bmod 26)=0$,对应着字母a；</p>
+                <p>l：$p_3=c_1-k_3(\bmod26)=11-18(\bmod 26)=19$,对应着字母t；</p>
+                <p>t：$p_4=c_1-k_4(\bmod26)=19-19(\bmod 26)=0$,对应着字母a；</p>
+                <p>T：$p_5=c_1-k_1(\bmod26)=19-1(\bmod 26)=18$,对应着字母s；</p>
+                <p>i：$p_6=c_1-k_2(\bmod26)=8-4(\bmod 26)=4$,对应着字母e；</p>
+                <p>u：$p_7=c_1-k_3(\bmod26)=20-18(\bmod 26)=2$,对应着字母c；</p>
+                <p>n：$p_8=c_1-k_4(\bmod26)=13-19(\bmod 26)=20$,对应着字母u；</p>
+                <p>s：$p_9=c_1-k_1(\bmod26)=18-1(\bmod 26)=17$,对应着字母r；</p>
+                <p>m：$p_{10}=c_1-k_2(\bmod26)=12-4(\bmod 26)=8$,对应着字母i；</p>
+                <p>l：$p_{11}=c_1-k_3(\bmod26)=11-18(\bmod 26)=19$,对应着字母t；</p>
+                <p>r：$p_{12}=c_1-k_4(\bmod26)=17-19(\bmod 26)=24$,对应着字母y；</p>
+                <p>即“eelt tiun smlr”经Vigenere密码解密恢复为“data security”。</p>
+                <p class="separator"></p>
+                <p><a href="#"> 回到顶部</a></p>
+                <p></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="vibrant centered">
+        <div class="container">
+            <h6> &copy; 北京数缘科技有限公司，鲁ICP备09017473号，Copyright (c) 2015 MathMagic Technology Co., Ltd. All Rights
+                Reserved.</h6>
+            <h6>地址：北京市海淀区中关村南大街9号理工科技大厦1412室，邮编：100081，电话：+86-15253166443，邮箱：sales@mathmagic.cn。</h6>
+        </div>
+    </section>
+</div>
+</body>
+</html>

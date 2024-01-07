@@ -1,0 +1,307 @@
+﻿<!-- 本文参考：http://www.sca.gov.cn/sca/c100061/201611/1002423/files/330480f731f64e1ea75138211ea0dc27.pdf -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="" name="description">
+    <meta content="True" name="HandheldFriendly">
+    <meta content="320" name="MobileOptimized">
+    <meta content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>SM4算法 - Documentation</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+MathJax = {    
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    //tags: 'ams'  // should be 'ams', 'none', or 'all'
+  }
+};
+
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <h2 class="lone-header">数缘科技 - SM4密码算法</h2>
+        </div>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="docs-nav" id="menu-left">
+                <li><strong>实验介绍</strong></li>
+                <li><a class=" " href="#SM4算法实验说明">SM4算法实验说明</a></li>
+                <li><a class=" " href="#SM4示例卡说明">SM4示例卡说明</a></li>
+                <li class="separator"></li>
+                <li><strong>SM4算法介绍</strong></li>
+                <li><a class=" " href="#算法概述">算法概述</a></li>
+                <li><a class=" " href="#算法流程">算法流程</a></li>
+                <li><a class=" " href="#轮函数">轮函数 $\mathrm{F}$</a></li>
+                <ul>
+                    <li><a class=" " href="#非线性变换">非线性变换 $\tau$</a></li>
+                    <li><a class=" " href="#线性变换">线性变换 $\mathrm{L}$</a></li>
+                </ul>
+                <li><a class=" " href="#密钥扩展算法">密钥扩展算法</a></li>
+            </ul>
+            <div class="docs-content">
+                <h3 id="SM4算法实验说明"> SM4算法实验说明</h3>
+                <p>本实验支持自定义明密文和密钥进行
+                    <emphasis>128比特</emphasis>
+                    的SM4加解密，且支持两种方式：PC端加解密和智能卡加解密。
+                </p>
+                <p>
+                    对于PC端进行加密，本实验可显示加密过程中关键步骤的中间值；对于智能卡加密，本实验支持在已定义明文和密钥的情况下，支持一键与智能卡进行通信并获取加密结果的方式，也支持通过手动输入APDU指令（智能卡读卡器和智能卡之间传送的信息单元）与智能卡通信的方式。这几种情景同样适用于SM4解密。</p>
+                <p>以下为本实验的重要提示：</p>
+                <ul>
+                    <li>连接智能卡：本实验用到的智能卡为“
+                        <emphasis>教学卡9：SM4算法</emphasis>
+                        ”，需要通过读卡器连接电脑和智能卡。具体做法是：将智能卡读卡器的USB插口插入电脑的USB接口，并将智能卡插入读卡器中。
+                    </li>
+                    <li>密钥输入：SM4加解密密钥相同，可通过交互栏的“Key (Hex)”文本框输入。</li>
+                    <li>明密文输入：若进行AES加密，则密钥和明文是必需的，明文可通过“Plaintext (Hex)”文本框输入；若进行SM4解密，则密钥和密文是必需的，密文可通过“Ciphertext
+                        (Hex)”文本框输入。
+                    </li>
+                    <li>PC端加解密：交互栏部分包含一个“Encrypt (PC)”按钮和一个“Decrypt
+                        (PC)”按钮，两者分别对应PC端的SMM4加密和PC端的SM4解密。在加解密过程中，可以切换到“Intermediate Value”页面，查看加解密过程关键步骤的中间值。
+                    </li>
+                    <li>智能卡加解密：我们可通过两种方式进行智能卡的加解密：既可以通过点击“Encrypt (Card)”按钮或“Decrypt (Card)”按钮直接获取加解密结果，也可以切换到“Smart
+                        Card”页面，通过手动输入APDU指令进行智能卡通信，这部分我们将在“<a class=" " href="#SM4示例卡说明">SM4示例卡说明"</a>”一节进行详细介绍。
+                    </li>
+                    <li>数据格式：软件右侧交互栏部分可以进行SM4明密文和密钥的输入。本实验中支持128比特的SM4加解密，明密文、密钥以及中间值均为
+                        <emphasis>16字节</emphasis>
+                        数据。注意请以
+                        <emphasis>16进制</emphasis>
+                        的格式进行输入，并在每个字节之间加入一个空格作为分隔符。明密文和密钥输入框内已填入默认值，可参考默认值进行设置。
+                    </li>
+                </ul>
+                <h3 id="SM4示例卡说明"> SM4示例卡说明</h3>
+                <p>下面我们对SM4示例卡的APDU指令进行说明，SM4示例卡的Command APDU如下：</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>CLA</p></td>
+                            <td class=formLable0><p class=formLableText>INS</p></td>
+                            <td class=formLable0><p class=formLableText>P1</p></td>
+                            <td class=formLable0><p class=formLableText>P2</p></td>
+                            <td class=formLable0><p class=formLableText>Lc/Le</p></td>
+                            <td class=formLable1><p class=formLableText>Data</p></td>
+                            <td class=formLable1><p class=formLableText>功能</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>12</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>20</p></td>
+                            <td class=formContentLable01><p class=formContentText>10字节密钥+10字节明文</p></td>
+                            <td class=formContentLable01><p class=formContentText>SM4加密</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>12</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>01</p></td>
+                            <td class=formContentLable10><p class=formContentText>20</p></td>
+                            <td class=formContentLable11><p class=formContentText>10字节密钥+10字节密文</p></td>
+                            <td class=formContentLable11><p class=formContentText>SM4解密</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>C0</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable00><p class=formContentText>10</p></td>
+                            <td class=formContentLable01><p class=formContentText></p></td>
+                            <td class=formContentLable01><p class=formContentText>读取SM4加/解密结果</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable10><p class=formContentText>55</p></td>
+                            <td class=formContentLable10><p class=formContentText>AA</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText></p></td>
+                            <td class=formContentLable11><p class=formContentText>恢复下载态</p></td>
+                        </tr>
+
+                    </table>
+                </div>
+                <p><u><i>注：上表中的数字均为16进制表示。</i></u></p>
+                <p>Response APDU的SW1、SW2我们定义如下：</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>SW1</p></td>
+                            <td class=formLable0><p class=formLableText>SW2</p></td>
+                            <td class=formLable1><p class=formLableText>状态</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>90</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>成功</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>61</p></td>
+                            <td class=formContentLable10><p class=formContentText>xx</p></td>
+                            <td class=formContentLable11><p class=formContentText>有“xx”字节数据可读取</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>6E</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>CLA错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>6D</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText>INS错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable00><p class=formContentText>6B</p></td>
+                            <td class=formContentLable00><p class=formContentText>00</p></td>
+                            <td class=formContentLable01><p class=formContentText>P1或P2错误</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formContentLable10><p class=formContentText>67</p></td>
+                            <td class=formContentLable10><p class=formContentText>00</p></td>
+                            <td class=formContentLable11><p class=formContentText>Lc或Le错误</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p><u><i>注：上表中的数字均为16进制表示。</i></u></p>
+                <p>我们以加密为例对卡内的指令进行说明，用Key表示密钥，plaintext表示明文，令：</p>
+                <p>key =
+                    <emphasis>11 22 33 44 55 66 77 88 99 AA BB CC DD EE FF 00</emphasis>
+                    ，
+                </p>
+                <p>plaintext =
+                    <emphasis>11 22 33 44 55 66 77 88 99 AA BB CC DD EE FF 00</emphasis>
+                    。
+                </p>
+                <p>那么如果想要进行SM4加密，我们要发送的APDU指令为
+                    <emphasis>00 12 00 00 20 11 22 33 44 55 66 77 88 99 AA BB CC DD EE FF 00 11 22 33 44 55 66 77 88 99
+                        AA BB CC DD EE FF 00
+                    </emphasis>
+                    。
+                </p>
+                <p>当智能卡内程序正确时，卡会返回
+                    <emphasis>61 10</emphasis>
+                    ，表示SM4加密正常，有0x10个字节的数据可读取。此时如果我们想要获得智能卡的加密结果，可以发送APDU指令
+                    <emphasis>00 C0 00 00 10</emphasis>
+                    以读取加密结果。
+                </p>
+                <p>学员可切换至“Smart Card”页面，尝试与智能卡发送指令以进行学习。此处需要注意，当插入我们配套的读卡器后，右侧交互栏的读卡器列表将有一项值为“ACS ACR1281 1S Dual Reader
+                    ICC 0”的元素，选择该项，然后在“Smart Card”页面的“Command
+                    (Hex)”文本框内输入命令，并点击“Send”按钮，即可发送APDU指令给智能卡。智能卡的返回数据将显示在“Receive (Hex)”文本框内。</p>
+                <hr>
+                <h3 id="算法概述"> 算法概述</h3>
+                <p>SM4算法是一个分组算法。该算法的分组长度为
+                    <emphasis>128</emphasis>
+                    比特，密钥长度为
+                    <emphasis>128</emphasis>
+                    比特。加密算法与密钥扩展算法都采用
+                    <emphasis>32</emphasis>
+                    轮非线性迭代结构。解密算法与加密算法的结构相同，只是轮密钥的使用顺序相反，解密轮密钥是加密轮密钥的逆序。
+                </p>
+                <h3 id="算法流程"> 算法流程</h3>
+                <p>SM4算法流程图如图1所示：</p>
+                <p style="text-align:center"><img alt="流程图" class="img-responsive" src="images/SM4总体流程图.png"
+                                                  style="width: 40em;height:29.2em"></p>
+                <p style="text-align:center">图1 SM4总体流程图</p>
+                <p>本算法采用非线性迭代结构，以字为单位进行加密运算，称一次迭代运算为一轮变换,加解密过程共
+                    <emphasis>32轮</emphasis>
+                    ，流程图如图2所示。设输入为 $\left(X_{0}, X_{1}, X_{2}, X_{3}\right) \in\left(Z_{2}^{32}\right)^{4}$ ，轮密钥为 $r
+                    k_{i} \in Z_{2}^{32}$ ，则对于第 $i$ 轮，加密变换为：$$X_{i+4}=F\left(X_{i}, X_{i+1}, X_{i+2}, X_{i+3}, r
+                    k_{i}\right)$$
+                </p>
+                <p style="text-align:center"><img alt="流程图" class="img-responsive" src="images/流程图.png"
+                                                  style="width: 40em;height:10em"></p>
+                <p style="text-align:center">图2 流程图</p>
+                <p>记算法的输出为 $\left(Y_{0}, Y_{1}, Y_{2}, Y_{3}\right)$，则输出为 $\left(X_{32}, X_{33}, X_{34}, X_{35}\right)$
+                    的逆序，如图3所示，即：$$\left(Y_{0}, Y_{1}, Y_{2}, Y_{3}\right)=\left(X_{35}, X_{34}, X_{33},
+                    X_{32}\right)$$</p>
+                <p style="text-align:center"><img alt="逆序输出" class="img-responsive" src="images/逆序输出.png"
+                                                  style="width: 15em;height:9em"></p>
+                <p style="text-align:center">图3 逆序输出</p>
+                <p>本算法的解密变换与加密变换结构相同，不同的仅是轮密钥的使用顺序。
+                    加密时轮密钥的使用顺序为：$\left(r k_{0}, r k_{1}, \cdots, r k_{31}\right)$
+                    解密时轮密钥的使用顺序为：$\left(r k_{31}, r k_{30}, \cdots, r k_{0}\right)$。</p>
+                <h3 id="轮函数">轮函数 $\mathrm{F}$</h3>
+                <p>轮函数示意图如图4所示，对于第 $i$ 轮，轮函数 $\mathrm{F}$ 的输入为 $\left(X_{i}, X_{i+1}, X_{i+2}, X_{i+3}\right)$，函数输出为
+                    $X_{i+4}$ 。则：</p>
+                $$X_{i+4}=\mathrm{F}\left(X_{i}, X_{i+1}, X_{i+2}, X_{i+3}, r k_{i}\right)=X_{i} \oplus
+                \mathrm{T}\left(X_{i+1} \oplus X_{i+2} \oplus X_{i+3} \oplus r k_{i}\right), i=0,1, \cdots, 31$$
+                <p style="text-align:center"><img alt="轮函数F" class="img-responsive" src="images/轮函数.png"
+                                                  style="width: 25em;height:10em"></p>
+                <p style="text-align:center">图4 轮函数 $\mathrm{F}$</p>
+                <p>在轮函数 $\mathrm{F}$ 中，合成置换 $\mathrm{T}(Z_{2}^{32} \rightarrow Z_{2}^{32})$ 是一个可逆变换，由非线性变换 $\tau$ 和线性变换
+                    $\mathrm{L}$ 复合而成,即：$$\mathrm{T}( .)=\mathrm{L}(\tau( .))$$</p>
+                <ul>
+                    <h4 id="非线性变换">
+                        <li>非线性变换 $\tau$</li>
+                    </h4>
+                    <p>$\tau$ 由4个并行的S盒构成，如图5所示。</p>
+                    <p>设输入为 $A=\left(a_{0}, a_{1}, a_{2}, a_{3}\right) \in\left(Z_{2}^{8}\right)^{4}$ ，输出为
+                        $B=\left(b_{0}, b_{1}, b_{2}, b_{3}\right) \in\left(Z_{2}^{8}\right)^{4}$，则：$$\left(b_{0},
+                        b_{1}, b_{2}, b_{3}\right)=\tau(A)=\left(\operatorname{Sbox}\left(a_{0}\right),
+                        \operatorname{Sbox}\left(a_{1}\right), \operatorname{Sbox}\left(a_{2}\right),
+                        \operatorname{Sbox}\left(a_{3}\right)\right)$$</p>
+                    <p style="text-align:center"><img alt="非线性变换" class="img-responsive" src="images/非线性变换.png"
+                                                      style="width: 12em;height:14em"></p>
+                    <p style="text-align:center">图5 非线性变换 $\tau$ </p>
+                    <p>在本算法中，用到的S盒如图6所示：</p>
+                    <p style="text-align:center"><img alt="S盒" class="img-responsive" src="images/S盒.png"
+                                                      style="width: 50em;height:22em"></p>
+                    <p style="text-align:center">图6 S盒</p>
+                    <h4 id="线性变换">
+                        <li>线性变换 $\mathrm{L}$</li>
+                    </h4>
+                    <p>非线性变换 $\tau$ 的输出是线性变换 $\mathrm{L}$ 的输入，如图7所示。设输入为 $B \in Z_{2}^{32}$ ，输出为 $C \in Z_{2}^{32}$ ，则
+                        $$C=\mathrm{L}(B)=B \oplus(B \lll2) \oplus(B \lll10) \oplus(B \lll18) \oplus(B \lll24)$$</p>
+                    <p style="text-align:center"><img alt="线性变换L" class="img-responsive" src="images/线性变换L.png"
+                                                      style="width: 28em;height:20em"></p>
+                    <p style="text-align:center">图7 线性变换$\mathrm{L}$</p>
+                </ul>
+                <h3 id="密钥扩展算法">密钥扩展算法</h3>
+                <p>本算法中加密算法的轮密钥由加密密钥通过密钥扩展算法生成。</p>
+                <p>记加密密钥 $MK=\left(MK_{0}, MK_{1}, MK_{2}, MK_{3}\right)$，$MK_{i} \in Z_{2}^{32}, i=0,1,2,3$ ，临时变量
+                    $K_{i} \in Z_{2}^{32}, i=0,1, \cdots, 35$ ，轮密钥为 $r k_{i} \in Z_{2}^{32}, i=0,1, \cdots, 31$
+                    。则轮密钥生成方法如下：</p>
+                <p>首先，$$\left(K_{0}, K_{1}, K_{2}, K_{3}\right)=\left(MK_{0} \oplus FK_{0}, MK_{1} \oplus FK_{1}, MK_{2}
+                    \oplus FK_{2}, MK_{3} \oplus FK_{3}\right)$$</p>
+                <p>然后，对 $i=0,1, \cdots, 31$ ，$$r k_{i}=K_{i+4}=K_{i} \oplus T^{\prime}\left(K_{i+1} \oplus K_{i+2}
+                    \oplus K_{i+3} \oplus C K_{i}\right)$$
+                <p>在密钥扩展算法中， $\mathrm{T^{\prime}}$ 变换与加密算法轮函数中的 $\mathrm{T}$ 基本相同，只将其中的线性变换 $\mathrm{L}$ 修改为以
+                    $\mathrm{L^{\prime}}$ ：$$\mathrm{L^{\prime}}(B)=B \oplus(B \lll13) \oplus(B \lll23)$$</p>
+                <p>系统参数 $FK$ 的取值，采用16进制表示为：</p>
+                <p>A3B1BAC6,56AA3350,677D9197,B27022DC</p>
+                <p>系统参数 $CK$ 的取值，采用16进制表示为：</p>
+                00070E15,1C232A31,383F464D,545B6269,70777E85,8C939AA1,A8AFB6BD,C4CBD2D9<br>
+                E0E7EEF5,FC030A11,181F262D,343B4249,50575E65,6C737A81,888F969D,A4ABB2B9<br>
+                C0C7CED5,DCE3EAF1,F8FF060D,141B2229,30373E45,4C535A61,686F767D,848B9299<br>
+                A0A7AEB5,BCC3CAD1,D8DFE6ED,F4FB0209,10171E25,2C333A41,484F565D,646B7279<br>
+                <p class="separator"></p>
+                <p><a href="#"> 回到顶部</a></p>
+                <p></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="vibrant centered">
+        <div class="container">
+            <h6> &copy; 北京数缘科技有限公司，鲁ICP备09017473号，Copyright (c) 2015 MathMagic Technology Co., Ltd. All Rights
+                Reserved.</h6>
+            <h6>地址：北京市海淀区中关村南大街9号理工科技大厦1412室，邮编：100081，电话：+86-15253166443，邮箱：sales@mathmagic.cn。</h6>
+        </div>
+    </section>
+</div>
+</body>
+</html>
+

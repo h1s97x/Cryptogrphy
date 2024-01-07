@@ -50,3 +50,4 @@ class RsaThread(QtCore.QThread):
             self.encrypt()
         elif self.encrypt_selected == 1:
             self.decrypt()
+

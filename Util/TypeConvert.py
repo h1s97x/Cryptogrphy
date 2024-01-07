@@ -105,3 +105,11 @@ def hex_list_to_int(hex_list):
     for i in range(len(hex_list)):
         int_data |= hex_list[len(hex_list) - i - 1] << (8 * i)
     return int_data
+
+def int_to_bytes(i, min_size = None):
+    # i might be a gmpy2 big integer; convert back to a Python int
+    i = int(i)
+    b = i.to_bytes((i.bit_length()+7)//8, byteorder='big')
+    if min_size != None and len(b) < min_size:
+        b = b'\x00'*(min_size-len(b)) + b
+    return b

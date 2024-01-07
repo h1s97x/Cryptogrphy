@@ -2,11 +2,12 @@ import csv
 import re
 import hashlib
 from Hash import SM3
-from PyQt5.QtWidgets import QApplication, QVBoxLayout, QLabel, QPushButton, QWidget, QComboBox
+from PyQt5.QtWidgets import QApplication
 
-from Util.Modules import Button, PlainTextEdit, Key, KeyGroup, Group, ErrorType, TextEdit, ComboBox
-from Util.Modules import CryptographyWidget
-from Util import Path, TypeConvert
+from Modules import Button, PlainTextEdit, KeyGroup, Group, ComboBox
+from Modules import CryptographyWidget
+from Util import Path
+
 
 class PSWidget(CryptographyWidget):
     def __init__(self):

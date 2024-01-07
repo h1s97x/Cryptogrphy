@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="" name="description">
+    <meta content="True" name="HandheldFriendly">
+    <meta content="320" name="MobileOptimized">
+    <meta content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>频率分析攻击 - Documentation</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+MathJax = {    
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    //tags: 'ams'  // should be 'ams', 'none', or 'all'
+  }
+};
+
+
+
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <h2 class="lone-header">数缘科技 - 频率分析攻击</h2>
+        </div>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="docs-nav" id="menu-left">
+                <li><strong>实验介绍</strong></li>
+                <li><a class=" " href="#频率分析攻击实验说明">频率分析攻击实验说明</a></li>
+                <li class="separator"></li>
+                <li><strong>频率分析攻击介绍</strong></li>
+                <li><a class=" " href="#频率分析攻击简介">频率分析攻击简介</a></li>
+                <li><a class=" " href="#分析方法">分析方法</a></li>
+            </ul>
+            <div class="docs-content">
+                <!-- <h2> 实验介绍</h2> -->
+                <h3 id="频率分析攻击实验说明"> 频率分析攻击实验说明</h3>
+                <p>本实验支持自定义txt文件作为密文进行频率分析攻击实验。本实验提供一些世界英文名著的txt文件，并将其用<a href="../../Monoalphabetic_Cipher/html/index.html">单表代替密码</a>加密，得到本实验中用于解密的密文文件。示例文件位于/MathMagic Cryptor/Menu/CryptographicAlgorithm/ClassicalCryptographicAlgorithm/Frequency_Analysis/Frequency Analysis Files目录下。
+                </p>
+                <p>以下为本实验的重要提示：</p>
+                <ul>
+                    <li>获得密文文件：本实验所用默认文件为单表代替密码加密好的密文文件。根据单表代替密码模块的实验步骤，可得到本实验需要的密文文件。</li>
+                    <li>输入密文路径：点击“Import File”按钮，向文本框中输入存储密文的txt文件路径。</li>
+                    <li>单字母出现次数统计：点击“Decrypt (PC)”按钮，电脑将统计txt文件中每个字母出现的次数，并将结果显示在"Intermediate Value"里。</li>
+                    <li>利用字母组合猜测明文：点击“Decrypt Multi (PC)”按钮，电脑将根据固定的字母组合猜测明文字母，并将结果显示在"Intermediate Value"里。</li>
+                    <li>数据格式：软件右侧交互栏部分可以进行频率分析攻击明文txt路径的输入。本实验中只对密文txt文件其中的字母进行加解密，非字母的字符直接输出，示例文件均为2M以内，文件过大可能影响解密速度，故txt文件大小限制为2M以内。</li>
+                    <li>当密文消息足够长时，将密文字母的使用频率和英文字母的使用频率进行比较，可以提高猜对明文的概率，但密文消息相对较短时，则不能得到准确的字母匹配。</li>
+                    <li>解密结果文件会生成在密文文件的同目录下。</li>
+                </ul>
+
+                <p class="separator"></p>
+                <h3 id="频率分析攻击简介"> 频率分析攻击简介</h3>
+                <p>频率分析在数学、物理学和信号处理中是一种分解函数、波形、或者信号的频率组成，以获取频谱的方法。在密码学中，频率分析是指研究字母或者字母组合在文本中出现的频率。应用频率分析可以破解古典密码。</p>
+                <p>频率分析的过程就是将明文字母的出现频率与密文字母的频率相比较的过程。通过分析每个符号出现的频率而轻易地破译代换式密码。在每种语言中，冗长的文章中的字母表现出一种可对之进行分辨的频率。</p>
+                <h3 id="分析方法"> 分析方法</h3>
+                <p>例如，e是英语中最常用的字母，其出现频率大约为八分之一。最好假定长长的密文中最常用的符号代表e。如果密码分析者根据频率数能破译出9个最常用的字母e，t，a，o，n，i，r，s和h，一般来说他就可破译70%的密码。最现代的译密技术也是以古老的频率分析法为根据的。</p>
+                <p>频率分析法还可以用来对单词中的字母的位置及其组合进行分析。例如，全部英语单词中有一半以上是以t，a，o，s或w开头的。仅10个单词（the，of，and，to，a，in，that，it，is和I）就构成标准英语文章四分之一以上的篇幅。</p>
+                <p>编成密码的词汇量越大，用频率分析法译密就越容易。</p>
+                <p>统计双字母组合的频率也是很有效的工具。例如在t与其他字母的组合中，组合th的出现频率明显高于其他字母组合，那么在已确定t的情况下，与t组合出现次数最多的字母，可以认为是h。</p>
+                <p><a href="#"> 回到顶部</a></p>
+                <p></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="vibrant centered">
+        <div class="container">
+            <h6> &copy; 北京数缘科技有限公司，鲁ICP备09017473号，Copyright (c) 2015 MathMagic Technology Co., Ltd. All Rights
+                Reserved.</h6>
+            <h6>地址：北京市海淀区中关村南大街9号理工科技大厦1412室，邮编：100081，电话：+86-15253166443，邮箱：sales@mathmagic.cn。</h6>
+        </div>
+    </section>
+</div>
+</body>
+</html>

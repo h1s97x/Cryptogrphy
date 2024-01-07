@@ -1,0 +1,145 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="" name="description">
+    <meta content="True" name="HandheldFriendly">
+    <meta content="320" name="MobileOptimized">
+    <meta content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+    <title>Playfair密码 - Documentation</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+MathJax = {    
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    //tags: 'ams'  // should be 'ams', 'none', or 'all'
+  }
+};
+
+    </script>
+    <script async id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="container">
+            <h2 class="lone-header">数缘科技 - Playfair密码密码算法</h2>
+        </div>
+    </header>
+    <section>
+        <div class="container">
+            <ul class="docs-nav" id="menu-left">
+                <li><strong>实验介绍</strong></li>
+                <li><a class=" " href="#Caesar密码实验说明">Playfair密码密码实验说明</a></li>
+                <li class="separator"></li>
+                <li><strong>Playfair密码密码介绍</strong></li>
+                <li><a class=" " href="#背景">背景</a></li>
+                <li><a class=" " href="#加解密">加解密</a></li>
+                <li><a class=" " href="#示例">示例</a></li>
+            </ul>
+
+            <div class="docs-content">
+                <h3 id="Caesar密码实验说明"> Playfair密码密码实验说明</h3>
+                <p>本实验支持自定义明密文和密钥进行PC端的Playfair密码加解密。</p>
+                <p>以下为本实验的重要提示：</p>
+                <ul>
+                    <li>密钥输入：Playfair密码加解密密钥相同，可通过交互栏的“Key (Str)”文本框输入。</li>
+                    <li>明密文输入：若进行Playfair密码加密，则密钥和明文是必需的，明文可通过“Plaintext
+                        (Str)”文本框输入；若进行Playfair密码解密，则密钥和密文是必需的，密文可通过“Ciphertext (Str)”文本框输入。
+                    </li>
+                    <li>加解密：交互栏部分包含一个“Encrypt (PC)”按钮和一个“Decrypt
+                        (PC)”按钮，两者分别对应PC端的Playfair加密和PC端的Playfair解密。加密时如果明文含奇数个字母，本实验中在明文的末尾添加字母Z，如果明文两个一组进行分组之后，一组中字母重复，则在中间插入字母Q。
+                    </li>
+                    <li>数据格式：软件右侧交互栏部分可以进行Playfair的明密文和密钥的输入。本实验中支持
+                        <emphasis>任意长度</emphasis>
+                        明文输入的Playfair密码加密，以及支持
+                        <emphasis>含偶数个字母</emphasis>
+                        的
+                        <emphasis>任意长度</emphasis>
+                        密文输入的Playfair密码解密，不支持中文输入。明密文和密钥都以
+                        <emphasis>字符串</emphasis>
+                        的形式输入，只对其中的字母进行加解密，字母的大小写一一对应，非字母的字符直接输出。明密文和密钥输入框内已填入默认值，可参考默认值进行设置。
+                    </li>
+                </ul>
+                <p class="separator"></p>
+                <h3 id="背景"> 背景</h3>
+                <p>关于Playfair密码最早的纪录出现在一份1854年3月26日由Charles
+                    Wheatstone签署的文件。Wheatstone的朋友Playfair普及了这个加密法。最初英国外交部拒绝使用这种密码，认为它太复杂。当惠斯登证明邻近学校的四个男孩中，有三个可以在15分钟内学会这种方法，外交部副秘书长的回应是：“这是有可能的，可惜你不能教晓那些高层人员。”</p>
+                <p>在第二次布尔战争和第一次世界大战，英军用了它；在二战，澳大利亚人也用了。Playfair密码所用的工具很少，而且很快便能加密讯息。它主要用来加密重要而又不关键的讯息。</p>
+                <h3 id="加解密"> 加解密</h3>
+                <p>
+                    Playfair密码将明文中的双字母组合作为一个单元对待，并将这些单元转换为密文双字母组合。Playfair密码基于一个5$\times$5的字母矩阵，该矩阵使用一个关键词（密钥）构造矩阵，其构造方法是：从左至右、从上至下依次填入关键词的字母（去除重复的字母），然后以字母表顺序依次填入其他的字母。加密时字母I和J被当作同一个字母。在实验中，都当做I来处理。</p>
+                <p>对每一对明文字母 $p_1$、$p_2$ 的加密方法如下：</p>
+                <p>（1）若 $p_1$、$p_2$ 在同一行时，则对应的密文 $c_1$、$c_2$ 分别是紧靠 $p_1$、$p_2$ 右端的字母，其中第一列被看作是最后一列的右方。（解密时反向）</p>
+                <p>（2）若 $p_1$、$p_2$ 在同一列时，则对应的密文 $c_1$、$c_2$ 分别是紧靠 $p_1$、$p_2$ 下方的字母，其中第一行被看作是最后一行的下方。（解密时反向）</p>
+                <p>（3）若 $p_1$、$p_2$ 不在同一行、也不在同一列时，则 $c_1$、$c_2$ 是由 $p_1$ 和 $p_2$ 确定的矩阵两角的字母，并且 $c_1$ 和 $p_1$，$c_2$ 和
+                    $p_2$ 分别同行。（解密时处理方法相同）</p>
+                <p>（4）若 $p_1=p_2$，则插入一个字母（例如Q，需要事先约定）于重复字母之间，并用前述方法处理。</p>
+                <p>（5）若明文字母数为奇数时，则在明文的末端添加某个事先约定的字母（例如Z）作为填充。</p>
+                <h3 id="示例"> 示例</h3>
+                <p>密钥是“PLAYFAIR IS A DIGRAM CIPHER”，则构造的字母矩阵如表1所示。</p>
+                <p align="center">表1 字母矩阵表</p>
+                <div align=center>
+                    <table cellpadding=0 cellspacing=0 class=TableGrid
+                           style='border-collapse:collapse;border:none'>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>p</p></td>
+                            <td class=formLable0><p class=formLableText>l</p></td>
+                            <td class=formLable0><p class=formLableText>a</p></td>
+                            <td class=formLable0><p class=formLableText>y</p></td>
+                            <td class=formLable0><p class=formLableText>f</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>i/j</p></td>
+                            <td class=formLable0><p class=formLableText>r</p></td>
+                            <td class=formLable0><p class=formLableText>s</p></td>
+                            <td class=formLable0><p class=formLableText>d</p></td>
+                            <td class=formLable0><p class=formLableText>g</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>m</p></td>
+                            <td class=formLable0><p class=formLableText>c</p></td>
+                            <td class=formLable0><p class=formLableText>h</p></td>
+                            <td class=formLable0><p class=formLableText>e</p></td>
+                            <td class=formLable0><p class=formLableText>b</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>k</p></td>
+                            <td class=formLable0><p class=formLableText>n</p></td>
+                            <td class=formLable0><p class=formLableText>o</p></td>
+                            <td class=formLable0><p class=formLableText>q</p></td>
+                            <td class=formLable0><p class=formLableText>t</p></td>
+                        </tr>
+                        <tr>
+                            <td class=formLable0><p class=formLableText>u</p></td>
+                            <td class=formLable0><p class=formLableText>v</p></td>
+                            <td class=formLable0><p class=formLableText>w</p></td>
+                            <td class=formLable0><p class=formLableText>x</p></td>
+                            <td class=formLable0><p class=formLableText>z</p></td>
+                        </tr>
+                    </table>
+                </div>
+                <p>如果明文是：p=playfair cipher。</p>
+                <p>先将明文分成两个一组：pl ay fa ir ci ph er。</p>
+                <p>基于表1的对应密文为：la yf py rs mr am cd。</p>
+                <p class="separator"></p>
+                <p><a href="#"> 回到顶部</a></p>
+                <p></p>
+            </div>
+        </div>
+    </section>
+
+    <section class="vibrant centered">
+        <div class="container">
+            <h6> &copy; 北京数缘科技有限公司，鲁ICP备09017473号，Copyright (c) 2015 MathMagic Technology Co., Ltd. All Rights
+                Reserved.</h6>
+            <h6>地址：北京市海淀区中关村南大街9号理工科技大厦1412室，邮编：100081，电话：+86-15253166443，邮箱：sales@mathmagic.cn。</h6>
+        </div>
+    </section>
+</div>
+</body>
+</html>

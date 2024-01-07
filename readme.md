@@ -192,7 +192,7 @@ from .Vigenere_ui import VigenereWidget
 1.子窗口打开时不能修改标题。
 
 
-## Version1.2 -2023.12.06
+## Version1.2 - 2023.12.06
 
 修复：
 修复了一些已知的bug：导入bug
@@ -209,7 +209,8 @@ combo_widget.currentIndexChanged.connect(combo.changed_function)  # 添加这一
 
 已添加changed_function，操作为pass
 
-### Version1.3 -2023.12.10
+## Version1.3 - 2023.12.10
+
 修改：
 1.主窗口新增函数render()用于渲染子窗口；
 之前因为groups_config属性定义在子窗口，害怕在主窗口定义渲染函数render()时会报错，今天写报告时仔细想了想，只要在主窗口定义，但是不初始化，而是在子窗口定义时初始化，问题就应该能解决。
@@ -281,3 +282,63 @@ Modules.py
 
 No module named 'Crypto' 
 参考博客：https://blog.csdn.net/xiaojin21cen/article/details/109642940
+
+## Version1.4 - 2024.1.7
+
+增加web窗口
+
+
+
+#### 问题描述
+
+在使用PyQt5开发程序时，有时候会遇到无法导入QtWebKitWidgets的情况。通常，当我们在代码中添加`from PyQt5.QtWebKitWidgets import QWebView`时，会收到一个类似于以下错误提示：
+
+```python
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ImportError: cannot import name 'QWebView' from 'PyQt5.QtWebKitWidgets' 
+```
+
+这个错误表示我们的PyQt5库没有包含QtWebKitWidgets模块。
+
+#### 解决方法
+
+要解决这个问题，我们需要安装额外的模块。在PyQt5中，QtWebKitWidgets模块是被分离出来的，因此我们需要单独安装这个模块。
+
+在终端或命令提示符中执行以下命令可以使用pip来安装QtWebKitWidgets模块：
+
+```python
+pip install PyQtWebEngine
+```
+
+当安装完成后，重新运行程序，应该就可以成功导入QtWebKitWidgets模块了。
+
+#### 原因解释
+
+[Python PyQt5 无法导入名称 'QWebView' - IT工具网 (coder.work)](https://www.coder.work/article/7793520)
+
+Qt5 有两种不同的 Web 工具包:基于 WebKit 的 QtWebKit 和基于 Chromium 的较新的 `QtWebEngine`。
+
+您的导入似乎混淆了这两者。 `QWebPage` 和 `QWebView` 是 `QtWebKit` 的一部分，而不是 `QtWebEngine` 的一部分，后者具有 `QWebEngineView`和 `QWebEnginePage`.
+
+所以可以选择任何一个
+
+- [WebEngine](http://doc.qt.io/qt-5/qtwebengine-index.html) :
+
+  ```
+  from PyQt5.QtWebEngineWidgets import QWebEnginePage
+  from PyQt5.QtWebEngineWidgets import QWebEngineView
+  ```
+
+- [WebKit](http://doc.qt.io/archives/qt-5.5/qtwebkit-index.html) :
+
+  ```
+  from PyQt5.QtWebKitWidgets import QWebPage
+  from PyQt5.QtWebKitWidgets import QWebView
+  ```
+
+这两者的接口(interface)在很大程度上是兼容的，但并不完全相同。
+
+考试周比较忙，所以最近没有更新，其实之前已经写好了，框架也改动了一下，加入了html，将不同加密函数分到子文件夹下，方便管理。
+
+Web界面还有些问题，因为过了有点久，先提交一版，后续xiu'gai
