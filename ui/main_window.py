@@ -177,14 +177,9 @@ class CryptographyWidget(QMainWindow):
 
 
     def initUI(self):
-        # 延迟导入
-        import ClassicCrypto
-        import BlockCipher
-        import PublicKeyCryptography
-        import StreamCipher
-        import Hash
+        # 延迟导入 - 使用新的模块结构
+        import ui.widgets as widgets
         # import CryptographicProtocol
-        import MathematicalBasis
 
 
         self.logging_widget = LoggingWidget()
@@ -201,35 +196,35 @@ class CryptographyWidget(QMainWindow):
         classic_cipher_menu = menubar.addMenu("Classic Cipher")
 
         hill_cipher_action = QAction("Hill Cipher", self)
-        hill_cipher_action.triggered.connect(lambda: self.handleCipherAction(ClassicCrypto.HillWidget)) # 修改为通用的处理方法
+        hill_cipher_action.triggered.connect(lambda: self.handleCipherAction(widgets.HillWidget)) # 修改为通用的处理方法
         classic_cipher_menu.addAction(hill_cipher_action)
 
         caesar_cipher_action = QAction("Caesar Cipher", self)
-        caesar_cipher_action.triggered.connect(lambda: self.handleCipherAction(ClassicCrypto.CaesarWidget)) # 修改为通用的处理方法
+        caesar_cipher_action.triggered.connect(lambda: self.handleCipherAction(widgets.CaesarWidget)) # 修改为通用的处理方法
         classic_cipher_menu.addAction(caesar_cipher_action)
 
         vigenere_cipher_action = QAction("Vigenere Cipher", self)
-        vigenere_cipher_action.triggered.connect(lambda: self.handleCipherAction(ClassicCrypto.VigenereWidget)) # 修改为通用的处理方法
+        vigenere_cipher_action.triggered.connect(lambda: self.handleCipherAction(widgets.VigenereWidget)) # 修改为通用的处理方法
         classic_cipher_menu.addAction(vigenere_cipher_action)
 
         playfair_cipher_action = QAction("Playfair Cipher", self)
         playfair_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(ClassicCrypto.PlayfairWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.PlayfairWidget))  # 修改为通用的处理方法
         classic_cipher_menu.addAction(playfair_cipher_action)
 
         enigma_cipher_action = QAction("Enigma Cipher", self)
         enigma_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(ClassicCrypto.EnigmaWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.EnigmaWidget))  # 修改为通用的处理方法
         classic_cipher_menu.addAction(enigma_cipher_action)
 
         monoalphabetic_cipher_action = QAction("Monoalphabetic Cipher", self)
         monoalphabetic_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(ClassicCrypto.MonoalphabeticWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.MonoalphabeticWidget))  # 修改为通用的处理方法
         classic_cipher_menu.addAction(monoalphabetic_cipher_action)
 
         FA_cipher_action = QAction("Frequency Analysis", self)
         FA_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(ClassicCrypto.FAWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.FAWidget))  # 修改为通用的处理方法
         classic_cipher_menu.addAction(FA_cipher_action)
 
 
@@ -237,32 +232,32 @@ class CryptographyWidget(QMainWindow):
 
         DES_cipher_action = QAction("DES", self)
         DES_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(BlockCipher.DESWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.DESWidget))  # 修改为通用的处理方法
         block_cipher_menu.addAction(DES_cipher_action)
 
         AES_cipher_action = QAction("AES", self)
         AES_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(BlockCipher.AESWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.AESWidget))  # 修改为通用的处理方法
         block_cipher_menu.addAction(AES_cipher_action)
 
         block_cipher_action = QAction("Block Mode", self)
         block_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(BlockCipher.BlockModeWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.BlockModeWidget))  # 修改为通用的处理方法
         block_cipher_menu.addAction(block_cipher_action)
 
         SM4_cipher_action = QAction("SM4", self)
         SM4_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(BlockCipher.SM4Widget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.SM4Widget))  # 修改为通用的处理方法
         block_cipher_menu.addAction(SM4_cipher_action)
 
         SIMON_cipher_action = QAction("SIMON", self)
         SIMON_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(BlockCipher.SIMONWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.SIMONWidget))  # 修改为通用的处理方法
         block_cipher_menu.addAction(SIMON_cipher_action)
 
         SPECK_cipher_action = QAction("SPECK", self)
         SPECK_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(BlockCipher.SPECKWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.SPECKWidget))  # 修改为通用的处理方法
         block_cipher_menu.addAction(SPECK_cipher_action)
 
 
@@ -270,37 +265,37 @@ class CryptographyWidget(QMainWindow):
 
         RSA_cipher_action = QAction("RSA", self)
         RSA_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(PublicKeyCryptography.RSAWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.RSAWidget))  # 修改为通用的处理方法
         public_key_cipher_menu.addAction(RSA_cipher_action)
 
         RSASign_cipher_action = QAction("RSA signature", self)
         RSASign_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(PublicKeyCryptography.RSASignWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.RSASignWidget))  # 修改为通用的处理方法
         public_key_cipher_menu.addAction(RSASign_cipher_action)
 
         SM2_cipher_action = QAction("SM2", self)
         SM2_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(PublicKeyCryptography.SM2Widget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.SM2Widget))  # 修改为通用的处理方法
         public_key_cipher_menu.addAction(SM2_cipher_action)
 
         SM2Sign_cipher_action = QAction("SM2 signature", self)
         SM2Sign_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(PublicKeyCryptography.SM2Widget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.SM2Widget))  # 修改为通用的处理方法
         public_key_cipher_menu.addAction(SM2Sign_cipher_action)
 
         ElGamal_cipher_action = QAction("ElGamal", self)
         ElGamal_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(PublicKeyCryptography.ElGamalWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.ElGamalWidget))  # 修改为通用的处理方法
         public_key_cipher_menu.addAction(ElGamal_cipher_action)
 
         ECC_cipher_action = QAction("ECC", self)
         ECC_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(PublicKeyCryptography.ECCWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.ECCWidget))  # 修改为通用的处理方法
         public_key_cipher_menu.addAction(ECC_cipher_action)
 
         ECDSA_cipher_action = QAction("ECDSA", self)
         ECDSA_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(PublicKeyCryptography.ECDSAWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.ECDSAWidget))  # 修改为通用的处理方法
         public_key_cipher_menu.addAction(ECDSA_cipher_action)
 
 
@@ -308,47 +303,47 @@ class CryptographyWidget(QMainWindow):
 
         SHA1_cipher_action = QAction("SHA-1", self)
         SHA1_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(Hash.SHA1Widget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.SHA1Widget))  # 修改为通用的处理方法
         hash_algorithm_menu.addAction(SHA1_cipher_action)
 
         SHA3_cipher_action = QAction("SHA-3", self)
         SHA3_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(Hash.SHA3Widget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.SHA3Widget))  # 修改为通用的处理方法
         hash_algorithm_menu.addAction(SHA3_cipher_action)
 
         SHA256_cipher_action = QAction("SHA-256", self)
         SHA256_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(Hash.SHA256Widget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.SHA256Widget))  # 修改为通用的处理方法
         hash_algorithm_menu.addAction(SHA256_cipher_action)
 
         MD5_cipher_action = QAction("MD5", self)
         MD5_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(Hash.MD5Widget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.MD5Widget))  # 修改为通用的处理方法
         hash_algorithm_menu.addAction(MD5_cipher_action)
 
         HMACMD5_cipher_action = QAction("HMACMD5", self)
         HMACMD5_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(Hash.MD5_HMACWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.HMACMD5Widget))  # 修改为通用的处理方法
         hash_algorithm_menu.addAction(HMACMD5_cipher_action)
 
         SM3_cipher_action = QAction("SM3", self)
         SM3_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(Hash.SM3Widget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.SM3Widget))  # 修改为通用的处理方法
         hash_algorithm_menu.addAction(SM3_cipher_action)
 
         AES_CBC_MAC_cipher_action = QAction("AES-CBC-MAC", self)
         AES_CBC_MAC_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(Hash.AES_CBC_MACWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.AESCBCMACWidget))  # 修改为通用的处理方法
         hash_algorithm_menu.addAction(AES_CBC_MAC_cipher_action)
 
         PS_cipher_action = QAction("Password System", self)
         PS_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(Hash.PSWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.PasswordSystemWidget))  # 修改为通用的处理方法
         hash_algorithm_menu.addAction(PS_cipher_action)
 
         HR_cipher_action = QAction("Hash Reverse", self)
         HR_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(Hash.HashReverseWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.HashReverseWidget))  # 修改为通用的处理方法
         hash_algorithm_menu.addAction(HR_cipher_action)
 
 
@@ -356,39 +351,39 @@ class CryptographyWidget(QMainWindow):
 
         Crypto1_cipher_action = QAction("Crypto-1", self)
         Crypto1_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(StreamCipher.Crypto1Widget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.Crypto1Widget))  # 修改为通用的处理方法
         stream_algorithm_menu.addAction(Crypto1_cipher_action)
 
         RC4_cipher_action = QAction("RC4", self)
         RC4_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(StreamCipher.RC4Widget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.RC4Widget))  # 修改为通用的处理方法
         stream_algorithm_menu.addAction(RC4_cipher_action)
 
         SEAL_cipher_action = QAction("SEAL", self)
         SEAL_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(StreamCipher.SEALWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.SEALWidget))  # 修改为通用的处理方法
         stream_algorithm_menu.addAction(SEAL_cipher_action)
 
         ZUC_cipher_action = QAction("ZUC", self)
         ZUC_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(StreamCipher.ZUCWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.ZUCWidget))  # 修改为通用的处理方法
         stream_algorithm_menu.addAction(ZUC_cipher_action)
 
         math_algorithm_menu = menubar.addMenu("Mathematical Basis")
 
         CRT_cipher_action = QAction("CRT", self)
         CRT_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(MathematicalBasis.CRTWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.CRTWidget))  # 修改为通用的处理方法
         math_algorithm_menu.addAction(CRT_cipher_action)
 
         Euler_cipher_action = QAction("Euler", self)
         Euler_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(MathematicalBasis.EulerWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.EulerWidget))  # 修改为通用的处理方法
         math_algorithm_menu.addAction(Euler_cipher_action)
 
         Euclidean_cipher_action = QAction("Euclidean", self)
         Euclidean_cipher_action.triggered.connect(
-            lambda: self.handleCipherAction(MathematicalBasis.EuclideanWidget))  # 修改为通用的处理方法
+            lambda: self.handleCipherAction(widgets.EuclideanWidget))  # 修改为通用的处理方法
         math_algorithm_menu.addAction(Euclidean_cipher_action)
 
         protocol_algorithm_menu = menubar.addMenu("Cryptographic Protocol")
