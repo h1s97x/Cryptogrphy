@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 
-from Hash import SM3
+from core.algorithms.hash.SM3 import Thread as SM3
 from ui.main_window import Button, PlainTextEdit, Group, ErrorType
 from ui.main_window import CryptographyWidget
 from infrastructure.converters.TypeConvert import *

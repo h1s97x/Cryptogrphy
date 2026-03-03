@@ -1,7 +1,7 @@
 import csv
 import re
 import hashlib
-from Hash import SM3
+from core.algorithms.hash.SM3 import Thread as SM3
 from PyQt5.QtWidgets import QApplication
 
 from ui.main_window import Button, PlainTextEdit, KeyGroup, Group, ComboBox

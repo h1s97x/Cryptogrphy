@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 
-from StreamCipher import RC4
+from core.algorithms.symmetric.RC4 import Thread as RC4
 from ui.main_window import Button, PlainTextEdit, Key, KeyGroup, Group, ErrorType
 from ui.main_window import CryptographyWidget
 from infrastructure.converters.TypeConvert import *

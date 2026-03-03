@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QApplication
 
 from core.algorithms.mathematical.Euclidean import Thread as Euclidean
-from core.algorithms.mathematical.Euler import Thread as Euler
+from core.algorithms.mathematical.Euler import EulerFunctionThread, EulerTheoremThread
 from ui.main_window import Button, PlainTextEdit, Group, ErrorType
 from ui.main_window import CryptographyWidget
 
@@ -49,7 +49,7 @@ class EulerWidget(CryptographyWidget):
                 return
             self.logging.log("m:   " + m)
             m = int(m)
-            thread = Euler.EulerFunctionThread(self, m)
+            thread = EulerFunctionThread(self, m)
             thread.final_result.connect(self.func_phi)
             thread.start()
         except Exception as e:
@@ -83,7 +83,7 @@ class EulerWidget(CryptographyWidget):
             a = int(a)
             n = int(n)
             m = int(m)
-            phi_m = Euler.EulerFunctionThread.euler_phi(m)
+            phi_m = EulerFunctionThread.euler_phi(m)
             self.widgets_dict["phi_m"].set_text(str(phi_m))
             self.logging.log("φ(m):" + str(phi_m))
             if Euclidean.Thread.gcd(a, m) != 1:
@@ -96,7 +96,7 @@ class EulerWidget(CryptographyWidget):
                     return
             else:
                 flag = 1
-            thread = Euler.EulerTheoremThread(self, a, n, m, phi_m, flag)
+            thread = EulerTheoremThread(self, a, n, m, phi_m, flag)
             thread.print_final_result.connect(self.func_mod)
             thread.start()
         except Exception as e:

@@ -1,7 +1,7 @@
 import logging
 from PyQt5 import QtCore
 from infrastructure.converters.TypeConvert import *
-from BlockCipher.AES import AES
+from core.algorithms.symmetric.AES import Thread as AESThread
 
 
 def int_to_matrix(text):
@@ -23,7 +23,7 @@ def matrix_to_int(matrix):
     return text
 
 
-class Thread(AES.Thread):
+class Thread(AESThread):
     intermediate_value = QtCore.pyqtSignal(str)
     final_result = QtCore.pyqtSignal(str)
 

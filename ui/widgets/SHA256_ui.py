@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 
-from Hash import SHA256
+from core.algorithms.hash.SHA256 import Thread as SHA256
 from ui.main_window import Button, PlainTextEdit, Group, ErrorType
 from ui.main_window import CryptographyWidget
 from infrastructure.converters.TypeConvert import *

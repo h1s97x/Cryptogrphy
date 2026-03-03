@@ -2,7 +2,7 @@ import logging
 import csv
 from PyQt5 import QtCore
 from infrastructure.converters.TypeConvert import *
-from infrastructure.Path import Path
+import infrastructure.Path as Path
 
 
 class Thread(QtCore.QThread):

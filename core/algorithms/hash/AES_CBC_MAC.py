@@ -1,6 +1,6 @@
 import logging
 from PyQt5 import QtCore
-import BlockCipher.Block_Mode as AES_CBC
+import core.algorithms.symmetric.Block_Mode as AES_CBC
 from infrastructure.converters.TypeConvert import *
 
 

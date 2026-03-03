@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 
-from StreamCipher import SEAL
+from core.algorithms.symmetric.SEAL import Thread as SEAL
 from ui.main_window import Button, PlainTextEdit, Key, KeyGroup, Group, ErrorType
 from ui.main_window import CryptographyWidget
 from infrastructure.converters.TypeConvert import *

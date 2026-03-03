@@ -9,8 +9,20 @@
 =================================================="""
 import logging
 from PyQt5 import QtCore
-from PublicKeyCryptography.gmssl import sm2, func
+# TODO: gmssl 模块已被删除，需要安装 gmssl 库或使用其他实现
+# from PublicKeyCryptography.gmssl import sm2, func
 from infrastructure.converters.TypeConvert import *
+
+# 临时占位符，防止导入错误
+class sm2:
+    @staticmethod
+    def CryptSM2(*args, **kwargs):
+        raise NotImplementedError("SM2 功能需要安装 gmssl 库")
+
+class func:
+    @staticmethod
+    def bytes_to_list(data):
+        raise NotImplementedError("SM2 功能需要安装 gmssl 库")
 
 
 def str_add_space(out_str: str) -> str:

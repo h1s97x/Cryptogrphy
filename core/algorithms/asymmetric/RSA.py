@@ -1,6 +1,21 @@
 import logging
 from PyQt5 import QtCore
-from PublicKeyCryptography import mm_rsa
+# TODO: mm_rsa 模块已被删除，需要重新实现或使用 cryptography 库替代
+# from PublicKeyCryptography import mm_rsa
+
+# 临时占位符，防止导入错误
+class mm_rsa:
+    @staticmethod
+    def newkeys(size, shift_select=False):
+        raise NotImplementedError("RSA 功能需要重新实现")
+    
+    @staticmethod
+    def encrypt(data, key):
+        raise NotImplementedError("RSA 功能需要重新实现")
+    
+    @staticmethod
+    def decrypt(data, key):
+        raise NotImplementedError("RSA 功能需要重新实现")
 
 
 class KeyThread(QtCore.QThread):
