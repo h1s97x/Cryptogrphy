@@ -1,7 +1,7 @@
 import os
 from PyQt5.QtWidgets import QApplication
 
-from ClassicCrypto.Caesar import Caesar
+from core.algorithms.classical.Caesar import Thread as Caesar
 from ui.main_window import Button, PlainTextEdit, Group, ErrorType
 from ui.main_window import CryptographyWidget
 from infrastructure.Path import *

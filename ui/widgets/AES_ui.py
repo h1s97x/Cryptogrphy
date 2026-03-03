@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
-from BlockCipher.AES import AES
+from core.algorithms.symmetric.AES import Thread as AES
 from ui.main_window import Button, PlainTextEdit, Key, Group, ErrorType
 from ui.main_window import CryptographyWidget
 from infrastructure.converters.TypeConvert import *

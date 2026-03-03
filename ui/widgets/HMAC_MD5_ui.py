@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 
-from Hash.HMAC_MD5 import HMAC_MD5
+from core.algorithms.hash.HMAC_MD5 import Thread as HMAC_MD5
 from ui.main_window import Button, PlainTextEdit, Group, ErrorType
 from ui.main_window import CryptographyWidget
 from infrastructure.converters.TypeConvert import *

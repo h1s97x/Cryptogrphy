@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 
-from Hash.AES_CBC_MAC import AES_CBC_MAC
+from core.algorithms.hash.AES_CBC_MAC import Thread as AES_CBC_MAC
 from ui.main_window import Button, PlainTextEdit, Group, ErrorType
 from ui.main_window import CryptographyWidget
 from infrastructure.converters.TypeConvert import *

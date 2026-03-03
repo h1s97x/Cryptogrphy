@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QApplication
 
-from MathematicalBasis.Euclidean import Euclidean
-from MathematicalBasis.CRT import CRT
+from core.algorithms.mathematical.Euclidean import Thread as Euclidean
+from core.algorithms.mathematical.CRT import Thread as CRT
 from ui.main_window import Button, PlainTextEdit, Group, ErrorType
 from ui.main_window import CryptographyWidget
 

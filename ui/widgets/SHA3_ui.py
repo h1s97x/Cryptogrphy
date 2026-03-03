@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 
-from Hash.SHA3 import SHA3
+from core.algorithms.hash.SHA3 import Thread as SHA3
 from ui.main_window import Button, PlainTextEdit, KeyGroup, Group, ErrorType, ComboBox
 from ui.main_window import CryptographyWidget
 

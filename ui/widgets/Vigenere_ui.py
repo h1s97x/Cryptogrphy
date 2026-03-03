@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 
-from ClassicCrypto.Vigenere import Vigenere
+from core.algorithms.classical.Vigenere import Thread as Vigenere
 from ui.main_window import Button, PlainTextEdit, Group, ErrorType
 from ui.main_window import CryptographyWidget
 

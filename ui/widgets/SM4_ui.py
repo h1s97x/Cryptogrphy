@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 
-from BlockCipher.SM4 import SM4
+from core.algorithms.symmetric.SM4 import Thread as SM4
 from ui.main_window import Button, PlainTextEdit, Key, KeyGroup, Group, ErrorType
 from ui.main_window import CryptographyWidget
 from infrastructure.converters.TypeConvert import *

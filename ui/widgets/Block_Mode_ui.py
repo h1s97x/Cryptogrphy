@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 
-from BlockCipher.Block_Mode import Block_Mode
+from core.algorithms.symmetric.Block_Mode import Thread as Block_Mode
 from ui.main_window import Button, PlainTextEdit, Key, KeyGroup, Group, ErrorType, ComboBox
 from ui.main_window import CryptographyWidget
 from infrastructure.converters.TypeConvert import *

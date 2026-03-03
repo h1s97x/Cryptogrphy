@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 
-from ClassicCrypto.Enigma import Enigma
+from core.algorithms.classical.Enigma import Thread as Enigma
 from ui.main_window import Button, PlainTextEdit, Group, ErrorType
 from ui.main_window import CryptographyWidget
 

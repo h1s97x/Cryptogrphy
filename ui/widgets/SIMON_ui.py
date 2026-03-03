@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 
-from BlockCipher.SIMON import SIMON
+from core.algorithms.symmetric.SIMON import Thread as SIMON
 from ui.main_window import Button, PlainTextEdit, Key, KeyGroup, Group, ErrorType
 from ui.main_window import CryptographyWidget
 from infrastructure.converters.TypeConvert import *

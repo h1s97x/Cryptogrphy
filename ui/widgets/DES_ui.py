@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 
-from BlockCipher.DES import DES
+from core.algorithms.symmetric.DES import Thread as DES
 from ui.main_window import Button, PlainTextEdit, Key, KeyGroup, Group, ErrorType, ComboBox
 from ui.main_window import CryptographyWidget
 from infrastructure.converters.TypeConvert import *

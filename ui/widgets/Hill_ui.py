@@ -2,7 +2,7 @@ import numpy
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QUrl
 
-from ClassicCrypto.Hill import Hill
+from core.algorithms.classical.Hill import Thread as Hill
 from ui.main_window import Button, PlainTextEdit, Group, ErrorType
 from ui.main_window import CryptographyWidget
 from infrastructure.Path import *

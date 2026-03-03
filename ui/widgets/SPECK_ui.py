@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 
-from BlockCipher.SPECK import SPECK
+from core.algorithms.symmetric.SPECK import Thread as SPECK
 from ui.main_window import Button, PlainTextEdit, Key, KeyGroup, Group, ErrorType
 from ui.main_window import CryptographyWidget
 from infrastructure.converters.TypeConvert import *

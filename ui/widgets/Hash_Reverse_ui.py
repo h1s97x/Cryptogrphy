@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 
-from Hash.Hash_Reverse import Hash_Reverse
+from core.algorithms.hash.Hash_Reverse import Thread as Hash_Reverse
 from ui.main_window import Button, PlainTextEdit, KeyGroup, Group, ErrorType, ComboBox
 from ui.main_window import CryptographyWidget
 from infrastructure.converters.TypeConvert import *

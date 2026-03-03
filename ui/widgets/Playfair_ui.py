@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 
-from ClassicCrypto.Playfair import Playfair
+from core.algorithms.classical.Playfair import Thread as Playfair
 from ui.main_window import Button, PlainTextEdit, Group, ErrorType
 from ui.main_window import CryptographyWidget
 

@@ -1,7 +1,7 @@
 import os
 from PyQt5.QtWidgets import QApplication
 
-from ClassicCrypto.Monoalphabetic_Cipher import Monoalphabetic_Cipher
+from core.algorithms.classical.Monoalphabetic_Cipher import Thread as Monoalphabetic_Cipher
 from ui.main_window import Button, PlainTextEdit, Group, ErrorType
 from ui.main_window import CryptographyWidget
 from infrastructure.Path import *
