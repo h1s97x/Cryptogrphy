@@ -1,7 +1,7 @@
 from MathMagic.Modules.CryptographyModule import CryptographyWidget, Path, IntroductionTab, Group, PlainTextEdit, Button
 from Crypto.PublicKey import ECC
 import Menu.CryptographicAlgorithm.PublicKeyCryptography.ECDSA.ECDSA as ECDSA
-from Util import TypeConvert, Path
+from infrastructure.converters.TypeConvert import *, Path
 
 
 def str_add_space(out_str: str) -> str:

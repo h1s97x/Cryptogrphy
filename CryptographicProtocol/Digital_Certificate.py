@@ -4,7 +4,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 import Menu.CryptographicAlgorithm.PublicKeyCryptography.RSA.mm_rsa as mm_rsa
 import datetime
-from Util import Path
+from infrastructure.Path import *
 
 
 class KeyThread(QtCore.QThread):

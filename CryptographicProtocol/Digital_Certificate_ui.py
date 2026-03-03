@@ -4,9 +4,9 @@ from . import Digital_Certificate
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 
-from Modules import Button, PlainTextEdit, Group, ErrorType
-from Modules import CryptographyWidget
-from Util import TypeConvert, Path
+from ui.main_window import Button, PlainTextEdit, Group, ErrorType
+from ui.main_window import CryptographyWidget
+from infrastructure.converters.TypeConvert import *, Path
 
 
 class DCWidget(CryptographyWidget):

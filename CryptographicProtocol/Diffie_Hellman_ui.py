@@ -2,9 +2,9 @@ import logging
 
 import random
 from CryptographicProtocol import ModularPower, PrimeGen
-from Modules import Button, PlainTextEdit, Group, ErrorType
-from Modules import CryptographyWidget
-from Util import TypeConvert
+from ui.main_window import Button, PlainTextEdit, Group, ErrorType
+from ui.main_window import CryptographyWidget
+from infrastructure.converters.TypeConvert import *
 
 
 class DHWidget(CryptographyWidget):
