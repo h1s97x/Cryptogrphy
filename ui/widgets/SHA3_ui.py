@@ -7,11 +7,9 @@ from ui.main_window import CryptographyWidget
 
 class SHA3Widget(CryptographyWidget):
     def __init__(self):
-        CryptographyWidget.__init__(self)
+        super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("SHA-3")
-        self.widgets_dict = {}
-        self.groups_config = [
+        self.setWindowTitle("SHA-3")        self.groups_config = [
             KeyGroup(name="",
                      key_edit=[],
                      buttons=[],
@@ -31,7 +29,7 @@ class SHA3Widget(CryptographyWidget):
         ]
         self.sha3_len = 224
         self.render()
-        self.logging.log("SHA-3 algorithm has been imported.\n")
+        self.log_message("SHA-3 algorithm has been imported.\n")
 
         self.card_limit_len = {224: 1600 - 2 * 224 - 4,
                                256: 1600 - 2 * 256 - 4,
@@ -42,7 +40,7 @@ class SHA3Widget(CryptographyWidget):
     def computer_hash(self):
         try:
             # print the login information to main logging widget
-            self.logging.log("Hash on your computer.")
+            self.log_message("Hash on your computer.")
             if not self.error_check_bin(self.widgets_dict["Message"].get_text().replace('\n', '').replace(' ', '').replace('\t', '').replace('\r', '')):
                 return
 
@@ -50,11 +48,11 @@ class SHA3Widget(CryptographyWidget):
             if message_len == 0:
                 message = None
                 self.widgets_dict["Message"].set_text('')
-                self.logging.log("Message: None")
+                self.log_message("Message: None")
             else:
                 message = self.widgets_dict["Message"].get_text().replace('\n', '').replace(' ', '').replace('\t', '').replace('\r', '')
                 self.widgets_dict["Message"].set_text(self._message_show_format(message))
-                self.logging.log("Message: " + message)
+                self.log_message("Message: " + message)
 
             # initial Sha_3 Hash thread
             thread = SHA3.Thread(self, message, self.sha3_len)
@@ -62,14 +60,14 @@ class SHA3Widget(CryptographyWidget):
             thread.final_result.connect(self.set_print_hash)
             # start Hash thread
             thread.start()
-            # self.logging.log("\n")
+            # self.log_message("\n")
         except Exception as e:
-            self.logging.log('Error:' + str(e) + '\n')
+            self.log_message('Error:' + str(e) + '\n')
 
     def set_print_hash(self, string):
         self.widgets_dict["Hash"].set_text(string)
-        self.logging.log("Hash:    " + string)
-        self.logging.log('\n')
+        self.log_message("Hash:    " + string)
+        self.log_message('\n')
 
     # clean widget text
     def hash_clean(self):
@@ -83,7 +81,7 @@ class SHA3Widget(CryptographyWidget):
                 _ = int(text, 2)
                 return True
             except Exception as e:
-                self.logging.log(ErrorType.NotMeetRequirementError.value + '\n')
+                self.log_message(ErrorType.NotMeetRequirementError.value + '\n')
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value)
                 return False
 

@@ -1,17 +1,15 @@
 from PyQt5.QtWidgets import QApplication
 
 from core.algorithms.hash.SM3 import Thread as SM3
-from ui.main_window import Button, PlainTextEdit, Group, ErrorType
+from ui.main_window import Button, PlainTextEdit, Group, ErrorType, KeyGroup, Key
 from ui.main_window import CryptographyWidget
 from infrastructure.converters.TypeConvert import *
 
 class SM3Widget(CryptographyWidget):
     def __init__(self):
-        CryptographyWidget.__init__(self)
+        super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("SM3")
-        self.widgets_dict = {}
-        self.groups_config = [
+        self.setWindowTitle("SM3")        self.groups_config = [
             Group(name="SM3 Hash",
                   plain_text_edits=[PlainTextEdit(id="Plaintext", label="Message (Hex)",
                                                   default_text="61 62 63"),
@@ -24,23 +22,23 @@ class SM3Widget(CryptographyWidget):
         ]
 
         self.render()
-        self.logging.log("SM3 algorithm has been imported.\n")
+        self.log_message("SM3 algorithm has been imported.\n")
 
     # encrypt on computer
     def computer_hash(self):
         try:
             # get text from target widget and print the login information to main logging widget and
-            self.logging.log("Hash on computer.")
+            self.log_message("Hash on computer.")
             if not self.error_check_str_to_hex_list(self.widgets_dict["Plaintext"].get_text(), 'Plaintext'):
                 return
             plaintext = TypeConvert.str_to_hex_list(self.widgets_dict["Plaintext"].get_text())
             if plaintext is None:
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + "You should check the \"Message\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             # format input
             self.widgets_dict["Plaintext"].set_text(TypeConvert.hex_list_to_str(plaintext))
-            self.logging.log("Message:    " + TypeConvert.hex_list_to_str(plaintext))
+            self.log_message("Message:    " + TypeConvert.hex_list_to_str(plaintext))
             # initial SM3 thread
             thread = SM3.Thread(self, plaintext)
             # thread.intermediate_value.connect(self.widgets_dict["IntermediateValueTab"].append)
@@ -49,7 +47,7 @@ class SM3Widget(CryptographyWidget):
             # start SM3 thread
             thread.start()
         except Exception as e:
-            self.logging.log_error(e)
+            self.logging_error(e)
 
     # clean widget text
     def encrypt_clean(self):
@@ -61,11 +59,11 @@ class SM3Widget(CryptographyWidget):
 
     def error_check_str_to_hex_list(self, text: str, input_name: str) -> bool:
         if TypeConvert.str_to_hex_list(text) == 'ERROR_CHARACTER':
-            self.logging.log(ErrorType.CharacterError.value + 'You should check the \"' + input_name + '\" input box.\n')
+            self.log_message(ErrorType.CharacterError.value + 'You should check the \"' + input_name + '\" input box.\n')
             self.pop_message_box(ErrorType.CharacterError.value + 'You should check the \"' + input_name + '\" input box.\n')
             return False
         elif TypeConvert.str_to_hex_list(text) == 'ERROR_LENGTH':
-            self.logging.log(ErrorType.LengthError.value + input_name + 'length must be a multiple of 2.\n')
+            self.log_message(ErrorType.LengthError.value + input_name + 'length must be a multiple of 2.\n')
             self.pop_message_box(ErrorType.LengthError.value + input_name + 'length must be a multiple of 2.')
             return False
         elif TypeConvert.str_to_hex_list(text) is None:
@@ -74,8 +72,8 @@ class SM3Widget(CryptographyWidget):
             return True
 
     def print_result_to_logging(self, str_data):
-        self.logging.log("Result:     " + str(str_data))
-        self.logging.log("\n")
+        self.log_message("Result:     " + str(str_data))
+        self.log_message("\n")
 
 if __name__ == '__main__':
     app = QApplication([])

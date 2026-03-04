@@ -7,11 +7,9 @@ from infrastructure.converters.TypeConvert import *
 
 class AES_CBC_MACWidget(CryptographyWidget):
     def __init__(self):
-        CryptographyWidget.__init__(self)
+        super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("AES-CBC-MAC")
-        self.widgets_dict = {}
-        self.groups_config = [
+        self.setWindowTitle("AES-CBC-MAC")        self.groups_config = [
             Group(name="AES-CBC-MAC Hash",
                   plain_text_edits=[PlainTextEdit(id="Message", label="Message (Hex)",
                                                   default_text="32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34 "
@@ -32,18 +30,18 @@ class AES_CBC_MACWidget(CryptographyWidget):
                   ]),
         ]
         self.render()
-        self.logging.log("AES-CBC-MAC algorithm has been imported.\n")
+        self.log_message("AES-CBC-MAC algorithm has been imported.\n")
 
     # hash on computer
     def computer_hash(self):
         try:
             # print the login information to main logging widget
-            self.logging.log("HMac-Hash on your computer.")
+            self.log_message("HMac-Hash on your computer.")
             if not self.error_check_str_to_hex_list(self.widgets_dict["Message"].get_text(), 'Message'):
                 return
             message_len = len(TypeConvert.str_to_hex_list(self.widgets_dict["Message"].get_text()))
             if message_len == 0 or message_len % 16 != 0:
-                self.logging.log(ErrorType.LengthError.value + "Message length must be a multiple of 16.\n")
+                self.log_message(ErrorType.LengthError.value + "Message length must be a multiple of 16.\n")
                 self.pop_message_box(ErrorType.LengthError.value + "Message length must be a multiple of 16.")
                 return
 
@@ -51,16 +49,16 @@ class AES_CBC_MACWidget(CryptographyWidget):
                 return
             key_len = len(TypeConvert.str_to_hex_list(self.widgets_dict["Key"].get_text()))
             if key_len != 16:
-                self.logging.log(ErrorType.LengthError.value + "Message length must be 16.\n")
+                self.log_message(ErrorType.LengthError.value + "Message length must be 16.\n")
                 self.pop_message_box(ErrorType.LengthError.value + "Message length must be 16.")
                 return
             # format input
             message = TypeConvert.str_to_int(self.widgets_dict["Message"].get_text())
             self.widgets_dict["Message"].set_text(TypeConvert.int_to_str(message, message_len))
-            self.logging.log("Message:     " + self.widgets_dict["Message"].get_text())
+            self.log_message("Message:     " + self.widgets_dict["Message"].get_text())
             key = TypeConvert.str_to_int(self.widgets_dict["Key"].get_text())
             self.widgets_dict["Key"].set_text(TypeConvert.int_to_str(key, key_len))
-            self.logging.log("Key    :     " + self.widgets_dict["Key"].get_text())
+            self.log_message("Key    :     " + self.widgets_dict["Key"].get_text())
 
             # initial Hash thread
             thread = AES_CBC_MAC.Thread(self, message, message_len, self.widgets_dict["Key"].get_text())
@@ -70,12 +68,12 @@ class AES_CBC_MACWidget(CryptographyWidget):
             # start Hash thread
             thread.start()
         except Exception as e:
-            self.logging.log('Error:' + str(e) + '\n')
+            self.log_message('Error:' + str(e) + '\n')
 
     def set_print_hash(self, string):
         self.widgets_dict["Hash"].set_text(string)
-        self.logging.log("Hash:        " + string)
-        self.logging.log('\n')
+        self.log_message("Hash:        " + string)
+        self.log_message('\n')
 
 
     # clean widget text
@@ -84,11 +82,11 @@ class AES_CBC_MACWidget(CryptographyWidget):
 
     def error_check_str_to_hex_list(self, text: str, input_name: str) -> bool:
         if TypeConvert.str_to_hex_list(text) == 'ERROR_CHARACTER':
-            self.logging.log(ErrorType.CharacterError.value + 'You should check the \"' + input_name + '\" input box.\n')
+            self.log_message(ErrorType.CharacterError.value + 'You should check the \"' + input_name + '\" input box.\n')
             self.pop_message_box(ErrorType.CharacterError.value + 'You should check the \"' + input_name + '\" input box.\n')
             return False
         elif TypeConvert.str_to_hex_list(text) == 'ERROR_LENGTH':
-            self.logging.log(ErrorType.LengthError.value + input_name + 'length must be a multiple of 2.\n')
+            self.log_message(ErrorType.LengthError.value + input_name + 'length must be a multiple of 2.\n')
             self.pop_message_box(ErrorType.LengthError.value + input_name + 'length must be a multiple of 2.')
             return False
         elif TypeConvert.str_to_hex_list(text) is None:

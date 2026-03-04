@@ -7,12 +7,10 @@ from infrastructure.converters.TypeConvert import *
 
 class HashReverseWidget(CryptographyWidget):
     def __init__(self):
-        CryptographyWidget.__init__(self)
+        super().__init__()
         self.menuBar().setHidden(True)
         self.setWindowTitle("Hash Reverse")
-        # self.tabs_config = [IntroductionTab(link="file:///" + Path.MENU_DIRECTORY + "/CryptographicAlgorithm/CryptographicHashFunction/Hash_Reverse/html/index.html")]
-        self.widgets_dict = {}
-        self.groups_config = [
+        # self.tabs_config = [IntroductionTab(link="file:///" + Path.MENU_DIRECTORY + "/CryptographicAlgorithm/CryptographicHashFunction/Hash_Reverse/html/index.html")]        self.groups_config = [
             KeyGroup(name="Hash Function",
                      key_edit=[],
                      buttons=[],
@@ -27,7 +25,7 @@ class HashReverseWidget(CryptographyWidget):
                   ]),
         ]
         self.render()
-        self.logging.log("HashReverse algorithm has been imported.\n")
+        self.log_message("HashReverse algorithm has been imported.\n")
         # when combobox changed
 
     def combo_changed(self):
@@ -45,26 +43,26 @@ class HashReverseWidget(CryptographyWidget):
     def hash_reverse(self):
         try:
             # print the login information to main logging widget
-            self.logging.log("Hash Reverse on your computer.")
+            self.log_message("Hash Reverse on your computer.")
             if not self.error(self.widgets_dict["Hash"].get_text(), 'Hash'):
                 return
 
             hash_len = len(TypeConvert.str_to_hex_list(self.widgets_dict["Hash"].get_text()))
             hash_number = self.widgets_dict["ComboBox"].currentIndex()
             if hash_len == 0:
-                self.logging.log(ErrorType.LengthError.value + "The Hash length cannot be 0.\n")
+                self.log_message(ErrorType.LengthError.value + "The Hash length cannot be 0.\n")
                 self.pop_message_box(ErrorType.LengthError.value + "The Hash length cannot be 0.")
                 return
             elif ((hash_number == 1) | (hash_number == 2) | (hash_number == 4)) & (hash_len != 32):
-                self.logging.log(ErrorType.LengthError.value + "The Hash length must be 32.\n")
+                self.log_message(ErrorType.LengthError.value + "The Hash length must be 32.\n")
                 self.pop_message_box(ErrorType.LengthError.value + "The Hash length must be 32.")
                 return
             elif (hash_number == 0) & (hash_len != 20):
-                self.logging.log(ErrorType.LengthError.value + "The Hash length must be 20.\n")
+                self.log_message(ErrorType.LengthError.value + "The Hash length must be 20.\n")
                 self.pop_message_box(ErrorType.LengthError.value + "The Hash length must be 20.")
                 return
             elif (hash_number == 3) & (hash_len != 16):
-                self.logging.log(ErrorType.LengthError.value + "The Hash length must be 16.\n")
+                self.log_message(ErrorType.LengthError.value + "The Hash length must be 16.\n")
                 self.pop_message_box(ErrorType.LengthError.value + "The Hash length must be 16.")
                 return
             hash_mode = self.widgets_dict["ComboBox"].currentText()
@@ -74,8 +72,8 @@ class HashReverseWidget(CryptographyWidget):
 
             # get text from target widget
             # then convert str to int
-            self.logging.log("Hash: " + TypeConvert.int_to_str(hash_result, hash_len))
-            self.logging.log("\n")
+            self.log_message("Hash: " + TypeConvert.int_to_str(hash_result, hash_len))
+            self.log_message("\n")
             # initial Hash Reverse thread
             thread = Hash_Reverse.Thread(self, self.widgets_dict["Hash"].get_text(), hash_mode)
             thread.final_result.connect(self.set_print_message)
@@ -83,23 +81,23 @@ class HashReverseWidget(CryptographyWidget):
             thread.start()
 
         except Exception as e:
-            self.logging.log('Error:' + str(e) + '\n')
+            self.log_message('Error:' + str(e) + '\n')
 
     def set_print_message(self, string):
         self.widgets_dict["Message"].set_text(string)
-        self.logging.log("Message:    " + string)
-        self.logging.log('\n')
+        self.log_message("Message:    " + string)
+        self.log_message('\n')
 
     def hash_clean(self):
         self.widgets_dict["Message"].set_text("")
 
     def error(self, text: str, input_name: str) -> bool:
         if TypeConvert.str_to_hex_list(text) == 'ERROR_CHARACTER':
-            self.logging.log(ErrorType.CharacterError.value + 'You should check the \"' + input_name + '\" input box.\n')
+            self.log_message(ErrorType.CharacterError.value + 'You should check the \"' + input_name + '\" input box.\n')
             self.pop_message_box(ErrorType.CharacterError.value + 'You should check the \"' + input_name + '\" input box.\n')
             return False
         elif TypeConvert.str_to_hex_list(text) == 'ERROR_LENGTH':
-            self.logging.log(ErrorType.LengthError.value + input_name + 'length must be a multiple of 2.\n')
+            self.log_message(ErrorType.LengthError.value + input_name + 'length must be a multiple of 2.\n')
             self.pop_message_box(ErrorType.LengthError.value + input_name + 'length must be a multiple of 2.')
             return False
         elif TypeConvert.str_to_hex_list(text) is None:
