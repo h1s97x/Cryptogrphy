@@ -5,32 +5,23 @@
 ### 启动程序
 
 ```bash
-# 推荐：Fluent UI (自动主题)
-python main_fluent.py
-
-# 或使用统一入口
 python main.py
 ```
 
 ### 启动选项
 
 ```bash
-# Fluent UI (默认，自动主题)
+# 自动主题（默认，跟随系统）
 python main.py
 
-# Fluent UI (浅色主题)
+# 浅色主题
 python main.py --theme light
 
-# Fluent UI (深色主题)
+# 深色主题
 python main.py --theme dark
-
-# 经典UI
-python main.py --classic
 ```
 
-## UI对比
-
-### Fluent UI (推荐)
+## Fluent UI
 
 **特点**:
 - ✅ 现代化 Fluent Design 风格
@@ -40,27 +31,18 @@ python main.py --classic
 - ✅ 流畅的动画效果
 - ✅ 更好的用户体验
 
-**启动**: `python main_fluent.py`
-
-### 经典UI
-
-**特点**:
-- 传统菜单栏界面
-- 简单直接
-- 兼容性好
-
-**启动**: `python main.py --classic`
+**启动**: `python main.py`
 
 ## 主题说明
 
-### 自动主题 (推荐)
+### 自动主题 (默认)
 
 跟随 Windows 系统主题自动切换：
 - 白天 → 浅色主题
 - 晚上 → 深色主题
 
 ```bash
-python main_fluent.py
+python main.py
 # 或
 python main.py --theme auto
 ```
@@ -99,14 +81,7 @@ python main.py --theme dark
 
 ## 功能特性
 
-### Fluent UI
-
-#### 首页
-- 算法统计信息
-- 快速开始指南
-- 统计卡片展示
-
-#### 算法界面
+### 算法界面
 - Hill 密码（完整实现）
   - 密钥配置
   - 加密/解密
@@ -114,21 +89,16 @@ python main.py --theme dark
   - 实时日志
 - 其他算法（待迁移）
 
-#### 设置
+### 首页
+- 算法统计信息
+- 快速开始指南
+- 统计卡片展示
+
+### 设置
 - 主题切换
 - 关于信息
 
-### 经典UI
-
-- 完整的算法实现
-- 传统菜单栏
-- 所有功能可用
-
 ## 常见问题
-
-### Q: 推荐使用哪个UI？
-
-A: 推荐使用 Fluent UI (`python main_fluent.py`)，体验更好。
 
 ### Q: 如何切换主题？
 
@@ -140,25 +110,15 @@ A:
 
 A: 请重启程序，主题需要重新初始化才能完全生效。
 
-### Q: 经典UI还能用吗？
+### Q: 如何使用旧版经典UI？
 
-A: 可以，运行 `python main.py --classic` 即可。
+A: 切换到 `classic-ui` 分支：
+```bash
+git checkout classic-ui
+python main.py
+```
 
 ## 开发说明
-
-### 项目结构
-
-```
-ui/
-├── fluent/              # Fluent UI (新)
-│   ├── main_window.py
-│   ├── components/      # 可复用组件
-│   ├── interfaces/      # 界面
-│   └── widgets/         # 算法界面
-├── widgets/             # 经典UI算法界面
-├── dialogs/             # 对话框
-└── main_window.py       # 经典UI主窗口
-```
 
 ### 迁移算法到Fluent UI
 
@@ -180,9 +140,9 @@ ui/
 
 ## 总结
 
-- ✅ 推荐使用 Fluent UI
+- ✅ 使用 Fluent UI
 - ✅ 使用自动主题跟随系统
 - ✅ 需要固定主题时使用启动参数
-- ✅ 经典UI作为备选方案
+- ✅ 旧版UI保存在 `classic-ui` 分支
 
 享受现代化的UI体验！🎨
