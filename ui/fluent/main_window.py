@@ -150,6 +150,7 @@ class FluentMainWindow(FluentWindow):
         from ui.fluent.widgets.aes_widget import AESWidget
         from ui.fluent.widgets.des_widget import DESWidget
         from ui.fluent.widgets.sm4_widget import SM4Widget
+        from ui.fluent.widgets.speck_widget import SPECKWidget
         
         # AES
         self.aesWidget = AESWidget(self)
@@ -178,6 +179,16 @@ class FluentMainWindow(FluentWindow):
             self.sm4Widget,
             FIF.DOCUMENT,
             'SM4',
+            NavigationItemPosition.SCROLL
+        )
+        
+        # SPECK
+        self.speckWidget = SPECKWidget(self)
+        self.speckWidget.setObjectName('speckWidget')
+        self.addSubInterface(
+            self.speckWidget,
+            FIF.DOCUMENT,
+            'SPECK',
             NavigationItemPosition.SCROLL
         )
     
