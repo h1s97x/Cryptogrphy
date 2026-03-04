@@ -7,13 +7,11 @@ from infrastructure.converters.TypeConvert import *
 
 class ZUCWidget(CryptographyWidget):
     def __init__(self):
-        CryptographyWidget.__init__(self)
+        super().__init__()
         self.menuBar().setHidden(True)
         # set tabs widget configurations
         # link: link to the html file
-        self.setWindowTitle("ZUC")
-        self.widgets_dict = {}
-        self.groups_config = [
+        self.setWindowTitle("ZUC")        self.groups_config = [
             KeyGroup(name="Key",
                   key_edit=[Key(enabled=True, id="Key", label="Key (Hex)",
                                         default_text="3D 4C 4B E9 6A 82 FD AE B5 8F 64 1D B1 7B 45 5B")],
@@ -34,38 +32,38 @@ class ZUCWidget(CryptographyWidget):
         ]
 
         self.render()
-        self.logging.log("ZUC algorithm has been imported.\n")
+        self.log_message("ZUC algorithm has been imported.\n")
 
     def set_print_ciphertext(self, string):
         self.widgets_dict["_Ciphertext"].set_text(string)
-        self.logging.log("KeyStream: " + string)
-        self.logging.log('\n')
+        self.log_message("KeyStream: " + string)
+        self.log_message('\n')
 
     def set_print_plaintext(self, string):
         self.widgets_dict["_Plaintext"].set_text(string)
-        self.logging.log("iv: " + string)
-        self.logging.log('\n')
+        self.log_message("iv: " + string)
+        self.log_message('\n')
 
     def set_print_ciphertext1(self, str1):
         self.widgets_dict["_Ciphertext"].set_text(str1)
-        self.logging.log("KeyStream z1 : " + str1)
+        self.log_message("KeyStream z1 : " + str1)
 
     def set_print_ciphertext2(self, str2):
         self.widgets_dict["_Ciphertext2"].set_text(str2)
-        self.logging.log("KeyStream z2 : " + str2)
-        self.logging.log('\n')
+        self.log_message("KeyStream z2 : " + str2)
+        self.log_message('\n')
 
     # encrypt on computer
     def computer_encrypt(self):
         try:
             # print the login information to main logging.log widget
-            self.logging.log("Encrypt on your computer.")
+            self.log_message("Encrypt on your computer.")
             if not self.error_check_str_to_hex_list(self.widgets_dict["Key"].get_text(), 'Key'):
                 return
 
             key_len = len(TypeConvert.str_to_hex_list(self.widgets_dict["Key"].get_text()))
             if key_len != 16:
-                self.logging.log(ErrorType.LengthError.value + "Key length must be 16.\n")
+                self.log_message(ErrorType.LengthError.value + "Key length must be 16.\n")
                 self.pop_message_box(ErrorType.LengthError.value + "Key length must be 16.")
                 return
 
@@ -74,7 +72,7 @@ class ZUCWidget(CryptographyWidget):
 
             plaintext_len = len(TypeConvert.str_to_hex_list(self.widgets_dict["Plaintext"].get_text()))
             if plaintext_len != 16:
-                self.logging.log(ErrorType.LengthError.value + "Plaintext length must be 16.\n")
+                self.log_message(ErrorType.LengthError.value + "Plaintext length must be 16.\n")
                 self.pop_message_box(ErrorType.LengthError.value + "Plaintext length must be 16.")
                 return
 
@@ -86,8 +84,8 @@ class ZUCWidget(CryptographyWidget):
 
             # get text from target widget
             # then convert str to int
-            self.logging.log("Key: " + TypeConvert.int_to_str(key, key_len))
-            self.logging.log("iv : " + TypeConvert.int_to_str(plaintext, plaintext_len))
+            self.log_message("Key: " + TypeConvert.int_to_str(key, key_len))
+            self.log_message("iv : " + TypeConvert.int_to_str(plaintext, plaintext_len))
 
             # initial ZUC thread
             thread = ZUC.Thread(self, plaintext, plaintext_len, key, key_len, 0)
@@ -99,7 +97,7 @@ class ZUCWidget(CryptographyWidget):
             thread.start()
 
         except Exception as e:
-            self.logging.log('Error:' + str(e) + '\n')
+            self.log_message('Error:' + str(e) + '\n')
 
 
     # clean widget text
@@ -109,11 +107,11 @@ class ZUCWidget(CryptographyWidget):
 
     def error_check_str_to_hex_list(self, text: str, input_name: str) -> bool:
         if TypeConvert.str_to_hex_list(text) == 'ERROR_CHARACTER':
-            self.logging.log(ErrorType.CharacterError.value + 'You should check the \"' + input_name + '\" input box.\n')
+            self.log_message(ErrorType.CharacterError.value + 'You should check the \"' + input_name + '\" input box.\n')
             self.pop_message_box(ErrorType.CharacterError.value + 'You should check the \"' + input_name + '\" input box.\n')
             return False
         elif TypeConvert.str_to_hex_list(text) == 'ERROR_LENGTH':
-            self.logging.log(ErrorType.LengthError.value + input_name + 'length must be a multiple of 2.\n')
+            self.log_message(ErrorType.LengthError.value + input_name + 'length must be a multiple of 2.\n')
             self.pop_message_box(ErrorType.LengthError.value + input_name + 'length must be a multiple of 2.')
             return False
         elif TypeConvert.str_to_hex_list(text) is None:

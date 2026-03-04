@@ -8,11 +8,9 @@ from infrastructure.converters.TypeConvert import *
 
 class RC4Widget(CryptographyWidget):
     def __init__(self):
-        CryptographyWidget.__init__(self)
+        super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("RC4")
-        self.widgets_dict = {}
-        self.groups_config = [
+        self.setWindowTitle("RC4")        self.groups_config = [
             KeyGroup(name="Key",
                   key_edit=[Key(enabled=True, id="Key", label="Key (Hex)",
                                         default_text="4B 65 79 ")],
@@ -40,13 +38,13 @@ class RC4Widget(CryptographyWidget):
         ]
 
         self.render()
-        self.logging.log("RC4 algorithm has been imported.\n")
+        self.log_message("RC4 algorithm has been imported.\n")
 
     # encrypt on computer
     def computer_encrypt(self):
         try:
             # print the login information to main logging widget
-            self.logging.log("Encrypt on your computer.")
+            self.log_message("Encrypt on your computer.")
             if not self.error_check_str_to_hex_list(self.widgets_dict["Key"].get_text(), 'Key'):
                 return
             if not self.error_check_str_to_hex_list(self.widgets_dict["Plaintext"].get_text(), 'Plaintext'):
@@ -54,12 +52,12 @@ class RC4Widget(CryptographyWidget):
 
             key_len = len(TypeConvert.str_to_hex_list(self.widgets_dict["Key"].get_text()))
             if key_len == 0:
-                self.logging.log(ErrorType.LengthError.value + "Key length cannot be 0.\n")
+                self.log_message(ErrorType.LengthError.value + "Key length cannot be 0.\n")
                 self.pop_message_box(ErrorType.LengthError.value + "Key length cannot be 0.")
                 return
             plaintext_len = len(TypeConvert.str_to_hex_list(self.widgets_dict["Plaintext"].get_text()))
             if plaintext_len == 0:
-                self.logging.log(ErrorType.LengthError.value + "Plaintext length cannot be 0.\n")
+                self.log_message(ErrorType.LengthError.value + "Plaintext length cannot be 0.\n")
                 self.pop_message_box(ErrorType.LengthError.value + "Plaintext length cannot be 0.")
                 return
 
@@ -69,8 +67,8 @@ class RC4Widget(CryptographyWidget):
             key = TypeConvert.str_to_int(self.widgets_dict["Key"].get_text())
             self.widgets_dict["Key"].set_text(TypeConvert.int_to_str(key, key_len))
             # get text from target widget
-            self.logging.log("Plaintext : " + TypeConvert.int_to_str(plaintext, plaintext_len))
-            self.logging.log("Key :       " + TypeConvert.int_to_str(key, key_len))
+            self.log_message("Plaintext : " + TypeConvert.int_to_str(plaintext, plaintext_len))
+            self.log_message("Key :       " + TypeConvert.int_to_str(key, key_len))
 
             # initial Rc4 thread
             thread = RC4.Thread(self, plaintext, plaintext_len, key, key_len, 0)
@@ -81,35 +79,35 @@ class RC4Widget(CryptographyWidget):
             thread.start()
 
         except Exception as e:
-            self.logging.log('Error:' + str(e) + '\n')
+            self.log_message('Error:' + str(e) + '\n')
 
     def set_print_ciphertext(self, string):
         self.widgets_dict["_Ciphertext"].set_text(string)
-        self.logging.log("Ciphertext: " + string)
-        self.logging.log('\n')
+        self.log_message("Ciphertext: " + string)
+        self.log_message('\n')
 
     def set_print_plaintext(self, string):
         self.widgets_dict["_Plaintext"].set_text(string)
-        self.logging.log("Plaintext:  " + string)
-        self.logging.log('\n')
+        self.log_message("Plaintext:  " + string)
+        self.log_message('\n')
 
     # decrypt on computer
     def computer_decrypt(self):
         try:
             # print the login information to main logging widget
-            self.logging.log("Decrypt on your computer.")
+            self.log_message("Decrypt on your computer.")
             if not self.error_check_str_to_hex_list(self.widgets_dict["Key"].get_text(), 'Key'):
                 return
             if not self.error_check_str_to_hex_list(self.widgets_dict["Ciphertext"].get_text(), 'Ciphertext'):
                 return
             key_len = len(TypeConvert.str_to_hex_list(self.widgets_dict["Key"].get_text()))
             if key_len == 0:
-                self.logging.log(ErrorType.LengthError.value + "Key length cannot be 0.\n")
+                self.log_message(ErrorType.LengthError.value + "Key length cannot be 0.\n")
                 self.pop_message_box(ErrorType.LengthError.value + "Key length cannot be 0.")
                 return
             cipher_len = len(TypeConvert.str_to_hex_list(self.widgets_dict["Ciphertext"].get_text()))
             if cipher_len == 0:
-                self.logging.log(ErrorType.LengthError.value + "Ciphertext length cannot be 0.\n")
+                self.log_message(ErrorType.LengthError.value + "Ciphertext length cannot be 0.\n")
                 self.pop_message_box(ErrorType.LengthError.value + "Ciphertext length cannot be 0.")
                 return
 
@@ -120,15 +118,15 @@ class RC4Widget(CryptographyWidget):
             self.widgets_dict["Key"].set_text(TypeConvert.int_to_str(key, key_len))
 
             # get text from target widget
-            self.logging.log("Ciphertext: " + TypeConvert.int_to_str(ciphertext, cipher_len))
-            self.logging.log("Key:        " + TypeConvert.int_to_str(key, key_len))
+            self.log_message("Ciphertext: " + TypeConvert.int_to_str(ciphertext, cipher_len))
+            self.log_message("Key:        " + TypeConvert.int_to_str(key, key_len))
             thread = RC4.Thread(self, ciphertext, cipher_len, key, key_len, 1)
             # thread.intermediate_value.connect(self.widgets_dict["IntermediateValueTab"].append)
             thread.final_result.connect(self.set_print_plaintext)
             thread.start()
         except Exception as e:
-            self.logging.log(e)
-            self.logging.log('Error:' + str(e) + '\n')
+            self.log_message(e)
+            self.log_message('Error:' + str(e) + '\n')
 
     # clean widget text
     def encrypt_clean(self):
@@ -140,11 +138,11 @@ class RC4Widget(CryptographyWidget):
 
     def error_check_str_to_hex_list(self, text: str, input_name: str) -> bool:
         if TypeConvert.str_to_hex_list(text) == 'ERROR_CHARACTER':
-            self.logging.log(ErrorType.CharacterError.value + 'You should check the \"' + input_name + '\" input box.\n')
+            self.log_message(ErrorType.CharacterError.value + 'You should check the \"' + input_name + '\" input box.\n')
             self.pop_message_box(ErrorType.CharacterError.value + 'You should check the \"' + input_name + '\" input box.\n')
             return False
         elif TypeConvert.str_to_hex_list(text) == 'ERROR_LENGTH':
-            self.logging.log(ErrorType.LengthError.value + input_name + 'length must be a multiple of 2.\n')
+            self.log_message(ErrorType.LengthError.value + input_name + 'length must be a multiple of 2.\n')
             self.pop_message_box(ErrorType.LengthError.value + input_name + 'length must be a multiple of 2.')
             return False
         elif TypeConvert.str_to_hex_list(text) is None:

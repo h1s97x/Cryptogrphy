@@ -8,11 +8,9 @@ from infrastructure.converters.TypeConvert import *
 
 class SM4Widget(CryptographyWidget):
     def __init__(self):
-        CryptographyWidget.__init__(self)
+        super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("SM4")
-        self.widgets_dict = {}
-        self.groups_config = [
+        self.setWindowTitle("SM4")        self.groups_config = [
             KeyGroup(name="Key",
                      key_edit=[Key(enabled=True, id="Key", label="Key (Hex)",
                                    default_text="01 23 45 67 89 AB CD EF FE DC BA 98 76 54 32 10")],
@@ -39,40 +37,40 @@ class SM4Widget(CryptographyWidget):
         ]
 
         self.render()
-        self.logging.log("SM4 algorithm has been imported.\n")
+        self.log_message("SM4 algorithm has been imported.\n")
 
     # encrypt on computer
     def computer_encrypt(self):
         try:
             # get text from target widget and print the login information to main logging.log widget and
-            self.logging.log("Encrypt on computer.")
+            self.log_message("Encrypt on computer.")
             key = TypeConvert.str_to_hex_list(self.widgets_dict["Key"].get_text())
             if key is None:
                 self.pop_message_box(
                     ErrorType.NotMeetRequirementError.value + "You should check the \"Key\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             len1 = len(key)
             if not len1 == 16:
                 self.pop_message_box(ErrorType.LengthError.value + "You should check the \"Key\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             plaintext = TypeConvert.str_to_hex_list(self.widgets_dict["Plaintext"].get_text())
             if plaintext is None:
                 self.pop_message_box(
                     ErrorType.NotMeetRequirementError.value + "You should check the \"Plaintext\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             len1 = len(plaintext)
             if not len1 == 16:
                 self.pop_message_box(ErrorType.LengthError.value + "You should check the \"Plaintext\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             # format input
             self.widgets_dict["Plaintext"].set_text(TypeConvert.hex_list_to_str(plaintext))
-            self.logging.log("Plaintext:  " + TypeConvert.hex_list_to_str(plaintext))
+            self.log_message("Plaintext:  " + TypeConvert.hex_list_to_str(plaintext))
             self.widgets_dict["Key"].set_text(TypeConvert.hex_list_to_str(key))
-            self.logging.log("Key:        " + TypeConvert.hex_list_to_str(key))
+            self.log_message("Key:        " + TypeConvert.hex_list_to_str(key))
             # initial SM4 thread
             thread = SM4.Thread(self, plaintext, key, 0)
             # thread.intermediate_value.connect(self.widgets_dict["IntermediateValueTab"].append)
@@ -82,40 +80,40 @@ class SM4Widget(CryptographyWidget):
             # start SM4 thread
             thread.start()
         except Exception as e:
-            self.logging.log_error(e)
+            self.logging_error(e)
 
     # decrypt on computer
     def computer_decrypt(self):
         try:
             # get text from target widget and print the login information to main logging.log widget and
-            self.logging.log("Decrypt on computer.")
+            self.log_message("Decrypt on computer.")
             key = TypeConvert.str_to_hex_list(self.widgets_dict["Key"].get_text())
             if key is None:
                 self.pop_message_box(
                     ErrorType.NotMeetRequirementError.value + "You should check the \"Key\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             len1 = len(key)
             if not len1 == 16:
                 self.pop_message_box(ErrorType.LengthError.value + "You should check the \"Key\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             ciphertext = TypeConvert.str_to_hex_list(self.widgets_dict["Ciphertext"].get_text())
             if ciphertext is None:
                 self.pop_message_box(
                     ErrorType.NotMeetRequirementError.value + "You should check the \"Ciphertext\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             len1 = len(ciphertext)
             if not len1 == 16:
                 self.pop_message_box(ErrorType.LengthError.value + "You should check the \"Ciphertext\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             # format input
             self.widgets_dict["Ciphertext"].set_text(TypeConvert.hex_list_to_str(ciphertext))
-            self.logging.log("Ciphertext: " + TypeConvert.hex_list_to_str(ciphertext))
+            self.log_message("Ciphertext: " + TypeConvert.hex_list_to_str(ciphertext))
             self.widgets_dict["Key"].set_text(TypeConvert.hex_list_to_str(key))
-            self.logging.log("Key:        " + TypeConvert.hex_list_to_str(key))
+            self.log_message("Key:        " + TypeConvert.hex_list_to_str(key))
             # initial SM4 thread
             thread = SM4.Thread(self, ciphertext, key, 1)
             # thread.intermediate_value.connect(self.widgets_dict["IntermediateValueTab"].append)
@@ -124,7 +122,7 @@ class SM4Widget(CryptographyWidget):
             # start SM4 thread
             thread.start()
         except Exception as e:
-            self.logging.log_error(e)
+            self.logging_error(e)
 
     # clean widget text
     def encrypt_clean(self):
@@ -135,8 +133,8 @@ class SM4Widget(CryptographyWidget):
         self.widgets_dict["_Plaintext"].set_text("")
 
     def print_result_to_logging(self, str_data):
-        self.logging.log("Result:     " + str(str_data))
-        self.logging.log("\n")
+        self.log_message("Result:     " + str(str_data))
+        self.log_message("\n")
 
 if __name__ == '__main__':
     app = QApplication([])
