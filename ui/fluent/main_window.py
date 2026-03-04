@@ -81,6 +81,7 @@ class FluentMainWindow(FluentWindow):
         from ui.fluent.widgets.hill_widget import HillWidget
         from ui.fluent.widgets.caesar_widget import CaesarWidget
         from ui.fluent.widgets.vigenere_widget import VigenereWidget
+        from ui.fluent.widgets.playfair_widget import PlayfairWidget
         
         # Hill
         self.hillWidget = HillWidget(self)
@@ -109,6 +110,16 @@ class FluentMainWindow(FluentWindow):
             self.vigenereWidget,
             FIF.DOCUMENT,
             'Vigenere',
+            NavigationItemPosition.SCROLL
+        )
+        
+        # Playfair
+        self.playfairWidget = PlayfairWidget(self)
+        self.playfairWidget.setObjectName('playfairWidget')
+        self.addSubInterface(
+            self.playfairWidget,
+            FIF.DOCUMENT,
+            'Playfair',
             NavigationItemPosition.SCROLL
         )
     
@@ -153,8 +164,9 @@ class FluentMainWindow(FluentWindow):
     
     def addHashAlgorithms(self):
         """添加哈希算法分类"""
-        from ui.fluent.widgets.sha256_widget import SHA256Widget
         from ui.fluent.widgets.md5_widget import MD5Widget
+        from ui.fluent.widgets.sha1_widget import SHA1Widget
+        from ui.fluent.widgets.sha256_widget import SHA256Widget
         
         # MD5
         self.md5Widget = MD5Widget(self)
@@ -163,6 +175,16 @@ class FluentMainWindow(FluentWindow):
             self.md5Widget,
             FIF.DOCUMENT,
             'MD5',
+            NavigationItemPosition.SCROLL
+        )
+        
+        # SHA-1
+        self.sha1Widget = SHA1Widget(self)
+        self.sha1Widget.setObjectName('sha1Widget')
+        self.addSubInterface(
+            self.sha1Widget,
+            FIF.DOCUMENT,
+            'SHA-1',
             NavigationItemPosition.SCROLL
         )
         
