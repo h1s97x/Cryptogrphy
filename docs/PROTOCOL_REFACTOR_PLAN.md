@@ -1,0 +1,267 @@
+# CryptographicProtocol 重构计划
+
+## 概述
+
+将 `CryptographicProtocol/` 目录下的7个密码协议从旧UI框架迁移到 Fluent UI。
+
+## 当前状态
+
+### 现有协议列表
+
+| 协议 | 文件 | 复杂度 | 优先级 |
+|------|------|--------|--------|
+| Diffie-Hellman | `Diffie_Hellman_ui.py` | 高（智能卡） | P2 |
+| Digital Envelope | `Digital_Envelope_ui.py`, `Digital_Envelope.py` | 高（RSA+AES） | P2 |
+| Digital Certificate | `Digital_Certificate_ui.py`, `Digital_Certificate.py` | 高（PKI） | P3 |
+| Verify | `Verify_ui.py` | 中 | P2 |
+| Millionaire | `Millionaire_ui.py` | 中（安全多方计算） | P3 |
+| Replay Attack | `Replay_Attack_ui.py` | 低 | P3 |
+| Zero Knowledge Proof | `Zero_Knowledge_Proof_ui.py` | 中 | P3 |
+
+### 技术债务
+
+1. **使用旧UI框架**
+   - 继承自 `CryptographyWidget`
+   - 使用 `Group`, `Button`, `PlainTextEdit` 配置
+   - 需要迁移到 Fluent UI 组件
+
+2. **智能卡依赖**
+   - Diffie-Hellman 等协议依赖智能卡通信
+   - 需要保留或模拟智能卡功能
+
+3. **目录位置**
+   - 当前在根目录 `CryptographicProtocol/`
+   - 建议移动到 `core/protocols/` 或保持现状
+
+## 重构策略
+
+### 阶段1：目录重组（可选）
+
+**选项A：移动到 core/protocols/**
+```
+core/
+├── algorithms/
+│   ├── classical/
+│   ├── symmetric/
+│   ├── asymmetric/
+│   ├── hash/
+│   └── mathematical/
+└── protocols/          # 新增
+    ├── diffie_hellman.py
+    ├── digital_envelope.py
+    └── ...
+```
+
+**选项B：保持当前位置**
+```
+CryptographicProtocol/  # 保持不变
+├── __init__.py
+├── diffie_hellman.py   # 重命名（去掉_ui后缀）
+└── ...
+```
+
+**建议：选项B** - 保持当前位置，只重构UI
+
+### 阶段2：UI重构
+
+#### 2.1 创建 Fluent UI Widget
+
+每个协议创建对应的 Fluent Widget：
+
+```python
+# ui/widgets/protocols/diffie_hellman_widget.py
+from PyQt5.QtWidgets import QWidget, QVBoxLayout
+from qfluentwidgets import ScrollArea, TitleLabel, BodyLabel
+
+class DiffieHellmanWidget(ScrollArea):
+    """Diffie-Hellman 密钥交换协议"""
+    
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.initUI()
+    
+    def initUI(self):
+        # 使用 Fluent UI 组件
+        pass
+```
+
+#### 2.2 组件映射
+
+| 旧组件 | 新组件 |
+|--------|--------|
+| `PlainTextEdit` | `TextEdit` / `LineEdit` |
+| `Button` | `PrimaryPushButton` / `PushButton` |
+| `Group` | `CardWidget` |
+| `CryptographyWidget` | `ScrollArea` |
+
+#### 2.3 智能卡功能
+
+**选项A：保留智能卡功能**
+- 创建 `SmartCardWidget` 组件
+- 保留 APDU 通信功能
+
+**选项B：移除智能卡功能**
+- 简化为纯软件实现
+- 移除智能卡相关代码
+
+**建议：选项B** - 先移除智能卡功能，简化重构
+
+### 阶段3：核心逻辑分离
+
+将业务逻辑从UI中分离：
+
+```python
+# CryptographicProtocol/diffie_hellman.py
+class DiffieHellman:
+    """Diffie-Hellman 协议核心逻辑"""
+    
+    def __init__(self, key_length=16):
+        self.key_length = key_length
+        self.prime = None
+        self.primitive = None
+    
+    def generate_parameters(self):
+        """生成参数 p 和 a"""
+        pass
+    
+    def generate_private_key(self):
+        """生成私钥 X_A"""
+        pass
+    
+    def calculate_public_key(self, private_key):
+        """计算公钥 Y_A = a^X_A mod p"""
+        pass
+    
+    def calculate_shared_secret(self, other_public_key, private_key):
+        """计算共享密钥 K = Y_B^X_A mod p"""
+        pass
+```
+
+## 实施步骤
+
+### Step 1: 准备工作 ✅
+
+- [x] 分析现有协议
+- [x] 制定重构计划
+- [x] 创建 `ui/widgets/protocols/` 目录
+- [ ] 创建基础组件
+
+### 当前状态
+
+**已完成**:
+- 分析了7个密码协议的复杂度和依赖
+- 制定了详细的重构计划
+- 创建了协议Widget目录结构
+- 确定了重构策略（保持目录位置，移除智能卡依赖）
+
+**下一步**:
+- 从简单协议开始逐个重构
+- 建议分多次提交，每次完成1-2个协议
+- 优先级：Replay Attack → Verify → 其他
+
+### Step 2: 简单协议重构（P3）
+
+从最简单的协议开始：
+
+1. **Replay Attack** - 最简单
+   - 创建 `ui/widgets/protocols/replay_attack_widget.py`
+   - 实现 Fluent UI
+   - 测试功能
+
+2. **Verify** - 中等复杂度
+   - 创建 Widget
+   - 分离核心逻辑
+   - 测试
+
+### Step 3: 中等协议重构（P2）
+
+3. **Millionaire Problem**
+   - 安全多方计算示例
+   - 创建 Widget
+   - 测试
+
+4. **Zero Knowledge Proof**
+   - 零知识证明
+   - 创建 Widget
+   - 测试
+
+### Step 4: 复杂协议重构（P2-P3）
+
+5. **Digital Envelope**
+   - 结合 RSA + AES
+   - 创建 Widget
+   - 测试
+
+6. **Diffie-Hellman**
+   - 移除智能卡功能
+   - 创建 Widget
+   - 测试
+
+7. **Digital Certificate**
+   - PKI 相关
+   - 创建 Widget
+   - 测试
+
+### Step 5: 集成和测试
+
+- [ ] 更新主窗口导航
+- [ ] 添加协议分类
+- [ ] 全面测试
+- [ ] 更新文档
+
+## 时间估算
+
+- Step 1: 1小时
+- Step 2: 2-3小时（2个协议）
+- Step 3: 3-4小时（2个协议）
+- Step 4: 6-8小时（3个协议）
+- Step 5: 2小时
+
+**总计：14-18小时**
+
+## 风险和挑战
+
+1. **智能卡依赖**
+   - 风险：移除智能卡功能可能影响教学价值
+   - 缓解：保留智能卡代码注释，未来可恢复
+
+2. **复杂业务逻辑**
+   - 风险：协议逻辑复杂，重构可能引入bug
+   - 缓解：逐步重构，充分测试
+
+3. **时间投入**
+   - 风险：重构耗时较长
+   - 缓解：分阶段进行，优先级排序
+
+## 决策点
+
+### 决策1：是否移动目录？
+
+**决定：保持当前位置**
+- 理由：减少改动范围，降低风险
+- 后续可以再考虑重组
+
+### 决策2：是否保留智能卡功能？
+
+**决定：暂时移除**
+- 理由：简化重构，降低复杂度
+- 保留代码注释，未来可恢复
+
+### 决策3：重构顺序？
+
+**决定：从简单到复杂**
+- 理由：快速验证方案，积累经验
+- 降低风险
+
+## 下一步行动
+
+1. 创建 `ui/widgets/protocols/` 目录
+2. 从 Replay Attack 开始重构
+3. 逐步完成其他协议
+4. 更新主窗口集成
+
+---
+
+**创建日期**: 2026-03-05  
+**状态**: 规划中  
+**负责人**: Kiro AI Assistant
