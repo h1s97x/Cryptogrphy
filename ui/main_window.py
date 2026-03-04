@@ -171,9 +171,15 @@ class CryptographyWidget(QMainWindow):
     def __init__(self):
         super().__init__()
         self.groups_config = []
+        self.widgets_dict = {}  # 初始化widgets_dict
         self.directory = Path.RUNNING_DIRECTORY
         self.current_subwidget = None
-        self.initUI()
+        # 初始化logging组件（子类可能需要）
+        self.logging_widget = LoggingWidget()
+        self.logging = Logging(self.logging_widget)
+        # 只有主窗口才调用initUI
+        if self.__class__.__name__ == 'CryptographyWidget':
+            self.initUI()
 
 
     def initUI(self):
@@ -403,6 +409,10 @@ class CryptographyWidget(QMainWindow):
 
     def logging_error(self, error):
         self.logging.log_error(error)
+    
+    def log_message(self, message):
+        """记录日志消息"""
+        self.logging.log(message)
 
     def pop_message_box(self, message):
         QMessageBox.critical(self, "Error", message)
@@ -417,58 +427,68 @@ class CryptographyWidget(QMainWindow):
         event.accept()
 
     def render(self) -> None:
+        """通用的UI渲染方法，基于groups_config配置"""
         layout = QVBoxLayout()
         central_widget = QWidget(self)
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
 
         for group_config in self.groups_config:
+            # 添加组标签
             group_label = QLabel(group_config.name)
+            group_label.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 10px;")
             layout.addWidget(group_label)
 
+            # 处理KeyGroup
             if isinstance(group_config, KeyGroup):
                 for edit in group_config.key_edit:
                     edit_label = QLabel(edit.label)
                     layout.addWidget(edit_label)
 
-                    edit_text = edit.text
-                    edit_widget = TextEdit(edit_text)  # 使用QLineEdit或其他适当的小部件替换此处的QLabel
+                    edit_widget = QLineEdit(edit.text)
+                    if not edit.enabled:
+                        edit_widget.setDisabled(True)
                     layout.addWidget(edit_widget)
 
-                    self.widgets_dict[edit.id] = edit_widget  # 将小部件与edit对象关联起来
+                    self.widgets_dict[edit.id] = edit_widget
 
                 for combo in group_config.combo_box:
                     combo_label = QLabel(combo.label)
                     layout.addWidget(combo_label)
 
-                    combo_items = combo.items
                     combo_widget = QComboBox()
-                    combo_widget.addItems(combo_items)
+                    combo_widget.addItems(combo.items)
+                    if combo.changed_function:
+                        combo_widget.currentIndexChanged.connect(combo.changed_function)
                     layout.addWidget(combo_widget)
 
-                    self.widgets_dict[combo.id] = combo_widget  # 将小部件与combo对象关联起来
-                    combo_widget.currentIndexChanged.connect(combo.changed_function)  # 添加这一行以关联信号和槽函数
+                    self.widgets_dict[combo.id] = combo_widget
 
-            if isinstance(group_config, Group):
+            # 处理普通Group
+            elif isinstance(group_config, Group):
                 for plain_text_edit in group_config.plain_text_edits:
-                    self.widgets_dict[plain_text_edit.id] = plain_text_edit
                     edit_label = QLabel(plain_text_edit.label)
                     layout.addWidget(edit_label)
 
-                    edit_text = plain_text_edit.text
-                    edit_widget = TextEdit(edit_text)
+                    edit_widget = TextEdit(plain_text_edit.text)
+                    if plain_text_edit.read_only:
+                        edit_widget.setReadOnly(True)
                     layout.addWidget(edit_widget)
-                    self.widgets_dict[plain_text_edit.id] = edit_widget  # 将QTextEdit小部件与plain_text_edit对象关联起来
 
+                    self.widgets_dict[plain_text_edit.id] = edit_widget
+
+            # 处理按钮
             for button in group_config.buttons:
-                self.widgets_dict[button.id] = button
                 button_widget = QPushButton(button.name)
                 button_widget.clicked.connect(button.clicked_function)
                 layout.addWidget(button_widget)
 
+                self.widgets_dict[button.id] = button_widget
+
+        # 添加日志组件
         layout.addWidget(self.logging.log_widget)
 
-        self.setGeometry(300, 300, 500, 400)
+        self.setGeometry(300, 300, 800, 600)
         self.show()
 
 if __name__ == '__main__':
