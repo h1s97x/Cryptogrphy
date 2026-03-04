@@ -162,6 +162,8 @@ class FluentMainWindow(FluentWindow):
         from ui.fluent.widgets.des_widget import DESWidget
         from ui.fluent.widgets.sm4_widget import SM4Widget
         from ui.fluent.widgets.speck_widget import SPECKWidget
+        from ui.fluent.widgets.simon_widget import SIMONWidget
+        from ui.fluent.widgets.block_mode_widget import BlockModeWidget
         
         # AES
         self.aesWidget = AESWidget(self)
@@ -202,6 +204,26 @@ class FluentMainWindow(FluentWindow):
             'SPECK',
             NavigationItemPosition.SCROLL
         )
+        
+        # SIMON
+        self.simonWidget = SIMONWidget(self)
+        self.simonWidget.setObjectName('simonWidget')
+        self.addSubInterface(
+            self.simonWidget,
+            FIF.DOCUMENT,
+            'SIMON',
+            NavigationItemPosition.SCROLL
+        )
+        
+        # Block Mode
+        self.blockModeWidget = BlockModeWidget(self)
+        self.blockModeWidget.setObjectName('blockModeWidget')
+        self.addSubInterface(
+            self.blockModeWidget,
+            FIF.DOCUMENT,
+            'Block Mode',
+            NavigationItemPosition.SCROLL
+        )
     
     def addPublicKeyCrypto(self):
         """添加公钥密码分类"""
@@ -209,6 +231,7 @@ class FluentMainWindow(FluentWindow):
         from ui.fluent.widgets.rsa_sign_widget import RSASignWidget
         from ui.fluent.widgets.elgamal_widget import ElGamalWidget
         from ui.fluent.widgets.ecdsa_widget import ECDSAWidget
+        from ui.fluent.widgets.ecc_widget import ECCWidget
         
         # RSA
         self.rsaWidget = RSAWidget(self)
@@ -247,6 +270,16 @@ class FluentMainWindow(FluentWindow):
             self.ecdsaWidget,
             FIF.DOCUMENT,
             'ECDSA',
+            NavigationItemPosition.SCROLL
+        )
+        
+        # ECC
+        self.eccWidget = ECCWidget(self)
+        self.eccWidget.setObjectName('eccWidget')
+        self.addSubInterface(
+            self.eccWidget,
+            FIF.DOCUMENT,
+            'ECC',
             NavigationItemPosition.SCROLL
         )
     
