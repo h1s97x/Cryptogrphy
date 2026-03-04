@@ -10,6 +10,9 @@ from qfluentwidgets import (
     FluentIcon as FIF
 )
 
+# 导入算法介绍按钮
+from ui.components.intro_button import AlgorithmIntroButton
+
 
 class KeyCard(CardWidget):
     """密钥配置卡片"""

@@ -3,13 +3,14 @@ AES 加密算法界面 - Fluent Design 版本
 """
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from qfluentwidgets import (
     ScrollArea, TitleLabel, BodyLabel,
     InfoBar, MessageBox
 )
 
 from ui.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
+from ui.components.intro_button import AlgorithmIntroButton
 from core.algorithms.symmetric.AES import Thread as AESThread
 from infrastructure.converters import TypeConvert
 
@@ -37,13 +38,20 @@ class AESWidget(ScrollArea):
         title = TitleLabel("AES 加密")
         layout.addWidget(title)
         
-        # 描述
+        # 描述和介绍按钮
+        descLayout = QHBoxLayout()
         desc = BodyLabel(
             "AES (Advanced Encryption Standard) 是一种对称加密算法，"
             "使用128位密钥对128位数据块进行加密。输入格式为十六进制。"
         )
         desc.setWordWrap(True)
-        layout.addWidget(desc)
+        descLayout.addWidget(desc, 1)
+        
+        # 算法介绍按钮
+        self.introBtn = AlgorithmIntroButton("AES")
+        descLayout.addWidget(self.introBtn)
+        
+        layout.addLayout(descLayout)
         
         # 密钥配置卡片
         self.keyCard = KeyCard()

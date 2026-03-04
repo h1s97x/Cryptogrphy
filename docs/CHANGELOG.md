@@ -4,6 +4,30 @@
 
 ---
 
+## [2.1.0] - 2026-03-05
+
+### HTML 算法介绍页面集成 ✅
+
+#### 新增功能
+- 创建 `AlgorithmIntroButton` 组件，支持在算法Widget中嵌入HTML介绍页面
+- 使用 QWebEngineView 渲染完整的HTML内容（支持CSS、JS、MathJax）
+- 实现全屏对话框显示算法介绍
+- 集成7个算法的HTML介绍页面：AES, Caesar, DES, Hill, MD5, SM4, Vigenere
+
+#### 技术实现
+- 新增 `ui/components/intro_button.py` - 算法介绍按钮组件
+- 新增 `ui/components/html_viewer.py` - HTML查看器组件
+- 新增 `docs/HTML_INTEGRATION.md` - 集成方案文档
+- 新增 `scripts/add_intro_buttons.py` - 批量集成辅助脚本
+
+#### 使用方法
+```python
+from ui.components.intro_button import AlgorithmIntroButton
+self.introBtn = AlgorithmIntroButton("AES")
+```
+
+---
+
 ## [2.0.0] - 2026-03-04
 
 ### Fluent UI 重构完成 ✅
