@@ -231,7 +231,6 @@ class FluentMainWindow(FluentWindow):
         from ui.fluent.widgets.rsa_sign_widget import RSASignWidget
         from ui.fluent.widgets.elgamal_widget import ElGamalWidget
         from ui.fluent.widgets.ecdsa_widget import ECDSAWidget
-        from ui.fluent.widgets.ecc_widget import ECCWidget
         
         # RSA
         self.rsaWidget = RSAWidget(self)
@@ -270,16 +269,6 @@ class FluentMainWindow(FluentWindow):
             self.ecdsaWidget,
             FIF.DOCUMENT,
             'ECDSA',
-            NavigationItemPosition.SCROLL
-        )
-        
-        # ECC
-        self.eccWidget = ECCWidget(self)
-        self.eccWidget.setObjectName('eccWidget')
-        self.addSubInterface(
-            self.eccWidget,
-            FIF.DOCUMENT,
-            'ECC',
             NavigationItemPosition.SCROLL
         )
     
