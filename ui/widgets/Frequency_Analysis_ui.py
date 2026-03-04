@@ -2,17 +2,15 @@ import os
 from PyQt5.QtWidgets import QApplication
 
 from core.algorithms.classical.Frequency_Analysis import Thread as Frequency_Analysis
-from ui.main_window import Button, PlainTextEdit, Group, ErrorType
+from ui.main_window import Button, PlainTextEdit, Group, ErrorType, KeyGroup, Key
 from ui.main_window import CryptographyWidget
 from infrastructure.Path import *
 
 class FAWidget(CryptographyWidget):
     def __init__(self):
-        CryptographyWidget.__init__(self)
+        super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("Frequency Analysis")
-        self.widgets_dict = {}
-        self.groups_config = [
+        self.setWindowTitle("Frequency Analysis")        self.groups_config = [
             Group(name="File Import",
                   plain_text_edits=[PlainTextEdit(id="Filepath", label="File Path",
                                                   default_text="", read_only=True)],
@@ -32,11 +30,11 @@ class FAWidget(CryptographyWidget):
                   ])
         ]
         self.render()
-        self.logging.log("Frequency Analysis Attack has been imported.\n")
+        self.log_message("Frequency Analysis Attack has been imported.\n")
 
     def logging_decrypt_multi(self, str_data):
-        self.logging.log(str_data)
-        self.logging.log("\n")
+        self.log_message(str_data)
+        self.log_message("\n")
 
     def import_file(self):
         try:
@@ -44,24 +42,24 @@ class FAWidget(CryptographyWidget):
             file_path = Path.get_open_file_path_from_dialog(self, "Txt File (*.txt)", directory)
             self.widgets_dict["Filepath"].set_text(file_path)
         except Exception as e:
-            self.logging.log_error(e)
-        self.logging.log("File imported successfully.\n")
+            self.logging_error(e)
+        self.log_message("File imported successfully.\n")
 
     def attack(self):
         try:
-            self.logging.log("Decrypt on your computer.")
+            self.log_message("Decrypt on your computer.")
             text = self.widgets_dict["Filepath"].get_text()
             if not os.path.exists(text):
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"FilePath\" box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             if os.stat(str(text)).st_size > 2048 * 1024:
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + " In order to ensure the decryption speed, the file size should be within 2M.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             if text == '':
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"FilePath\" box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             key = ""
             # initial Caesar thread
@@ -70,23 +68,23 @@ class FAWidget(CryptographyWidget):
             thread.start()
             self.pop_message_box("Decryption succeeded")
         except Exception as e:
-            self.logging.log_error(e)
+            self.logging_error(e)
 
     def attack_multi(self):
         try:
-            self.logging.log("Decrypt on your computer.")
+            self.log_message("Decrypt on your computer.")
             text = self.widgets_dict["Filepath"].get_text()
             if not os.path.exists(text):
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"FilePath\" box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             if os.stat(str(text)).st_size > 2048 * 1024:
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + " In order to ensure the decryption speed, the file size should be within 2M.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             if text == '':
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"FilePath\" box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             key = ""
             # initial Caesar thread
@@ -96,10 +94,10 @@ class FAWidget(CryptographyWidget):
             thread.start()
             self.pop_message_box("Decryption succeeded")
         except Exception as e:
-            self.logging.log_error(e)
+            self.logging_error(e)
 
     def export_file(self):
-        self.logging.log("File exported successfully.")
+        self.log_message("File exported successfully.")
 
     def encrypt_clean_import(self):
         self.widgets_dict["Filepath"].set_text("")

@@ -8,7 +8,7 @@ from ui.main_window import CryptographyWidget
 from infrastructure.Path import *
 class HillWidget(CryptographyWidget):
     def __init__(self):
-        CryptographyWidget.__init__(self)
+        super().__init__()
         # Hide the menu bar
         self.menuBar().setHidden(True)
         self.setWindowTitle("Hill")
@@ -17,9 +17,7 @@ class HillWidget(CryptographyWidget):
         # set button component configurations;
         # id: the identity of the component
         # clicked_function: execute the function after the button clicked
-        self.path = self.directory + "/ClassicCrypto/Hill/html/index.html"
-        self.widgets_dict = {}
-        self.groups_config = [
+        self.path = self.directory + "/ClassicCrypto/Hill/html/index.html"        self.groups_config = [
             Group(name="Key",
                   plain_text_edits=[PlainTextEdit(id="Key", label="Key (Str)",
                                    default_text="8 6 9 5\n6 9 5 10\n5 8 4 9\n10 6 11 4")],
@@ -51,7 +49,7 @@ class HillWidget(CryptographyWidget):
         # 目前有一个故障，测试时在本目录下运行会导致运行目录设置为本目录，因此path路径就会不正确，但是在主窗口运行就正常
         self.webview.load(QUrl.fromLocalFile(self.path))
         self.render()
-        self.logging.log("Hill algorithm has been imported.\n")
+        self.log_message("Hill algorithm has been imported.\n")
 
     def import_plaintext(self):
         try:
@@ -65,7 +63,7 @@ class HillWidget(CryptographyWidget):
 
         except Exception as e:
             self.logging_error(e)
-        self.logging.log("Plaintext file imported successfully.\n")
+        self.log_message("Plaintext file imported successfully.\n")
 
     def import_ciphertext(self):
         try:
@@ -73,7 +71,7 @@ class HillWidget(CryptographyWidget):
             self.widgets_dict["Ciphertext_text"].set_text(file_path)
         except Exception as e:
             self.logging_error(e)
-        self.logging.log("Ciphertext file imported successfully.\n")
+        self.log_message("Ciphertext file imported successfully.\n")
 
 
     def import_key(self):
@@ -86,7 +84,7 @@ class HillWidget(CryptographyWidget):
 
         except Exception as e:
             self.logging_error(e)
-        self.logging.log("Plaintext file imported successfully.\n")
+        self.log_message("Plaintext file imported successfully.\n")
     def export_file(self):
         try:
             directory = Path.MENU_DIRECTORY
@@ -97,29 +95,29 @@ class HillWidget(CryptographyWidget):
 
         except Exception as e:
             self.logging_error(e)
-        self.logging.log("Plaintext file imported successfully.\n")
+        self.log_message("Plaintext file imported successfully.\n")
 
 
     def func_encrypt(self, str_data):
-        self.logging.log("Ciphertext: " + str_data)
+        self.log_message("Ciphertext: " + str_data)
         self.widgets_dict["_Ciphertext"].set_text(str_data)
         self.widgets_dict["Ciphertext"].set_text(str_data)
-        self.logging.log("\n")
+        self.log_message("\n")
     def func_decrypt(self, str_data):
-        self.logging.log("Plaintext:  " + str_data)
+        self.log_message("Plaintext:  " + str_data)
         self.widgets_dict["_Plaintext"].set_text(str_data)
-        self.logging.log("\n")
+        self.log_message("\n")
 
     # encrypt on computer
     def computer_encrypt(self):
         try:
             # print the login information to main logging widget
-            self.logging.log("Encrypt on your computer.")
+            self.log_message("Encrypt on your computer.")
             self.encrypt_clean()
 
             # 这里由于QTextEdit类自带的方法不会保留\n这类特殊字符，导致key_error方法报错，原来的是用他自己写的get_text()方法获取，考虑复现
             key = self.widgets_dict["Key"].get_text()
-            self.logging.log(key)
+            self.log_message(key)
             if self.key_error(key) == 0:
                 return
             plaintext = self.widgets_dict["Plaintext"].get_text()
@@ -128,16 +126,16 @@ class HillWidget(CryptographyWidget):
             # 明文不能为空
             if plaintext == '':
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Plaintext\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             # 明文中不能含有汉字
             for ch in plaintext:
                 if u'\u4e00' <= ch <= u'\u9fff':
                     self.pop_message_box(ErrorType.CharacterError.value + " You should check the \"Plaintext\" input box.")
-                    self.logging.log("\n")
+                    self.log_message("\n")
                     return
-            self.logging.log("Plaintext:  " + plaintext)
-            self.logging.log("Key:        " + "\n" + key)
+            self.log_message("Plaintext:  " + plaintext)
+            self.log_message("Key:        " + "\n" + key)
             # initial Vigenere thread
             thread = Hill.Thread(self, plaintext, key, 0)
             thread.final_result.connect(self.func_encrypt)
@@ -149,7 +147,7 @@ class HillWidget(CryptographyWidget):
     # decrypt on computer
     def computer_decrypt(self):
         try:
-            self.logging.log("Decrypt on your computer.")
+            self.log_message("Decrypt on your computer.")
             self.decrypt_clean()
             key = self.widgets_dict["Key"].get_text()
             if self.key_error(key) == 0:
@@ -159,17 +157,17 @@ class HillWidget(CryptographyWidget):
                 key_line.remove('')
             row_key = len(key_line)  # 不能连着上两句写
             ciphertext = self.widgets_dict["Ciphertext"].get_text()
-            self.logging.log(ciphertext)
+            self.log_message(ciphertext)
             # 密文不能为空
             if ciphertext == '':
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Ciphertext\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             # 密文中不能含有汉字
             for ch in ciphertext:
                 if u'\u4e00' <= ch <= u'\u9fff':
                     self.pop_message_box(ErrorType.CharacterError.value + " You should check the \"Ciphertext\" input box.")
-                    self.logging.log("\n")
+                    self.log_message("\n")
                     return
             # 当密文字母的个数不是密钥矩阵行数的整数倍时，不能用于解密
             str_list_initial = list(ciphertext)
@@ -181,12 +179,12 @@ class HillWidget(CryptographyWidget):
                     str_list.append(str_list_initial[i])
             if len(str_list) % row_key != 0:
                 self.pop_message_box(ErrorType.LengthError.value + " You should check the \"Ciphertext\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
 
-            self.logging.log("Ciphertext: " + ciphertext)
+            self.log_message("Ciphertext: " + ciphertext)
             key = self.widgets_dict["Key"].get_text()
-            self.logging.log("Key:        " + "\n" + key)
+            self.log_message("Key:        " + "\n" + key)
             thread = Hill.Thread(self, ciphertext, key, 1)
             thread.final_result.connect(self.func_decrypt)
             thread.start()
@@ -199,7 +197,7 @@ class HillWidget(CryptographyWidget):
         if not key_str.isdigit():
             self.pop_message_box(
                 ErrorType.NotMeetRequirementError.value + " You should check the \"Key\" input box." + "The key must be a matrix of positive integers.")
-            self.logging.log("\n")
+            self.log_message("\n")
             return 0
         # 输入的密钥必须是矩阵的形式
         key_line = key.split('\n')
@@ -217,7 +215,7 @@ class HillWidget(CryptographyWidget):
             else:
                 self.pop_message_box(
                     ErrorType.NotMeetRequirementError.value + " You should check the \"Key\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return 0
         key_int = map(int, list(key.split()))
         key_list = []
@@ -226,7 +224,7 @@ class HillWidget(CryptographyWidget):
         key_matrix = numpy.array(key_list).reshape(key_row, key_column)
         if numpy.linalg.det(key_matrix) == 0:  # 判断密钥矩阵是否为可逆矩阵
             self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Key\" input box.")
-            self.logging.log("\n")
+            self.log_message("\n")
             return 0
 
     # clean widget text

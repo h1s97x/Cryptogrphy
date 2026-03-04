@@ -9,11 +9,9 @@ from infrastructure.Path import *
 
 class MonoalphabeticWidget(CryptographyWidget):
     def __init__(self):
-        CryptographyWidget.__init__(self)
+        super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("Monoalphabetic Cipher")
-        self.widgets_dict = {}
-        self.groups_config = [
+        self.setWindowTitle("Monoalphabetic Cipher")        self.groups_config = [
             Group(name="Key",
                   plain_text_edits=[PlainTextEdit(id="Key", label="Key (Str)",
                                    default_text="xyzz")],
@@ -47,26 +45,26 @@ class MonoalphabeticWidget(CryptographyWidget):
                   ])
         ]
         self.render()
-        self.logging.log("Monoalphabetic Cipher with Key has been imported.\n")
+        self.log_message("Monoalphabetic Cipher with Key has been imported.\n")
 
     def func_encrypt(self, str_data):
-        self.logging.log("Ciphertext: " + str_data)
+        self.log_message("Ciphertext: " + str_data)
         self.widgets_dict["_Ciphertext"].set_text(str_data)
-        self.logging.log("\n")
+        self.log_message("\n")
 
     def func_encrypt_text(self, str_data):
-        self.logging.log("The storage path of the plaintext file is : " + str_data)
+        self.log_message("The storage path of the plaintext file is : " + str_data)
         self.widgets_dict["Ciphertext_text"].set_text(str_data)
-        self.logging.log("\n")
+        self.log_message("\n")
 
     def func_decrypt(self, str_data):
-        self.logging.log("Plaintext:  " + str_data)
+        self.log_message("Plaintext:  " + str_data)
         self.widgets_dict["_Plaintext"].set_text(str_data)
-        self.logging.log("\n")
+        self.log_message("\n")
 
     def func_decrypt_text(self, str_data):
-        self.logging.log("The storage path of the ciphertext file is : " + str_data)
-        self.logging.log("\n")
+        self.log_message("The storage path of the ciphertext file is : " + str_data)
+        self.log_message("\n")
 
     def import_plaintext(self):
         try:
@@ -74,8 +72,8 @@ class MonoalphabeticWidget(CryptographyWidget):
             file_path = Path.get_open_file_path_from_dialog(self, "Txt File (*.txt)", directory)
             self.widgets_dict["Plaintext_text"].set_text(file_path)
         except Exception as e:
-            self.logging.log_error(e)
-        self.logging.log("Plaintext file imported successfully.\n")
+            self.logging_error(e)
+        self.log_message("Plaintext file imported successfully.\n")
 
     def import_ciphertext(self):
         try:
@@ -83,33 +81,33 @@ class MonoalphabeticWidget(CryptographyWidget):
             file_path = Path.get_open_file_path_from_dialog(self, "Txt File (*.txt)", directory)
             self.widgets_dict["Ciphertext_text"].set_text(file_path)
         except Exception as e:
-            self.logging.log_error(e)
-        self.logging.log("Ciphertext file imported successfully.\n")
+            self.logging_error(e)
+        self.log_message("Ciphertext file imported successfully.\n")
 
     # encrypt on computer
     def computer_encrypt(self):
         try:
             # print the login information to main logging.log widget
-            self.logging.log("Encrypt on your computer.")
+            self.log_message("Encrypt on your computer.")
             self.encrypt_clean()
             key = self.widgets_dict["Key"].get_text()
             key = key.replace(' ', '')
             # 密钥不能为空
             if key == '':
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Key\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             # 密钥必须为字母
             for i in range(0, len(key)):
                 if (key[i].isalpha()) == 0:
                     self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Key\" input box.")
-                    self.logging.log("\n")
+                    self.log_message("\n")
                     return
             # 密钥中不能含有汉字
             for ch in key:
                 if u'\u4e00' <= ch <= u'\u9fff':
                     self.pop_message_box(ErrorType.CharacterError.value + " You should check the \"Key\" input box.")
-                    self.logging.log("\n")
+                    self.log_message("\n")
                     return
 
             plaintext = self.widgets_dict["Plaintext"].get_text()
@@ -117,53 +115,53 @@ class MonoalphabeticWidget(CryptographyWidget):
             # 明文不能为空
             if plaintext == '':
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Plaintext\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             # 明文必须为字母
             for i in range(0, len(plaintext)):
                 if (plaintext[i].isalpha()) == 0:
                     self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Plaintext\" input box.")
-                    self.logging.log("\n")
+                    self.log_message("\n")
                     return
             # 明文中不能含有汉字
             for ch in plaintext:
                 if u'\u4e00' <= ch <= u'\u9fff':
                     self.pop_message_box(ErrorType.CharacterError.value + " You should check the \"Plaintext\" input box.")
-                    self.logging.log("\n")
+                    self.log_message("\n")
                     return
-            self.logging.log("Plaintext:  " + plaintext)
-            self.logging.log("Key:        " + key)
+            self.log_message("Plaintext:  " + plaintext)
+            self.log_message("Key:        " + key)
             # initial Mono alphabetic Cipher thread
             thread = Monoalphabetic_Cipher.Thread(self, plaintext, key, 0)
             thread.final_result.connect(self.func_encrypt)
             thread.final_result.connect(self.widgets_dict["Ciphertext"].set_text)
             thread.start()
         except Exception as e:
-            self.logging.log_error(e)
+            self.logging_error(e)
 
     # decrypt on computer
     def computer_decrypt(self):
         try:
-            self.logging.log("Decrypt on your computer.")
+            self.log_message("Decrypt on your computer.")
             self.decrypt_clean()
             key = self.widgets_dict["Key"].get_text()
             key = key.replace(' ', '')
             # 密钥不能为空
             if key == '':
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Key\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             # 密钥必须为字母
             for i in range(0, len(key)):
                 if (key[i].isalpha()) == 0:
                     self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Key\" input box.")
-                    self.logging.log("\n")
+                    self.log_message("\n")
                     return
             # 密钥中不能含有汉字
             for ch in key:
                 if u'\u4e00' <= ch <= u'\u9fff':
                     self.pop_message_box(ErrorType.CharacterError.value + " You should check the \"Key\" input box.")
-                    self.logging.log("\n")
+                    self.log_message("\n")
                     return
 
             ciphertext = self.widgets_dict["Ciphertext"].get_text()
@@ -171,60 +169,60 @@ class MonoalphabeticWidget(CryptographyWidget):
             # 密文不能为空
             if ciphertext == '':
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Ciphertext\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             # 密文必须为字母
             for i in range(0, len(ciphertext)):
                 if (ciphertext[i].isalpha()) == 0:
                     self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Ciphertext\" input box.")
-                    self.logging.log("\n")
+                    self.log_message("\n")
                     return
             # 密文中不能含有汉字
             for ch in ciphertext:
                 if u'\u4e00' <= ch <= u'\u9fff':
                     self.pop_message_box(ErrorType.CharacterError.value + " You should check the \"Ciphertext\" input box.")
-                    self.logging.log("\n")
+                    self.log_message("\n")
                     return
-            self.logging.log("Ciphertext: " + ciphertext)
-            self.logging.log("Key:        " + key)
+            self.log_message("Ciphertext: " + ciphertext)
+            self.log_message("Key:        " + key)
             thread = Monoalphabetic_Cipher.Thread(self, ciphertext, key, 1)
             thread.final_result.connect(self.func_decrypt)
             thread.start()
         except Exception as e:
-            self.logging.log_error(e)
+            self.logging_error(e)
 
     def computer_encrypt_text(self):
         try:
-            self.logging.log("Encrypt on your computer.")
+            self.log_message("Encrypt on your computer.")
             key = self.widgets_dict["Key"].get_text()
             key = key.replace(' ', '')
             # 密钥不能为空
             if key == '':
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Key\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             # 密钥必须为字母
             for i in range(0, len(key)):
                 if (key[i].isalpha()) == 0:
                     self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Key\" input box.")
-                    self.logging.log("\n")
+                    self.log_message("\n")
                     return
             # 密钥中不能含有汉字
             for ch in key:
                 if u'\u4e00' <= ch <= u'\u9fff':
                     self.pop_message_box(ErrorType.CharacterError.value + " You should check the \"Key\" input box.")
-                    self.logging.log("\n")
+                    self.log_message("\n")
                     return
 
             text = self.widgets_dict["Plaintext_text"].get_text()  # 明文路径
             # text = text.replace(' ','')
             if not os.path.exists(text):
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Plaintext_text\" box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             if text == '':
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Plaintext_text\" box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             # initial Mono alphabetic cipher thread
             thread = Monoalphabetic_Cipher.Thread(self, text, key, 2)
@@ -232,39 +230,39 @@ class MonoalphabeticWidget(CryptographyWidget):
             thread.start()
             self.pop_message_box("Encryption succeeded.")
         except Exception as e:
-            self.logging.log_error(e)
+            self.logging_error(e)
 
     def computer_decrypt_text(self):
         try:
-            self.logging.log("Decrypt on your computer.")
+            self.log_message("Decrypt on your computer.")
             key = self.widgets_dict["Key"].get_text()
             key = key.replace(' ', '')
             # 密钥不能为空
             if key == '':
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Key\" input box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             # 密钥必须为字母
             for i in range(0, len(key)):
                 if (key[i].isalpha()) == 0:
                     self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Key\" input box.")
-                    self.logging.log("\n")
+                    self.log_message("\n")
                     return
             # 密钥中不能含有汉字
             for ch in key:
                 if u'\u4e00' <= ch <= u'\u9fff':
                     self.pop_message_box(ErrorType.CharacterError.value + " You should check the \"Key\" input box.")
-                    self.logging.log("\n")
+                    self.log_message("\n")
                     return
 
             text = self.widgets_dict["Ciphertext_text"].get_text()
             if not os.path.exists(text):
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Plaintext_text\" box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             if text == '':
                 self.pop_message_box(ErrorType.NotMeetRequirementError.value + " You should check the \"Plaintext_text\" box.")
-                self.logging.log("\n")
+                self.log_message("\n")
                 return
             # initial Mono alphabetic cipher thread
             thread = Monoalphabetic_Cipher.Thread(self, text, key, 3)
@@ -272,7 +270,7 @@ class MonoalphabeticWidget(CryptographyWidget):
             thread.start()
             self.pop_message_box("Decryption succeeded.")
         except Exception as e:
-            self.logging.log_error(e)
+            self.logging_error(e)
 
     # clean widget text
     def encrypt_clean(self):
