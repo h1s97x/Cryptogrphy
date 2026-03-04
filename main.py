@@ -31,6 +31,13 @@ def launch_fluent_ui(theme_mode='auto'):
     """启动Fluent UI"""
     print(f"启动密码学平台 (主题: {theme_mode})...")
     
+    # 重要：必须在创建 QApplication 之前导入 QWebEngineWidgets
+    try:
+        from PyQt5.QtWebEngineWidgets import QWebEngineView
+    except ImportError:
+        print("警告: 未安装 PyQtWebEngine，算法介绍功能将不可用")
+        print("建议运行: pip install PyQtWebEngine")
+    
     try:
         from qfluentwidgets import setTheme, Theme, setThemeColor
         from ui.main_window import FluentMainWindow

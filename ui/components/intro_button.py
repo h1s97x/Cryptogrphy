@@ -4,9 +4,16 @@
 
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtWidgets import QVBoxLayout, QDialog
-from PyQt5.QtWebEngineWidgets import QWebEngineView
-from qfluentwidgets import PushButton, FluentIcon as FIF, InfoBar
+from qfluentwidgets import PushButton, FluentIcon as FIF, InfoBar, MessageBox
 from pathlib import Path
+
+# 尝试导入 QWebEngineView
+try:
+    from PyQt5.QtWebEngineWidgets import QWebEngineView
+    WEBENGINE_AVAILABLE = True
+except ImportError:
+    WEBENGINE_AVAILABLE = False
+    print("警告: PyQtWebEngine 未安装，算法介绍功能将不可用")
 
 
 class AlgorithmIntroButton(PushButton):
@@ -50,6 +57,17 @@ class AlgorithmIntroButton(PushButton):
     
     def showIntro(self):
         """显示算法介绍"""
+        # 检查 WebEngine 是否可用
+        if not WEBENGINE_AVAILABLE:
+            MessageBox(
+                "功能不可用",
+                "算法介绍功能需要安装 PyQtWebEngine。\n\n"
+                "请运行以下命令安装：\n"
+                "pip install PyQtWebEngine",
+                self.window()
+            ).exec()
+            return
+        
         if not self.html_path:
             InfoBar.warning(
                 title="暂无介绍",
@@ -77,6 +95,17 @@ class AlgorithmIntroDialog(QDialog):
     def initUI(self):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
+        
+        if not WEBENGINE_AVAILABLE:
+            # 如果 WebEngine 不可用，显示错误信息
+            from qfluentwidgets import BodyLabel
+            error_label = BodyLabel(
+                "算法介绍功能需要安装 PyQtWebEngine\n\n"
+                "请运行: pip install PyQtWebEngine"
+            )
+            error_label.setAlignment(Qt.AlignCenter)
+            layout.addWidget(error_label)
+            return
         
         # Web视图
         self.webView = QWebEngineView()

@@ -147,12 +147,22 @@ class AESWidget(ScrollArea):
 
 #### 8.1 依赖项
 - PyQt5
-- PyQtWebEngine (需要单独安装)
+- PyQtWebEngine (必需)
 
 安装命令：
 ```bash
 pip install PyQtWebEngine
 ```
+
+或使用核心依赖文件：
+```bash
+pip install -r requirements_core.txt
+```
+
+**重要提示**：
+- PyQtWebEngine 必须在创建 QApplication 之前导入
+- 如果未安装，点击"算法介绍"按钮会显示友好的错误提示
+- main.py 已自动处理导入顺序
 
 #### 8.2 路径解析
 - 使用 `Path` 对象处理路径

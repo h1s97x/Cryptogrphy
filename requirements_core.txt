@@ -1,0 +1,11 @@
+# 密码学平台核心依赖
+
+# UI框架
+PyQt5>=5.15.0
+PyQt-Fluent-Widgets>=1.5.0
+PyQtWebEngine>=5.15.0
+
+# 密码学库
+cryptography>=41.0.0
+pycryptodome>=3.19.0
+gmpy2>=2.1.5
