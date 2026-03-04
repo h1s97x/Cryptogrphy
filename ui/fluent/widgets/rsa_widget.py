@@ -106,7 +106,7 @@ class RSAWidget(ScrollArea):
         # 描述
         desc = BodyLabel(
             "RSA 是一种非对称加密算法，使用公钥加密、私钥解密。"
-            "密钥长度为1024位，输入格式为十六进制（128字节）。"
+            "密钥长度为1024位，使用PKCS1_OAEP填充，最大明文长度为86字节。"
         )
         desc.setWordWrap(True)
         layout.addWidget(desc)
@@ -117,14 +117,15 @@ class RSAWidget(ScrollArea):
         
         # 加密卡片
         self.encryptCard = EncryptCard()
-        default_plaintext = "11 22 33 44 55 66 77 88 99 AA BB CC DD EE FF 00 " * 8
-        self.encryptCard.plaintextEdit.setPlainText(default_plaintext.strip())
-        self.encryptCard.plaintextEdit.setPlaceholderText("输入128字节明文（十六进制）...")
+        # RSA PKCS1_OAEP最大明文长度为86字节（1024位密钥）
+        default_plaintext = "48 65 6C 6C 6F 20 52 53 41 21"  # "Hello RSA!"
+        self.encryptCard.plaintextEdit.setPlainText(default_plaintext)
+        self.encryptCard.plaintextEdit.setPlaceholderText("输入明文（十六进制，最多86字节）...")
         layout.addWidget(self.encryptCard)
         
         # 解密卡片
         self.decryptCard = DecryptCard()
-        self.decryptCard.ciphertextEdit.setPlaceholderText("输入128字节密文（十六进制）...")
+        self.decryptCard.ciphertextEdit.setPlaceholderText("输入密文（十六进制，128字节）...")
         layout.addWidget(self.decryptCard)
         
         # 日志卡片
@@ -193,7 +194,7 @@ class RSAWidget(ScrollArea):
         self.key = None
         self.logCard.log("密钥已清空", "info")
     
-    def validateHexInput(self, text, name, expected_length=128):
+    def validateHexInput(self, text, name, max_length=86):
         """验证十六进制输入"""
         try:
             hex_list = TypeConvert.str_to_hex_list(text)
@@ -207,8 +208,8 @@ class RSAWidget(ScrollArea):
             if hex_list is None:
                 raise ValueError(f"{name}格式错误")
             
-            if len(hex_list) != expected_length:
-                raise ValueError(f"{name}长度必须是{expected_length}字节，当前长度为{len(hex_list)}字节")
+            if len(hex_list) > max_length:
+                raise ValueError(f"{name}长度不能超过{max_length}字节，当前长度为{len(hex_list)}字节")
             
             return True, hex_list
         except Exception as e:
@@ -223,24 +224,14 @@ class RSAWidget(ScrollArea):
             if self.key is None:
                 raise ValueError("请先生成密钥对")
             
-            # 验证明文
+            # 验证明文（最大86字节）
             plaintext_text = self.encryptCard.getPlaintext()
-            valid, result = self.validateHexInput(plaintext_text, "明文", 128)
+            valid, result = self.validateHexInput(plaintext_text, "明文", 86)
             if not valid:
                 raise ValueError(result)
             
-            # 转换为整数
-            plaintext = TypeConvert.str_to_int(plaintext_text)
-            
-            # 检查明文是否小于N
-            if plaintext >= self.key[0].n:
-                raise ValueError("明文太大，必须小于模数N")
-            
-            # 格式化显示
-            plaintext_formatted = TypeConvert.int_to_str(plaintext, 128)
-            self.encryptCard.setPlaintext(plaintext_formatted)
-            
-            self.logCard.log(f"明文: {plaintext_formatted[:50]}...", "info")
+            self.logCard.log(f"明文长度: {len(result)} 字节", "info")
+            self.logCard.log(f"明文: {plaintext_text[:50]}...", "info")
             self.logCard.log(f"使用公钥 (e, N) 加密", "info")
             
             # 转换为字节
@@ -277,24 +268,29 @@ class RSAWidget(ScrollArea):
             if self.key is None:
                 raise ValueError("请先生成密钥对")
             
-            # 验证密文
+            # 获取密文
             ciphertext_text = self.decryptCard.getCiphertext()
-            valid, result = self.validateHexInput(ciphertext_text, "密文", 128)
-            if not valid:
-                raise ValueError(result)
+            hex_list = TypeConvert.str_to_hex_list(ciphertext_text)
             
-            # 转换为整数
-            ciphertext = TypeConvert.str_to_int(ciphertext_text)
+            if hex_list == 'ERROR_CHARACTER':
+                raise ValueError("密文包含非法字符，只能包含十六进制字符（0-9, A-F）")
             
-            # 格式化显示
-            ciphertext_formatted = TypeConvert.int_to_str(ciphertext, 128)
-            self.decryptCard.setCiphertext(ciphertext_formatted)
+            if hex_list == 'ERROR_LENGTH':
+                raise ValueError("密文长度必须是2的倍数")
             
-            self.logCard.log(f"密文: {ciphertext_formatted[:50]}...", "info")
+            if hex_list is None:
+                raise ValueError("密文格式错误")
+            
+            # 密文应该是128字节（1024位密钥）
+            if len(hex_list) != 128:
+                raise ValueError(f"密文长度必须是128字节，当前长度为{len(hex_list)}字节")
+            
+            self.logCard.log(f"密文长度: {len(hex_list)} 字节", "info")
+            self.logCard.log(f"密文: {ciphertext_text[:50]}...", "info")
             self.logCard.log(f"使用私钥 (d, N) 解密", "info")
             
             # 转换为字节
-            ciphertext_bytes = bytes(result)
+            ciphertext_bytes = bytes(hex_list)
             
             # 创建解密线程
             thread = RSA.RsaThread(parent=self, input_bytes=ciphertext_bytes, key=self.key, encrypt_selected=1)
