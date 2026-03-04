@@ -261,6 +261,7 @@ class FluentMainWindow(FluentWindow):
         """添加数学基础分类"""
         from ui.fluent.widgets.euler_widget import EulerWidget
         from ui.fluent.widgets.crt_widget import CRTWidget
+        from ui.fluent.widgets.euclidean_widget import EuclideanWidget
         
         # Euler
         self.eulerWidget = EulerWidget(self)
@@ -279,6 +280,16 @@ class FluentMainWindow(FluentWindow):
             self.crtWidget,
             FIF.DOCUMENT,
             'CRT',
+            NavigationItemPosition.SCROLL
+        )
+        
+        # Euclidean
+        self.euclideanWidget = EuclideanWidget(self)
+        self.euclideanWidget.setObjectName('euclideanWidget')
+        self.addSubInterface(
+            self.euclideanWidget,
+            FIF.DOCUMENT,
+            'Euclidean',
             NavigationItemPosition.SCROLL
         )
     
