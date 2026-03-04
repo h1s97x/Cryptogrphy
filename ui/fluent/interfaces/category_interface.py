@@ -13,7 +13,7 @@ from qfluentwidgets import (
 class AlgorithmCard(CardWidget):
     """算法卡片"""
     
-    clicked = pyqtSignal(str)  # 点击信号，传递算法名称
+    algorithmClicked = pyqtSignal(str)  # 点击信号，传递算法名称
     
     def __init__(self, icon, name, description, objectName, parent=None):
         super().__init__(parent)
@@ -42,7 +42,7 @@ class AlgorithmCard(CardWidget):
         
         # 按钮
         self.openBtn = PushButton("打开")
-        self.openBtn.clicked.connect(lambda: self.clicked.emit(self.objectName))
+        self.openBtn.clicked.connect(lambda: self.algorithmClicked.emit(self.objectName))
         layout.addWidget(self.openBtn)
         
         self.setFixedHeight(200)
@@ -89,7 +89,7 @@ class CategoryInterface(ScrollArea):
                 algo['description'],
                 algo['objectName']
             )
-            card.clicked.connect(self.algorithmClicked.emit)
+            card.algorithmClicked.connect(self.algorithmClicked.emit)
             gridLayout.addWidget(card, i // 3, i % 3)
         
         layout.addLayout(gridLayout)

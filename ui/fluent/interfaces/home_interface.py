@@ -13,7 +13,7 @@ from qfluentwidgets import (
 class CategoryCard(CardWidget):
     """分类卡片"""
     
-    clicked = pyqtSignal(str)  # 点击信号，传递分类名称
+    categoryClicked = pyqtSignal(str)  # 点击信号，传递分类名称
     
     def __init__(self, icon, title, count, description, category, parent=None):
         super().__init__(parent)
@@ -42,7 +42,7 @@ class CategoryCard(CardWidget):
         
         # 按钮
         self.openBtn = PrimaryPushButton("查看算法")
-        self.openBtn.clicked.connect(lambda: self.clicked.emit(self.category))
+        self.openBtn.clicked.connect(lambda: self.categoryClicked.emit(self.category))
         layout.addWidget(self.openBtn)
         
         self.setFixedHeight(260)
@@ -136,7 +136,7 @@ class HomeInterface(ScrollArea):
                 cat['description'],
                 cat['category']
             )
-            card.clicked.connect(self.categoryClicked.emit)
+            card.categoryClicked.connect(self.categoryClicked.emit)
             categoriesLayout.addWidget(card, i // 3, i % 3)
         
         layout.addLayout(categoriesLayout)
