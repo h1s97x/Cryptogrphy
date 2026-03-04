@@ -81,7 +81,7 @@ ui/
 ```python
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 from qfluentwidgets import ScrollArea, TitleLabel, BodyLabel
-from ui.fluent.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
+from ui.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
 
 class MyAlgorithmWidget(ScrollArea):
     def __init__(self, parent=None):
@@ -236,7 +236,7 @@ setTheme(Theme.AUTO)
 ```python
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 from qfluentwidgets import ScrollArea, TitleLabel, BodyLabel
-from ui.fluent.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
+from ui.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
 
 class CaesarWidget(ScrollArea):
     def __init__(self, parent=None):
@@ -267,7 +267,7 @@ class CaesarWidget(ScrollArea):
 在 `ui/fluent/main_window.py` 中添加：
 
 ```python
-from ui.fluent.widgets.caesar_widget import CaesarWidget
+from ui.widgets.caesar_widget import CaesarWidget
 
 # 在 addClassicalCrypto 方法中添加
 self.caesarWidget = CaesarWidget(self)

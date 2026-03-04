@@ -19,42 +19,42 @@ def test_imports():
     
     widgets = [
         # 经典密码
-        ("Hill", "ui.fluent.widgets.hill_widget", "HillWidget"),
-        ("Caesar", "ui.fluent.widgets.caesar_widget", "CaesarWidget"),
-        ("Vigenere", "ui.fluent.widgets.vigenere_widget", "VigenereWidget"),
-        ("Playfair", "ui.fluent.widgets.playfair_widget", "PlayfairWidget"),
-        ("Enigma", "ui.fluent.widgets.enigma_widget", "EnigmaWidget"),
-        ("Monoalphabetic", "ui.fluent.widgets.monoalphabetic_widget", "MonoalphabeticWidget"),
-        ("Frequency Analysis", "ui.fluent.widgets.frequency_analysis_widget", "FrequencyAnalysisWidget"),
+        ("Hill", "ui.widgets.hill_widget", "HillWidget"),
+        ("Caesar", "ui.widgets.caesar_widget", "CaesarWidget"),
+        ("Vigenere", "ui.widgets.vigenere_widget", "VigenereWidget"),
+        ("Playfair", "ui.widgets.playfair_widget", "PlayfairWidget"),
+        ("Enigma", "ui.widgets.enigma_widget", "EnigmaWidget"),
+        ("Monoalphabetic", "ui.widgets.monoalphabetic_widget", "MonoalphabeticWidget"),
+        ("Frequency Analysis", "ui.widgets.frequency_analysis_widget", "FrequencyAnalysisWidget"),
         
         # 对称密码
-        ("AES", "ui.fluent.widgets.aes_widget", "AESWidget"),
-        ("DES", "ui.fluent.widgets.des_widget", "DESWidget"),
-        ("SM4", "ui.fluent.widgets.sm4_widget", "SM4Widget"),
-        ("RC4", "ui.fluent.widgets.rc4_widget", "RC4Widget"),
-        ("SPECK", "ui.fluent.widgets.speck_widget", "SPECKWidget"),
-        ("SIMON", "ui.fluent.widgets.simon_widget", "SIMONWidget"),
-        ("Block Mode", "ui.fluent.widgets.block_mode_widget", "BlockModeWidget"),
+        ("AES", "ui.widgets.aes_widget", "AESWidget"),
+        ("DES", "ui.widgets.des_widget", "DESWidget"),
+        ("SM4", "ui.widgets.sm4_widget", "SM4Widget"),
+        ("RC4", "ui.widgets.rc4_widget", "RC4Widget"),
+        ("SPECK", "ui.widgets.speck_widget", "SPECKWidget"),
+        ("SIMON", "ui.widgets.simon_widget", "SIMONWidget"),
+        ("Block Mode", "ui.widgets.block_mode_widget", "BlockModeWidget"),
         
         # 公钥密码
-        ("RSA", "ui.fluent.widgets.rsa_widget", "RSAWidget"),
-        ("RSA Sign", "ui.fluent.widgets.rsa_sign_widget", "RSASignWidget"),
-        ("ElGamal", "ui.fluent.widgets.elgamal_widget", "ElGamalWidget"),
-        ("ECDSA", "ui.fluent.widgets.ecdsa_widget", "ECDSAWidget"),
+        ("RSA", "ui.widgets.rsa_widget", "RSAWidget"),
+        ("RSA Sign", "ui.widgets.rsa_sign_widget", "RSASignWidget"),
+        ("ElGamal", "ui.widgets.elgamal_widget", "ElGamalWidget"),
+        ("ECDSA", "ui.widgets.ecdsa_widget", "ECDSAWidget"),
         
         # 哈希算法
-        ("MD5", "ui.fluent.widgets.md5_widget", "MD5Widget"),
-        ("SHA-1", "ui.fluent.widgets.sha1_widget", "SHA1Widget"),
-        ("SHA-256", "ui.fluent.widgets.sha256_widget", "SHA256Widget"),
-        ("SHA-3", "ui.fluent.widgets.sha3_widget", "SHA3Widget"),
-        ("SM3", "ui.fluent.widgets.sm3_widget", "SM3Widget"),
-        ("HMAC-MD5", "ui.fluent.widgets.hmac_md5_widget", "HMACMD5Widget"),
-        ("AES-CBC-MAC", "ui.fluent.widgets.aes_cbc_mac_widget", "AESCBCMACWidget"),
+        ("MD5", "ui.widgets.md5_widget", "MD5Widget"),
+        ("SHA-1", "ui.widgets.sha1_widget", "SHA1Widget"),
+        ("SHA-256", "ui.widgets.sha256_widget", "SHA256Widget"),
+        ("SHA-3", "ui.widgets.sha3_widget", "SHA3Widget"),
+        ("SM3", "ui.widgets.sm3_widget", "SM3Widget"),
+        ("HMAC-MD5", "ui.widgets.hmac_md5_widget", "HMACMD5Widget"),
+        ("AES-CBC-MAC", "ui.widgets.aes_cbc_mac_widget", "AESCBCMACWidget"),
         
         # 数学基础
-        ("Euler", "ui.fluent.widgets.euler_widget", "EulerWidget"),
-        ("CRT", "ui.fluent.widgets.crt_widget", "CRTWidget"),
-        ("Euclidean", "ui.fluent.widgets.euclidean_widget", "EuclideanWidget"),
+        ("Euler", "ui.widgets.euler_widget", "EulerWidget"),
+        ("CRT", "ui.widgets.crt_widget", "CRTWidget"),
+        ("Euclidean", "ui.widgets.euclidean_widget", "EuclideanWidget"),
     ]
     
     success_count = 0
@@ -116,7 +116,7 @@ def test_main_window():
     
     try:
         app = QApplication(sys.argv)
-        from ui.fluent.main_window import FluentMainWindow
+        from ui.main_window import FluentMainWindow
         window = FluentMainWindow()
         print("✅ 主窗口创建成功")
         print(f"   窗口标题: {window.windowTitle()}")

@@ -33,7 +33,7 @@ def launch_fluent_ui(theme_mode='auto'):
     
     try:
         from qfluentwidgets import setTheme, Theme, setThemeColor
-        from ui.fluent.main_window import FluentMainWindow
+        from ui.main_window import FluentMainWindow
     except ImportError:
         print("错误: 未安装 QFluentWidgets")
         print("请运行: pip install PyQt-Fluent-Widgets")

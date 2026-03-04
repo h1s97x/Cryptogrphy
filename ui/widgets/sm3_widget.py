@@ -9,7 +9,7 @@ from qfluentwidgets import (
     InfoBar, MessageBox
 )
 
-from ui.fluent.components.algorithm_card import HashCard, LogCard
+from ui.components.algorithm_card import HashCard, LogCard
 from core.algorithms.hash.SM3 import Thread as SM3Thread
 from infrastructure.converters import TypeConvert
 

@@ -9,7 +9,7 @@ from qfluentwidgets import (
     InfoBar, MessageBox, ComboBox
 )
 
-from ui.fluent.components.algorithm_card import HashCard, LogCard
+from ui.components.algorithm_card import HashCard, LogCard
 from core.algorithms.hash.SHA3 import Thread as SHA3Thread
 
 

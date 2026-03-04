@@ -1,5 +1,5 @@
 """
-Vigenere 密码算法界面 - Fluent Design 版本
+Playfair 密码算法界面 - Fluent Design 版本
 """
 
 from PyQt5.QtCore import Qt
@@ -9,16 +9,16 @@ from qfluentwidgets import (
     InfoBar, MessageBox
 )
 
-from ui.fluent.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
-from core.algorithms.classical.Vigenere import Thread as VigenereThread
+from ui.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
+from core.algorithms.classical.Playfair import Thread as PlayfairThread
 
 
-class VigenereWidget(ScrollArea):
-    """Vigenere 密码算法界面"""
+class PlayfairWidget(ScrollArea):
+    """Playfair 密码算法界面"""
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setObjectName("vigenereWidget")
+        self.setObjectName("playfairWidget")
         self.initUI()
         self.connectSignals()
     
@@ -33,26 +33,26 @@ class VigenereWidget(ScrollArea):
         layout.setContentsMargins(36, 36, 36, 36)
         
         # 标题
-        title = TitleLabel("Vigenere 密码")
+        title = TitleLabel("Playfair 密码")
         layout.addWidget(title)
         
         # 描述
         desc = BodyLabel(
-            "Vigenere密码是一种多表替换密码，使用一个关键词来加密明文。"
-            "密钥是一个字母字符串，会循环使用来加密明文中的每个字母。"
+            "Playfair密码是一种双字母替换密码，使用5×5的字母矩阵进行加密。"
+            "密钥用于生成加密矩阵，明文按两个字母一组进行加密。"
         )
         desc.setWordWrap(True)
         layout.addWidget(desc)
         
         # 密钥配置卡片
         self.keyCard = KeyCard()
-        self.keyCard.keyEdit.setPlainText("best")
+        self.keyCard.keyEdit.setPlainText("PLAYFAIR IS DIGRAM CIPHER")
         self.keyCard.keyEdit.setPlaceholderText("输入密钥（字母字符串）...")
         layout.addWidget(self.keyCard)
         
         # 加密卡片
         self.encryptCard = EncryptCard()
-        self.encryptCard.plaintextEdit.setPlainText("data security")
+        self.encryptCard.plaintextEdit.setPlainText("playfair cipher")
         layout.addWidget(self.encryptCard)
         
         # 解密卡片
@@ -66,7 +66,7 @@ class VigenereWidget(ScrollArea):
         layout.addStretch()
         
         # 初始日志
-        self.logCard.log("Vigenere 算法已加载", "success")
+        self.logCard.log("Playfair 算法已加载", "success")
     
     def connectSignals(self):
         """连接信号"""
@@ -89,8 +89,9 @@ class VigenereWidget(ScrollArea):
         """生成密钥"""
         import random
         import string
-        length = random.randint(4, 8)
-        key = ''.join(random.choices(string.ascii_lowercase, k=length))
+        # 生成随机单词组合作为密钥
+        words = ['CRYPTO', 'SECURE', 'CIPHER', 'MATRIX', 'PLAYFAIR', 'DIGRAM']
+        key = ' '.join(random.sample(words, 3))
         self.keyCard.setKey(key)
         self.logCard.log(f"已生成随机密钥: {key}", "success")
         InfoBar.success(
@@ -129,15 +130,15 @@ class VigenereWidget(ScrollArea):
             if not key.strip():
                 raise ValueError("密钥不能为空")
             
-            # 检查密钥中至少含有一个字母
-            has_letter = any(c.isalpha() for c in key)
-            if not has_letter:
-                raise ValueError("密钥中至少要包含一个字母")
-            
             # 检查密钥中是否有汉字
             for ch in key:
                 if '\u4e00' <= ch <= '\u9fff':
                     raise ValueError("密钥不能包含汉字")
+            
+            # 检查密钥中至少含有一个字母
+            has_letter = any(c.isalpha() for c in key)
+            if not has_letter:
+                raise ValueError("密钥中至少要包含一个字母")
             
             return True, key
         except Exception as e:
@@ -168,7 +169,7 @@ class VigenereWidget(ScrollArea):
             self.logCard.log(f"密钥: {key}", "info")
             
             # 创建加密线程
-            thread = VigenereThread(self, plaintext, key, 0)
+            thread = PlayfairThread(self, plaintext, key, 0)
             thread.final_result.connect(self.onEncryptFinished)
             thread.start()
             
@@ -210,11 +211,16 @@ class VigenereWidget(ScrollArea):
                 if '\u4e00' <= ch <= '\u9fff':
                     raise ValueError("密文不能包含汉字")
             
+            # 检查密文中字母数是否为偶数
+            letter_count = sum(1 for c in ciphertext if c.isalpha())
+            if letter_count % 2 != 0:
+                raise ValueError("密文中的字母数必须是偶数")
+            
             self.logCard.log(f"密文: {ciphertext}", "info")
             self.logCard.log(f"密钥: {key}", "info")
             
             # 创建解密线程
-            thread = VigenereThread(self, ciphertext, key, 1)
+            thread = PlayfairThread(self, ciphertext, key, 1)
             thread.final_result.connect(self.onDecryptFinished)
             thread.start()
             

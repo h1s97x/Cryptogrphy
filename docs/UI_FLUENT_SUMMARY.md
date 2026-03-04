@@ -135,7 +135,7 @@ python main.py
 ```python
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 from qfluentwidgets import ScrollArea, TitleLabel, BodyLabel
-from ui.fluent.components.algorithm_card import (
+from ui.components.algorithm_card import (
     KeyCard, EncryptCard, DecryptCard, LogCard
 )
 
@@ -175,7 +175,7 @@ class MyAlgorithmWidget(ScrollArea):
 在 `ui/fluent/main_window.py` 中注册：
 
 ```python
-from ui.fluent.widgets.my_algorithm_widget import MyAlgorithmWidget
+from ui.widgets.my_algorithm_widget import MyAlgorithmWidget
 
 self.myWidget = MyAlgorithmWidget(self)
 self.addSubInterface(

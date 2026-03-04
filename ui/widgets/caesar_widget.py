@@ -1,5 +1,5 @@
 """
-Playfair 密码算法界面 - Fluent Design 版本
+Caesar 密码算法界面 - Fluent Design 版本
 """
 
 from PyQt5.QtCore import Qt
@@ -9,16 +9,16 @@ from qfluentwidgets import (
     InfoBar, MessageBox
 )
 
-from ui.fluent.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
-from core.algorithms.classical.Playfair import Thread as PlayfairThread
+from ui.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
+from core.algorithms.classical.Caesar import Thread as CaesarThread
 
 
-class PlayfairWidget(ScrollArea):
-    """Playfair 密码算法界面"""
+class CaesarWidget(ScrollArea):
+    """Caesar 密码算法界面"""
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setObjectName("playfairWidget")
+        self.setObjectName("caesarWidget")
         self.initUI()
         self.connectSignals()
     
@@ -33,26 +33,26 @@ class PlayfairWidget(ScrollArea):
         layout.setContentsMargins(36, 36, 36, 36)
         
         # 标题
-        title = TitleLabel("Playfair 密码")
+        title = TitleLabel("Caesar 密码")
         layout.addWidget(title)
         
         # 描述
         desc = BodyLabel(
-            "Playfair密码是一种双字母替换密码，使用5×5的字母矩阵进行加密。"
-            "密钥用于生成加密矩阵，明文按两个字母一组进行加密。"
+            "Caesar密码是一种简单的替换密码，通过将字母表中的字母移动固定位数来加密。"
+            "密钥是一个整数，表示移动的位数。"
         )
         desc.setWordWrap(True)
         layout.addWidget(desc)
         
         # 密钥配置卡片
         self.keyCard = KeyCard()
-        self.keyCard.keyEdit.setPlainText("PLAYFAIR IS DIGRAM CIPHER")
-        self.keyCard.keyEdit.setPlaceholderText("输入密钥（字母字符串）...")
+        self.keyCard.keyEdit.setPlainText("3")
+        self.keyCard.keyEdit.setPlaceholderText("输入密钥（整数）...")
         layout.addWidget(self.keyCard)
         
         # 加密卡片
         self.encryptCard = EncryptCard()
-        self.encryptCard.plaintextEdit.setPlainText("playfair cipher")
+        self.encryptCard.plaintextEdit.setPlainText("China")
         layout.addWidget(self.encryptCard)
         
         # 解密卡片
@@ -66,7 +66,7 @@ class PlayfairWidget(ScrollArea):
         layout.addStretch()
         
         # 初始日志
-        self.logCard.log("Playfair 算法已加载", "success")
+        self.logCard.log("Caesar 算法已加载", "success")
     
     def connectSignals(self):
         """连接信号"""
@@ -88,11 +88,8 @@ class PlayfairWidget(ScrollArea):
     def generateKey(self):
         """生成密钥"""
         import random
-        import string
-        # 生成随机单词组合作为密钥
-        words = ['CRYPTO', 'SECURE', 'CIPHER', 'MATRIX', 'PLAYFAIR', 'DIGRAM']
-        key = ' '.join(random.sample(words, 3))
-        self.keyCard.setKey(key)
+        key = random.randint(1, 25)
+        self.keyCard.setKey(str(key))
         self.logCard.log(f"已生成随机密钥: {key}", "success")
         InfoBar.success(
             title="生成成功",
@@ -130,17 +127,14 @@ class PlayfairWidget(ScrollArea):
             if not key.strip():
                 raise ValueError("密钥不能为空")
             
-            # 检查密钥中是否有汉字
-            for ch in key:
-                if '\u4e00' <= ch <= '\u9fff':
-                    raise ValueError("密钥不能包含汉字")
+            if not key.isdigit():
+                raise ValueError("密钥必须是正整数")
             
-            # 检查密钥中至少含有一个字母
-            has_letter = any(c.isalpha() for c in key)
-            if not has_letter:
-                raise ValueError("密钥中至少要包含一个字母")
+            key_int = int(key)
+            if key_int < 0:
+                raise ValueError("密钥必须是正整数")
             
-            return True, key
+            return True, key_int
         except Exception as e:
             return False, str(e)
     
@@ -169,7 +163,7 @@ class PlayfairWidget(ScrollArea):
             self.logCard.log(f"密钥: {key}", "info")
             
             # 创建加密线程
-            thread = PlayfairThread(self, plaintext, key, 0)
+            thread = CaesarThread(self, plaintext, key, 0)
             thread.final_result.connect(self.onEncryptFinished)
             thread.start()
             
@@ -211,16 +205,11 @@ class PlayfairWidget(ScrollArea):
                 if '\u4e00' <= ch <= '\u9fff':
                     raise ValueError("密文不能包含汉字")
             
-            # 检查密文中字母数是否为偶数
-            letter_count = sum(1 for c in ciphertext if c.isalpha())
-            if letter_count % 2 != 0:
-                raise ValueError("密文中的字母数必须是偶数")
-            
             self.logCard.log(f"密文: {ciphertext}", "info")
             self.logCard.log(f"密钥: {key}", "info")
             
             # 创建解密线程
-            thread = PlayfairThread(self, ciphertext, key, 1)
+            thread = CaesarThread(self, ciphertext, key, 1)
             thread.final_result.connect(self.onDecryptFinished)
             thread.start()
             

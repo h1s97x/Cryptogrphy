@@ -10,7 +10,7 @@ from qfluentwidgets import (
     TextEdit, FluentIcon as FIF
 )
 
-from ui.fluent.components.algorithm_card import LogCard
+from ui.components.algorithm_card import LogCard
 from core.algorithms.mathematical.Euclidean import Thread as EuclideanThread
 from core.algorithms.mathematical.Euler import EulerFunctionThread, EulerTheoremThread
 

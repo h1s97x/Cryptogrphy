@@ -1,26 +1,25 @@
 """
-DES 加密算法界面 - Fluent Design 版本
+AES 加密算法界面 - Fluent Design 版本
 """
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout
 from qfluentwidgets import (
-    ScrollArea, TitleLabel, BodyLabel, CardWidget,
-    InfoBar, MessageBox, PushButton, ComboBox, PrimaryPushButton,
-    FluentIcon as FIF
+    ScrollArea, TitleLabel, BodyLabel,
+    InfoBar, MessageBox
 )
 
-from ui.fluent.components.algorithm_card import EncryptCard, DecryptCard, LogCard, KeyCard
-from core.algorithms.symmetric.DES import Thread as DESThread
+from ui.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
+from core.algorithms.symmetric.AES import Thread as AESThread
 from infrastructure.converters import TypeConvert
 
 
-class DESWidget(ScrollArea):
-    """DES 加密算法界面"""
+class AESWidget(ScrollArea):
+    """AES 加密算法界面"""
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setObjectName("desWidget")
+        self.setObjectName("aesWidget")
         self.initUI()
         self.connectSignals()
     
@@ -35,48 +34,32 @@ class DESWidget(ScrollArea):
         layout.setContentsMargins(36, 36, 36, 36)
         
         # 标题
-        title = TitleLabel("DES 加密")
+        title = TitleLabel("AES 加密")
         layout.addWidget(title)
         
         # 描述
         desc = BodyLabel(
-            "DES (Data Encryption Standard) 是一种对称加密算法，"
-            "使用56位密钥对64位数据块进行加密。支持DES和3-DES模式。输入格式为十六进制。"
+            "AES (Advanced Encryption Standard) 是一种对称加密算法，"
+            "使用128位密钥对128位数据块进行加密。输入格式为十六进制。"
         )
         desc.setWordWrap(True)
         layout.addWidget(desc)
         
-        # 模式选择卡片
-        modeCard = CardWidget()
-        modeLayout = QVBoxLayout(modeCard)
-        modeLayout.setSpacing(12)
-        
-        modeTitle = BodyLabel("⚙️ 加密模式")
-        modeTitle.setStyleSheet("font-weight: bold; font-size: 14px;")
-        modeLayout.addWidget(modeTitle)
-        
-        self.modeComboBox = ComboBox()
-        self.modeComboBox.addItems(["DES", "3-DES"])
-        self.modeComboBox.setCurrentIndex(0)
-        modeLayout.addWidget(self.modeComboBox)
-        
-        layout.addWidget(modeCard)
-        
         # 密钥配置卡片
         self.keyCard = KeyCard()
-        self.keyCard.keyEdit.setPlainText("0F 15 71 C9 47 D9 E8 59")
-        self.keyCard.keyEdit.setPlaceholderText("输入密钥（十六进制）...")
+        self.keyCard.keyEdit.setPlainText("2B 7E 15 16 28 AE D2 A6 AB F7 15 88 09 CF 4F 3C")
+        self.keyCard.keyEdit.setPlaceholderText("输入128位密钥（十六进制）...")
         layout.addWidget(self.keyCard)
         
         # 加密卡片
         self.encryptCard = EncryptCard()
-        self.encryptCard.plaintextEdit.setPlainText("02 46 8A CE EC A8 64 20")
-        self.encryptCard.plaintextEdit.setPlaceholderText("输入64位明文（十六进制）...")
+        self.encryptCard.plaintextEdit.setPlainText("32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34")
+        self.encryptCard.plaintextEdit.setPlaceholderText("输入128位明文（十六进制）...")
         layout.addWidget(self.encryptCard)
         
         # 解密卡片
         self.decryptCard = DecryptCard()
-        self.decryptCard.ciphertextEdit.setPlaceholderText("输入64位密文（十六进制）...")
+        self.decryptCard.ciphertextEdit.setPlaceholderText("输入128位密文（十六进制）...")
         layout.addWidget(self.decryptCard)
         
         # 日志卡片
@@ -86,13 +69,10 @@ class DESWidget(ScrollArea):
         layout.addStretch()
         
         # 初始日志
-        self.logCard.log("DES 算法已加载", "success")
+        self.logCard.log("AES 算法已加载", "success")
     
     def connectSignals(self):
         """连接信号"""
-        # 模式切换
-        self.modeComboBox.currentIndexChanged.connect(self.onModeChanged)
-        
         # 密钥卡片
         self.keyCard.generateBtn.clicked.connect(self.generateKey)
         
@@ -105,37 +85,20 @@ class DESWidget(ScrollArea):
         self.decryptCard.decryptBtn.clicked.connect(self.decrypt)
         self.decryptCard.copyBtn.clicked.connect(self.copyPlaintext)
     
-    def onModeChanged(self, index):
-        """模式切换"""
-        if index == 0:  # DES
-            self.keyCard.setKey("0F 15 71 C9 47 D9 E8 59")
-            self.logCard.log("切换到 DES 模式（8字节密钥）", "info")
-        else:  # 3-DES
-            self.keyCard.setKey("0F 15 71 C9 47 D9 E8 59 0F 15 71 C9 47 D9 E8 59 0F 15 71 C9 47 D9 E8 59")
-            self.logCard.log("切换到 3-DES 模式（24字节密钥）", "info")
-    
     def generateKey(self):
         """生成密钥"""
         import os
-        mode = self.modeComboBox.currentIndex()
-        
-        if mode == 0:  # DES
-            key_bytes = os.urandom(8)
-        else:  # 3-DES
-            key_bytes = os.urandom(24)
-        
+        key_bytes = os.urandom(16)
         key_hex = ' '.join([f'{b:02X}' for b in key_bytes])
         self.keyCard.setKey(key_hex)
-        
-        mode_name = "DES" if mode == 0 else "3-DES"
-        self.logCard.log(f"已生成 {mode_name} 随机密钥", "success")
+        self.logCard.log(f"已生成随机密钥", "success")
         InfoBar.success(
             title="生成成功",
-            content=f"已生成{mode_name}随机密钥",
+            content="已生成128位随机密钥",
             parent=self
         )
     
-    def validateHexInput(self, text, name, expected_length):
+    def validateHexInput(self, text, name, expected_length=16):
         """验证十六进制输入"""
         try:
             hex_list = TypeConvert.str_to_hex_list(text)
@@ -150,7 +113,7 @@ class DESWidget(ScrollArea):
                 raise ValueError(f"{name}格式错误")
             
             if len(hex_list) != expected_length:
-                raise ValueError(f"{name}长度必须是{expected_length}字节，当前长度为{len(hex_list)}字节")
+                raise ValueError(f"{name}长度必须是{expected_length}字节（{expected_length*2}个十六进制字符），当前长度为{len(hex_list)}字节")
             
             return True, hex_list
         except Exception as e:
@@ -161,18 +124,15 @@ class DESWidget(ScrollArea):
         try:
             self.logCard.log("开始加密...", "info")
             
-            mode = self.modeComboBox.currentIndex()
-            key_len = 8 if mode == 0 else 24
-            
             # 验证密钥
             key_text = self.keyCard.getKey()
-            valid, result = self.validateHexInput(key_text, "密钥", key_len)
+            valid, result = self.validateHexInput(key_text, "密钥", 16)
             if not valid:
                 raise ValueError(result)
             
             # 验证明文
             plaintext_text = self.encryptCard.getPlaintext()
-            valid, result = self.validateHexInput(plaintext_text, "明文", 8)
+            valid, result = self.validateHexInput(plaintext_text, "明文", 16)
             if not valid:
                 raise ValueError(result)
             
@@ -181,19 +141,17 @@ class DESWidget(ScrollArea):
             key = TypeConvert.str_to_int(key_text)
             
             # 格式化显示
-            plaintext_formatted = TypeConvert.int_to_str(plaintext, 8)
-            key_formatted = TypeConvert.int_to_str(key, key_len)
+            plaintext_formatted = TypeConvert.int_to_str(plaintext, 16)
+            key_formatted = TypeConvert.int_to_str(key, 16)
             
             self.encryptCard.setPlaintext(plaintext_formatted)
             self.keyCard.setKey(key_formatted)
             
-            mode_name = "DES" if mode == 0 else "3-DES"
-            self.logCard.log(f"模式: {mode_name}", "info")
             self.logCard.log(f"明文: {plaintext_formatted}", "info")
             self.logCard.log(f"密钥: {key_formatted}", "info")
             
             # 创建加密线程
-            thread = DESThread(self, plaintext, 8, key, key_len, 0, mode)
+            thread = AESThread(self, plaintext, key, 0)
             thread.final_result.connect(self.onEncryptFinished)
             thread.start()
             
@@ -219,18 +177,15 @@ class DESWidget(ScrollArea):
         try:
             self.logCard.log("开始解密...", "info")
             
-            mode = self.modeComboBox.currentIndex()
-            key_len = 8 if mode == 0 else 24
-            
             # 验证密钥
             key_text = self.keyCard.getKey()
-            valid, result = self.validateHexInput(key_text, "密钥", key_len)
+            valid, result = self.validateHexInput(key_text, "密钥", 16)
             if not valid:
                 raise ValueError(result)
             
             # 验证密文
             ciphertext_text = self.decryptCard.getCiphertext()
-            valid, result = self.validateHexInput(ciphertext_text, "密文", 8)
+            valid, result = self.validateHexInput(ciphertext_text, "密文", 16)
             if not valid:
                 raise ValueError(result)
             
@@ -239,19 +194,17 @@ class DESWidget(ScrollArea):
             key = TypeConvert.str_to_int(key_text)
             
             # 格式化显示
-            ciphertext_formatted = TypeConvert.int_to_str(ciphertext, 8)
-            key_formatted = TypeConvert.int_to_str(key, key_len)
+            ciphertext_formatted = TypeConvert.int_to_str(ciphertext, 16)
+            key_formatted = TypeConvert.int_to_str(key, 16)
             
             self.decryptCard.setCiphertext(ciphertext_formatted)
             self.keyCard.setKey(key_formatted)
             
-            mode_name = "DES" if mode == 0 else "3-DES"
-            self.logCard.log(f"模式: {mode_name}", "info")
             self.logCard.log(f"密文: {ciphertext_formatted}", "info")
             self.logCard.log(f"密钥: {key_formatted}", "info")
             
             # 创建解密线程
-            thread = DESThread(self, ciphertext, 8, key, key_len, 1, mode)
+            thread = AESThread(self, ciphertext, key, 1)
             thread.final_result.connect(self.onDecryptFinished)
             thread.start()
             

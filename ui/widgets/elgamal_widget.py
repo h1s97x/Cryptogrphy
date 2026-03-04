@@ -9,7 +9,7 @@ from qfluentwidgets import (
     PushButton, InfoBar, MessageBox, CardWidget
 )
 
-from ui.fluent.components.algorithm_card import LogCard
+from ui.components.algorithm_card import LogCard
 from core.algorithms.asymmetric.ElGamal import Thread as ElGamalThread
 from infrastructure.converters import TypeConvert
 

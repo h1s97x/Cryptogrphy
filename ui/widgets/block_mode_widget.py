@@ -11,7 +11,7 @@ from qfluentwidgets import (
     ComboBox, SpinBox, FluentIcon as FIF
 )
 
-from ui.fluent.components.algorithm_card import LogCard
+from ui.components.algorithm_card import LogCard
 from core.algorithms.symmetric.Block_Mode import Thread as BlockModeThread
 from infrastructure.converters import TypeConvert
 

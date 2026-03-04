@@ -1,5 +1,5 @@
 """
-MD5 哈希算法界面 - Fluent Design 版本
+SHA-256 哈希算法界面 - Fluent Design 版本
 """
 
 from PyQt5.QtCore import Qt
@@ -9,17 +9,17 @@ from qfluentwidgets import (
     InfoBar, MessageBox
 )
 
-from ui.fluent.components.algorithm_card import HashCard, LogCard
-from core.algorithms.hash.MD5 import Thread as MD5Thread
+from ui.components.algorithm_card import HashCard, LogCard
+from core.algorithms.hash.SHA256 import Thread as SHA256Thread
 from infrastructure.converters import TypeConvert
 
 
-class MD5Widget(ScrollArea):
-    """MD5 哈希算法界面"""
+class SHA256Widget(ScrollArea):
+    """SHA-256 哈希算法界面"""
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setObjectName("md5Widget")
+        self.setObjectName("sha256Widget")
         self.initUI()
         self.connectSignals()
     
@@ -34,13 +34,13 @@ class MD5Widget(ScrollArea):
         layout.setContentsMargins(36, 36, 36, 36)
         
         # 标题
-        title = TitleLabel("MD5 哈希")
+        title = TitleLabel("SHA-256 哈希")
         layout.addWidget(title)
         
         # 描述
         desc = BodyLabel(
-            "MD5 (Message Digest Algorithm 5) 是一种广泛使用的密码学哈希函数，"
-            "可以将任意长度的消息转换为固定长度（128位）的哈希值。输入格式为十六进制。"
+            "SHA-256 (Secure Hash Algorithm 256-bit) 是一种密码学哈希函数，"
+            "可以将任意长度的消息转换为固定长度（256位）的哈希值。输入格式为十六进制。"
         )
         desc.setWordWrap(True)
         layout.addWidget(desc)
@@ -58,7 +58,7 @@ class MD5Widget(ScrollArea):
         layout.addStretch()
         
         # 初始日志
-        self.logCard.log("MD5 算法已加载", "success")
+        self.logCard.log("SHA-256 算法已加载", "success")
     
     def connectSignals(self):
         """连接信号"""
@@ -111,7 +111,7 @@ class MD5Widget(ScrollArea):
             self.logCard.log(f"消息长度: {message_len} 字节", "info")
             
             # 创建哈希线程
-            thread = MD5Thread(self, message, message_len)
+            thread = SHA256Thread(self, message, message_len)
             thread.final_result.connect(self.onHashFinished)
             thread.start()
             

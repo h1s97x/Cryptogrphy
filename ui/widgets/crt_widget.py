@@ -9,7 +9,7 @@ from qfluentwidgets import (
     PushButton, InfoBar, MessageBox, CardWidget, PlainTextEdit
 )
 
-from ui.fluent.components.algorithm_card import LogCard
+from ui.components.algorithm_card import LogCard
 from core.algorithms.mathematical.CRT import Thread as CRTThread
 
 

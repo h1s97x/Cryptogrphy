@@ -33,8 +33,8 @@ class FluentMainWindow(FluentWindow):
         """初始化导航栏"""
         
         # 延迟导入，避免循环依赖
-        from ui.fluent.interfaces.home_interface import HomeInterface
-        from ui.fluent.interfaces.settings_interface import SettingsInterface
+        from ui.interfaces.home_interface import HomeInterface
+        from ui.interfaces.settings_interface import SettingsInterface
         
         # 首页
         self.homeInterface = HomeInterface(self)
@@ -85,7 +85,7 @@ class FluentMainWindow(FluentWindow):
     
     def initCategoryInterfaces(self):
         """初始化分类界面"""
-        from ui.fluent.interfaces.category_interface import CategoryInterface
+        from ui.interfaces.category_interface import CategoryInterface
         
         self.categoryInterfaces = {}
         self.algorithmWidgets = {}
@@ -195,42 +195,42 @@ class FluentMainWindow(FluentWindow):
         """延迟加载算法Widget"""
         widget_map = {
             # 经典密码
-            'hillWidget': ('ui.fluent.widgets.hill_widget', 'HillWidget'),
-            'caesarWidget': ('ui.fluent.widgets.caesar_widget', 'CaesarWidget'),
-            'vigenereWidget': ('ui.fluent.widgets.vigenere_widget', 'VigenereWidget'),
-            'playfairWidget': ('ui.fluent.widgets.playfair_widget', 'PlayfairWidget'),
-            'enigmaWidget': ('ui.fluent.widgets.enigma_widget', 'EnigmaWidget'),
-            'monoWidget': ('ui.fluent.widgets.monoalphabetic_widget', 'MonoalphabeticWidget'),
-            'freqWidget': ('ui.fluent.widgets.frequency_analysis_widget', 'FrequencyAnalysisWidget'),
+            'hillWidget': ('ui.widgets.hill_widget', 'HillWidget'),
+            'caesarWidget': ('ui.widgets.caesar_widget', 'CaesarWidget'),
+            'vigenereWidget': ('ui.widgets.vigenere_widget', 'VigenereWidget'),
+            'playfairWidget': ('ui.widgets.playfair_widget', 'PlayfairWidget'),
+            'enigmaWidget': ('ui.widgets.enigma_widget', 'EnigmaWidget'),
+            'monoWidget': ('ui.widgets.monoalphabetic_widget', 'MonoalphabeticWidget'),
+            'freqWidget': ('ui.widgets.frequency_analysis_widget', 'FrequencyAnalysisWidget'),
             
             # 对称密码
-            'aesWidget': ('ui.fluent.widgets.aes_widget', 'AESWidget'),
-            'desWidget': ('ui.fluent.widgets.des_widget', 'DESWidget'),
-            'sm4Widget': ('ui.fluent.widgets.sm4_widget', 'SM4Widget'),
-            'rc4Widget': ('ui.fluent.widgets.rc4_widget', 'RC4Widget'),
-            'speckWidget': ('ui.fluent.widgets.speck_widget', 'SPECKWidget'),
-            'simonWidget': ('ui.fluent.widgets.simon_widget', 'SIMONWidget'),
-            'blockModeWidget': ('ui.fluent.widgets.block_mode_widget', 'BlockModeWidget'),
+            'aesWidget': ('ui.widgets.aes_widget', 'AESWidget'),
+            'desWidget': ('ui.widgets.des_widget', 'DESWidget'),
+            'sm4Widget': ('ui.widgets.sm4_widget', 'SM4Widget'),
+            'rc4Widget': ('ui.widgets.rc4_widget', 'RC4Widget'),
+            'speckWidget': ('ui.widgets.speck_widget', 'SPECKWidget'),
+            'simonWidget': ('ui.widgets.simon_widget', 'SIMONWidget'),
+            'blockModeWidget': ('ui.widgets.block_mode_widget', 'BlockModeWidget'),
             
             # 公钥密码
-            'rsaWidget': ('ui.fluent.widgets.rsa_widget', 'RSAWidget'),
-            'rsaSignWidget': ('ui.fluent.widgets.rsa_sign_widget', 'RSASignWidget'),
-            'elgamalWidget': ('ui.fluent.widgets.elgamal_widget', 'ElGamalWidget'),
-            'ecdsaWidget': ('ui.fluent.widgets.ecdsa_widget', 'ECDSAWidget'),
+            'rsaWidget': ('ui.widgets.rsa_widget', 'RSAWidget'),
+            'rsaSignWidget': ('ui.widgets.rsa_sign_widget', 'RSASignWidget'),
+            'elgamalWidget': ('ui.widgets.elgamal_widget', 'ElGamalWidget'),
+            'ecdsaWidget': ('ui.widgets.ecdsa_widget', 'ECDSAWidget'),
             
             # 哈希算法
-            'md5Widget': ('ui.fluent.widgets.md5_widget', 'MD5Widget'),
-            'sha1Widget': ('ui.fluent.widgets.sha1_widget', 'SHA1Widget'),
-            'sha256Widget': ('ui.fluent.widgets.sha256_widget', 'SHA256Widget'),
-            'sha3Widget': ('ui.fluent.widgets.sha3_widget', 'SHA3Widget'),
-            'sm3Widget': ('ui.fluent.widgets.sm3_widget', 'SM3Widget'),
-            'hmacmd5Widget': ('ui.fluent.widgets.hmac_md5_widget', 'HMACMD5Widget'),
-            'aesCbcMacWidget': ('ui.fluent.widgets.aes_cbc_mac_widget', 'AESCBCMACWidget'),
+            'md5Widget': ('ui.widgets.md5_widget', 'MD5Widget'),
+            'sha1Widget': ('ui.widgets.sha1_widget', 'SHA1Widget'),
+            'sha256Widget': ('ui.widgets.sha256_widget', 'SHA256Widget'),
+            'sha3Widget': ('ui.widgets.sha3_widget', 'SHA3Widget'),
+            'sm3Widget': ('ui.widgets.sm3_widget', 'SM3Widget'),
+            'hmacmd5Widget': ('ui.widgets.hmac_md5_widget', 'HMACMD5Widget'),
+            'aesCbcMacWidget': ('ui.widgets.aes_cbc_mac_widget', 'AESCBCMACWidget'),
             
             # 数学基础
-            'eulerWidget': ('ui.fluent.widgets.euler_widget', 'EulerWidget'),
-            'crtWidget': ('ui.fluent.widgets.crt_widget', 'CRTWidget'),
-            'euclideanWidget': ('ui.fluent.widgets.euclidean_widget', 'EuclideanWidget'),
+            'eulerWidget': ('ui.widgets.euler_widget', 'EulerWidget'),
+            'crtWidget': ('ui.widgets.crt_widget', 'CRTWidget'),
+            'euclideanWidget': ('ui.widgets.euclidean_widget', 'EuclideanWidget'),
         }
         
         if objectName in widget_map:

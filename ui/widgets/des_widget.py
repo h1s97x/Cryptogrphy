@@ -1,96 +1,26 @@
 """
-SIMON 轻量级分组密码算法界面 - Fluent Design 版本
+DES 加密算法界面 - Fluent Design 版本
 """
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from qfluentwidgets import (
     ScrollArea, TitleLabel, BodyLabel, CardWidget,
-    InfoBar, MessageBox, PushButton, TextEdit, PrimaryPushButton,
-    ComboBox, FluentIcon as FIF
+    InfoBar, MessageBox, PushButton, ComboBox, PrimaryPushButton,
+    FluentIcon as FIF
 )
 
-from ui.fluent.components.algorithm_card import EncryptCard, DecryptCard, LogCard
-from core.algorithms.symmetric.SIMON import Thread as SIMONThread
+from ui.components.algorithm_card import EncryptCard, DecryptCard, LogCard, KeyCard
+from core.algorithms.symmetric.DES import Thread as DESThread
 from infrastructure.converters import TypeConvert
 
 
-class SIMONConfigCard(CardWidget):
-    """SIMON配置卡片"""
+class DESWidget(ScrollArea):
+    """DES 加密算法界面"""
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.initUI()
-    
-    def initUI(self):
-        layout = QVBoxLayout(self)
-        layout.setSpacing(12)
-        
-        # 标题
-        title = BodyLabel("⚙️ SIMON 配置")
-        title.setStyleSheet("font-weight: bold; font-size: 14px;")
-        layout.addWidget(title)
-        
-        # 分组大小
-        blockLabel = BodyLabel("分组大小 (bits)")
-        layout.addWidget(blockLabel)
-        
-        self.blockCombo = ComboBox()
-        self.blockCombo.addItems(["32", "48", "64", "96", "128"])
-        self.blockCombo.setCurrentIndex(2)  # 默认64位
-        layout.addWidget(self.blockCombo)
-        
-        # 密钥大小
-        keyLabel = BodyLabel("密钥大小 (bits)")
-        layout.addWidget(keyLabel)
-        
-        self.keyCombo = ComboBox()
-        self.keyCombo.addItems(["96", "128"])
-        self.keyCombo.setCurrentIndex(0)  # 默认96位
-        layout.addWidget(self.keyCombo)
-        
-        # 密钥输入
-        keyInputLabel = BodyLabel("密钥")
-        layout.addWidget(keyInputLabel)
-        
-        self.keyEdit = TextEdit()
-        self.keyEdit.setPlaceholderText("输入密钥（十六进制）...")
-        self.keyEdit.setMaximumHeight(60)
-        layout.addWidget(self.keyEdit)
-        
-        # 按钮组
-        btnLayout = QHBoxLayout()
-        
-        self.generateBtn = PushButton(FIF.SYNC, "生成密钥")
-        
-        btnLayout.addWidget(self.generateBtn)
-        btnLayout.addStretch()
-        
-        layout.addLayout(btnLayout)
-    
-    def getBlockSize(self):
-        """获取分组大小"""
-        return int(self.blockCombo.currentText())
-    
-    def getKeySize(self):
-        """获取密钥大小"""
-        return int(self.keyCombo.currentText())
-    
-    def getKey(self):
-        """获取密钥"""
-        return self.keyEdit.toPlainText()
-    
-    def setKey(self, key):
-        """设置密钥"""
-        self.keyEdit.setPlainText(key)
-
-
-class SIMONWidget(ScrollArea):
-    """SIMON 轻量级分组密码算法界面"""
-    
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setObjectName("simonWidget")
+        self.setObjectName("desWidget")
         self.initUI()
         self.connectSignals()
     
@@ -105,34 +35,48 @@ class SIMONWidget(ScrollArea):
         layout.setContentsMargins(36, 36, 36, 36)
         
         # 标题
-        title = TitleLabel("SIMON 轻量级密码")
+        title = TitleLabel("DES 加密")
         layout.addWidget(title)
         
         # 描述
         desc = BodyLabel(
-            "SIMON 是 NSA 设计的轻量级分组密码算法，适用于资源受限环境。"
-            "支持多种分组大小（32/48/64/96/128位）和密钥大小（96/128位）。"
-            "默认使用 ECB 模式，输入格式为十六进制。"
+            "DES (Data Encryption Standard) 是一种对称加密算法，"
+            "使用56位密钥对64位数据块进行加密。支持DES和3-DES模式。输入格式为十六进制。"
         )
         desc.setWordWrap(True)
         layout.addWidget(desc)
         
-        # 配置卡片
-        self.configCard = SIMONConfigCard()
-        # 设置默认密钥 (96位 = 12字节)
-        self.configCard.setKey("11 22 33 44 55 66 77 88 99 AA BB CC")
-        layout.addWidget(self.configCard)
+        # 模式选择卡片
+        modeCard = CardWidget()
+        modeLayout = QVBoxLayout(modeCard)
+        modeLayout.setSpacing(12)
+        
+        modeTitle = BodyLabel("⚙️ 加密模式")
+        modeTitle.setStyleSheet("font-weight: bold; font-size: 14px;")
+        modeLayout.addWidget(modeTitle)
+        
+        self.modeComboBox = ComboBox()
+        self.modeComboBox.addItems(["DES", "3-DES"])
+        self.modeComboBox.setCurrentIndex(0)
+        modeLayout.addWidget(self.modeComboBox)
+        
+        layout.addWidget(modeCard)
+        
+        # 密钥配置卡片
+        self.keyCard = KeyCard()
+        self.keyCard.keyEdit.setPlainText("0F 15 71 C9 47 D9 E8 59")
+        self.keyCard.keyEdit.setPlaceholderText("输入密钥（十六进制）...")
+        layout.addWidget(self.keyCard)
         
         # 加密卡片
         self.encryptCard = EncryptCard()
-        # 设置默认明文 (64位 = 8字节)
-        self.encryptCard.plaintextEdit.setPlainText("11 22 33 44 55 66 77 88")
-        self.encryptCard.plaintextEdit.setPlaceholderText("输入明文（十六进制）...")
+        self.encryptCard.plaintextEdit.setPlainText("02 46 8A CE EC A8 64 20")
+        self.encryptCard.plaintextEdit.setPlaceholderText("输入64位明文（十六进制）...")
         layout.addWidget(self.encryptCard)
         
         # 解密卡片
         self.decryptCard = DecryptCard()
-        self.decryptCard.ciphertextEdit.setPlaceholderText("输入密文（十六进制）...")
+        self.decryptCard.ciphertextEdit.setPlaceholderText("输入64位密文（十六进制）...")
         layout.addWidget(self.decryptCard)
         
         # 日志卡片
@@ -142,12 +86,15 @@ class SIMONWidget(ScrollArea):
         layout.addStretch()
         
         # 初始日志
-        self.logCard.log("SIMON 算法已加载", "success")
+        self.logCard.log("DES 算法已加载", "success")
     
     def connectSignals(self):
         """连接信号"""
-        # 配置卡片
-        self.configCard.generateBtn.clicked.connect(self.generateKey)
+        # 模式切换
+        self.modeComboBox.currentIndexChanged.connect(self.onModeChanged)
+        
+        # 密钥卡片
+        self.keyCard.generateBtn.clicked.connect(self.generateKey)
         
         # 加密卡片
         self.encryptCard.encryptBtn.clicked.connect(self.encrypt)
@@ -158,17 +105,33 @@ class SIMONWidget(ScrollArea):
         self.decryptCard.decryptBtn.clicked.connect(self.decrypt)
         self.decryptCard.copyBtn.clicked.connect(self.copyPlaintext)
     
+    def onModeChanged(self, index):
+        """模式切换"""
+        if index == 0:  # DES
+            self.keyCard.setKey("0F 15 71 C9 47 D9 E8 59")
+            self.logCard.log("切换到 DES 模式（8字节密钥）", "info")
+        else:  # 3-DES
+            self.keyCard.setKey("0F 15 71 C9 47 D9 E8 59 0F 15 71 C9 47 D9 E8 59 0F 15 71 C9 47 D9 E8 59")
+            self.logCard.log("切换到 3-DES 模式（24字节密钥）", "info")
+    
     def generateKey(self):
         """生成密钥"""
         import os
-        key_size = self.configCard.getKeySize()
-        key_bytes = os.urandom(key_size // 8)
+        mode = self.modeComboBox.currentIndex()
+        
+        if mode == 0:  # DES
+            key_bytes = os.urandom(8)
+        else:  # 3-DES
+            key_bytes = os.urandom(24)
+        
         key_hex = ' '.join([f'{b:02X}' for b in key_bytes])
-        self.configCard.setKey(key_hex)
-        self.logCard.log(f"已生成{key_size}位随机密钥", "success")
+        self.keyCard.setKey(key_hex)
+        
+        mode_name = "DES" if mode == 0 else "3-DES"
+        self.logCard.log(f"已生成 {mode_name} 随机密钥", "success")
         InfoBar.success(
             title="生成成功",
-            content=f"已生成{key_size}位随机密钥",
+            content=f"已生成{mode_name}随机密钥",
             parent=self
         )
     
@@ -198,18 +161,18 @@ class SIMONWidget(ScrollArea):
         try:
             self.logCard.log("开始加密...", "info")
             
-            block_size = self.configCard.getBlockSize()
-            key_size = self.configCard.getKeySize()
+            mode = self.modeComboBox.currentIndex()
+            key_len = 8 if mode == 0 else 24
             
             # 验证密钥
-            key_text = self.configCard.getKey()
-            valid, result = self.validateHexInput(key_text, "密钥", key_size // 8)
+            key_text = self.keyCard.getKey()
+            valid, result = self.validateHexInput(key_text, "密钥", key_len)
             if not valid:
                 raise ValueError(result)
             
             # 验证明文
             plaintext_text = self.encryptCard.getPlaintext()
-            valid, result = self.validateHexInput(plaintext_text, "明文", block_size // 8)
+            valid, result = self.validateHexInput(plaintext_text, "明文", 8)
             if not valid:
                 raise ValueError(result)
             
@@ -218,76 +181,25 @@ class SIMONWidget(ScrollArea):
             key = TypeConvert.str_to_int(key_text)
             
             # 格式化显示
-            plaintext_formatted = TypeConvert.int_to_str(plaintext, block_size // 8)
-            key_formatted = TypeConvert.int_to_str(key, key_size // 8)
+            plaintext_formatted = TypeConvert.int_to_str(plaintext, 8)
+            key_formatted = TypeConvert.int_to_str(key, key_len)
             
             self.encryptCard.setPlaintext(plaintext_formatted)
-            self.configCard.setKey(key_formatted)
+            self.keyCard.setKey(key_formatted)
             
-            self.logCard.log(f"分组大小: {block_size} bits", "info")
-            self.logCard.log(f"密钥大小: {key_size} bits", "info")
+            mode_name = "DES" if mode == 0 else "3-DES"
+            self.logCard.log(f"模式: {mode_name}", "info")
             self.logCard.log(f"明文: {plaintext_formatted}", "info")
             self.logCard.log(f"密钥: {key_formatted}", "info")
             
             # 创建加密线程
-            thread = SIMONThread(self, plaintext, key, 0, key_size, block_size)
-            thread.intermediate_value.connect(self.onIntermediateValue)
+            thread = DESThread(self, plaintext, 8, key, key_len, 0, mode)
             thread.final_result.connect(self.onEncryptFinished)
             thread.start()
             
         except Exception as e:
             self.logCard.log(f"加密失败: {str(e)}", "error")
             MessageBox("错误", f"加密失败: {str(e)}", self).exec()
-    
-    def decrypt(self):
-        """解密"""
-        try:
-            self.logCard.log("开始解密...", "info")
-            
-            block_size = self.configCard.getBlockSize()
-            key_size = self.configCard.getKeySize()
-            
-            # 验证密钥
-            key_text = self.configCard.getKey()
-            valid, result = self.validateHexInput(key_text, "密钥", key_size // 8)
-            if not valid:
-                raise ValueError(result)
-            
-            # 验证密文
-            ciphertext_text = self.decryptCard.getCiphertext()
-            valid, result = self.validateHexInput(ciphertext_text, "密文", block_size // 8)
-            if not valid:
-                raise ValueError(result)
-            
-            # 转换为整数
-            ciphertext = TypeConvert.str_to_int(ciphertext_text)
-            key = TypeConvert.str_to_int(key_text)
-            
-            # 格式化显示
-            ciphertext_formatted = TypeConvert.int_to_str(ciphertext, block_size // 8)
-            key_formatted = TypeConvert.int_to_str(key, key_size // 8)
-            
-            self.decryptCard.setCiphertext(ciphertext_formatted)
-            self.configCard.setKey(key_formatted)
-            
-            self.logCard.log(f"分组大小: {block_size} bits", "info")
-            self.logCard.log(f"密钥大小: {key_size} bits", "info")
-            self.logCard.log(f"密文: {ciphertext_formatted}", "info")
-            self.logCard.log(f"密钥: {key_formatted}", "info")
-            
-            # 创建解密线程
-            thread = SIMONThread(self, ciphertext, key, 1, key_size, block_size)
-            thread.intermediate_value.connect(self.onIntermediateValue)
-            thread.final_result.connect(self.onDecryptFinished)
-            thread.start()
-            
-        except Exception as e:
-            self.logCard.log(f"解密失败: {str(e)}", "error")
-            MessageBox("错误", f"解密失败: {str(e)}", self).exec()
-    
-    def onIntermediateValue(self, text):
-        """中间值输出"""
-        self.logCard.log(text, "info")
     
     def onEncryptFinished(self, ciphertext):
         """加密完成"""
@@ -301,6 +213,51 @@ class SIMONWidget(ScrollArea):
             content="明文已成功加密",
             parent=self
         )
+    
+    def decrypt(self):
+        """解密"""
+        try:
+            self.logCard.log("开始解密...", "info")
+            
+            mode = self.modeComboBox.currentIndex()
+            key_len = 8 if mode == 0 else 24
+            
+            # 验证密钥
+            key_text = self.keyCard.getKey()
+            valid, result = self.validateHexInput(key_text, "密钥", key_len)
+            if not valid:
+                raise ValueError(result)
+            
+            # 验证密文
+            ciphertext_text = self.decryptCard.getCiphertext()
+            valid, result = self.validateHexInput(ciphertext_text, "密文", 8)
+            if not valid:
+                raise ValueError(result)
+            
+            # 转换为整数
+            ciphertext = TypeConvert.str_to_int(ciphertext_text)
+            key = TypeConvert.str_to_int(key_text)
+            
+            # 格式化显示
+            ciphertext_formatted = TypeConvert.int_to_str(ciphertext, 8)
+            key_formatted = TypeConvert.int_to_str(key, key_len)
+            
+            self.decryptCard.setCiphertext(ciphertext_formatted)
+            self.keyCard.setKey(key_formatted)
+            
+            mode_name = "DES" if mode == 0 else "3-DES"
+            self.logCard.log(f"模式: {mode_name}", "info")
+            self.logCard.log(f"密文: {ciphertext_formatted}", "info")
+            self.logCard.log(f"密钥: {key_formatted}", "info")
+            
+            # 创建解密线程
+            thread = DESThread(self, ciphertext, 8, key, key_len, 1, mode)
+            thread.final_result.connect(self.onDecryptFinished)
+            thread.start()
+            
+        except Exception as e:
+            self.logCard.log(f"解密失败: {str(e)}", "error")
+            MessageBox("错误", f"解密失败: {str(e)}", self).exec()
     
     def onDecryptFinished(self, plaintext):
         """解密完成"""

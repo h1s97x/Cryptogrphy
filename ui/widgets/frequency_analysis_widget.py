@@ -10,7 +10,7 @@ from qfluentwidgets import (
     ComboBox, FluentIcon as FIF
 )
 
-from ui.fluent.components.algorithm_card import LogCard
+from ui.components.algorithm_card import LogCard
 from core.algorithms.classical.Frequency_Analysis import Thread as FreqThread
 
 

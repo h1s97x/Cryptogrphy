@@ -9,7 +9,7 @@ from qfluentwidgets import (
     InfoBar, MessageBox, CardWidget, PushButton
 )
 
-from ui.fluent.components.algorithm_card import EncryptCard, DecryptCard, LogCard
+from ui.components.algorithm_card import EncryptCard, DecryptCard, LogCard
 from core.algorithms.classical.Enigma import Thread as EnigmaThread
 
 

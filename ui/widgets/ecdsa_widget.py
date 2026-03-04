@@ -10,7 +10,7 @@ from qfluentwidgets import (
     FluentIcon as FIF
 )
 
-from ui.fluent.components.algorithm_card import LogCard
+from ui.components.algorithm_card import LogCard
 from core.algorithms.asymmetric import ECDSA
 
 

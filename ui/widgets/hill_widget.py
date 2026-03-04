@@ -10,7 +10,7 @@ from qfluentwidgets import (
     InfoBar, InfoBarPosition, MessageBox
 )
 
-from ui.fluent.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
+from ui.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
 from core.algorithms.classical.Hill import Thread as HillThread
 import infrastructure.Path as PathUtils
 

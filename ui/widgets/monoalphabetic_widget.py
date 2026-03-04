@@ -1,25 +1,24 @@
 """
-SM4 加密算法界面 - Fluent Design 版本
+单表替换密码界面 - Fluent Design 版本
 """
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout
 from qfluentwidgets import (
-    ScrollArea, TitleLabel, BodyLabel,
-    InfoBar, MessageBox
+    ScrollArea, TitleLabel, BodyLabel, LineEdit,
+    InfoBar, MessageBox, PushButton
 )
 
-from ui.fluent.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
-from core.algorithms.symmetric.SM4 import Thread as SM4Thread
-from infrastructure.converters import TypeConvert
+from ui.components.algorithm_card import EncryptCard, DecryptCard, LogCard, KeyCard
+from core.algorithms.classical.Monoalphabetic_Cipher import Thread as MonoThread
 
 
-class SM4Widget(ScrollArea):
-    """SM4 加密算法界面"""
+class MonoalphabeticWidget(ScrollArea):
+    """单表替换密码界面"""
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setObjectName("sm4Widget")
+        self.setObjectName("monoalphabeticWidget")
         self.initUI()
         self.connectSignals()
     
@@ -34,32 +33,34 @@ class SM4Widget(ScrollArea):
         layout.setContentsMargins(36, 36, 36, 36)
         
         # 标题
-        title = TitleLabel("SM4 加密")
+        title = TitleLabel("单表替换密码")
         layout.addWidget(title)
         
         # 描述
         desc = BodyLabel(
-            "SM4 是中国国家密码管理局发布的分组密码标准，"
-            "使用128位密钥对128位数据块进行加密。输入格式为十六进制。"
+            "单表替换密码使用一个固定的替换表将明文字母替换为密文字母。"
+            "密钥是一个包含字母的字符串，用于生成替换表。"
+            "重复字母会被自动去除，剩余字母按字母表顺序填充。"
         )
         desc.setWordWrap(True)
         layout.addWidget(desc)
         
-        # 密钥配置卡片
+        # 密钥卡片
         self.keyCard = KeyCard()
-        self.keyCard.keyEdit.setPlainText("01 23 45 67 89 AB CD EF FE DC BA 98 76 54 32 10")
-        self.keyCard.keyEdit.setPlaceholderText("输入128位密钥（十六进制）...")
+        self.keyCard.keyEdit.setPlainText("secret")
+        self.keyCard.keyEdit.setPlaceholderText("输入密钥（字母）...")
+        self.keyCard.keyEdit.setMaximumHeight(60)
         layout.addWidget(self.keyCard)
         
         # 加密卡片
         self.encryptCard = EncryptCard()
-        self.encryptCard.plaintextEdit.setPlainText("01 23 45 67 89 AB CD EF FE DC BA 98 76 54 32 10")
-        self.encryptCard.plaintextEdit.setPlaceholderText("输入128位明文（十六进制）...")
+        self.encryptCard.plaintextEdit.setPlainText("Hello World")
+        self.encryptCard.plaintextEdit.setPlaceholderText("输入明文...")
         layout.addWidget(self.encryptCard)
         
         # 解密卡片
         self.decryptCard = DecryptCard()
-        self.decryptCard.ciphertextEdit.setPlaceholderText("输入128位密文（十六进制）...")
+        self.decryptCard.ciphertextEdit.setPlaceholderText("输入密文...")
         layout.addWidget(self.decryptCard)
         
         # 日志卡片
@@ -69,7 +70,7 @@ class SM4Widget(ScrollArea):
         layout.addStretch()
         
         # 初始日志
-        self.logCard.log("SM4 算法已加载", "success")
+        self.logCard.log("单表替换密码已加载", "success")
     
     def connectSignals(self):
         """连接信号"""
@@ -86,32 +87,35 @@ class SM4Widget(ScrollArea):
         self.decryptCard.copyBtn.clicked.connect(self.copyPlaintext)
     
     def generateKey(self):
-        """生成密钥"""
-        import os
-        key_bytes = os.urandom(16)
-        key_hex = ' '.join([f'{b:02X}' for b in key_bytes])
-        self.keyCard.setKey(key_hex)
-        self.logCard.log(f"已生成随机密钥", "success")
+        """生成随机密钥"""
+        import random
+        import string
+        
+        # 生成随机字母序列
+        letters = list(string.ascii_lowercase)
+        random.shuffle(letters)
+        key = ''.join(letters[:10])  # 取前10个字母
+        
+        self.keyCard.setKey(key)
+        self.logCard.log(f"已生成随机密钥: {key}", "success")
         InfoBar.success(
             title="生成成功",
-            content="已生成128位随机密钥",
+            content="已生成随机密钥",
             parent=self
         )
     
-    def validateHexList(self, text, name, expected_length=16):
-        """验证十六进制列表输入"""
-        try:
-            hex_list = TypeConvert.str_to_hex_list(text)
-            
-            if hex_list is None:
-                raise ValueError(f"{name}格式错误")
-            
-            if len(hex_list) != expected_length:
-                raise ValueError(f"{name}长度必须是{expected_length}字节，当前长度为{len(hex_list)}字节")
-            
-            return True, hex_list
-        except Exception as e:
-            return False, str(e)
+    def validateKey(self, key):
+        """验证密钥"""
+        if not key:
+            raise ValueError("请输入密钥")
+        
+        # 只保留字母
+        key = ''.join(c for c in key if c.isalpha())
+        
+        if not key:
+            raise ValueError("密钥必须包含字母")
+        
+        return key.lower()
     
     def encrypt(self):
         """加密"""
@@ -120,30 +124,18 @@ class SM4Widget(ScrollArea):
             
             # 验证密钥
             key_text = self.keyCard.getKey()
-            valid, result = self.validateHexList(key_text, "密钥", 16)
-            if not valid:
-                raise ValueError(result)
-            key_list = result
+            key = self.validateKey(key_text)
             
-            # 验证明文
-            plaintext_text = self.encryptCard.getPlaintext()
-            valid, result = self.validateHexList(plaintext_text, "明文", 16)
-            if not valid:
-                raise ValueError(result)
-            plaintext_list = result
+            # 获取明文
+            plaintext = self.encryptCard.getPlaintext()
+            if not plaintext:
+                raise ValueError("请输入明文")
             
-            # 格式化显示
-            plaintext_formatted = TypeConvert.hex_list_to_str(plaintext_list)
-            key_formatted = TypeConvert.hex_list_to_str(key_list)
-            
-            self.encryptCard.setPlaintext(plaintext_formatted)
-            self.keyCard.setKey(key_formatted)
-            
-            self.logCard.log(f"明文: {plaintext_formatted}", "info")
-            self.logCard.log(f"密钥: {key_formatted}", "info")
+            self.logCard.log(f"明文: {plaintext[:50]}{'...' if len(plaintext) > 50 else ''}", "info")
+            self.logCard.log(f"密钥: {key}", "info")
             
             # 创建加密线程
-            thread = SM4Thread(self, plaintext_list, key_list, 0)
+            thread = MonoThread(self, plaintext, key, 0)
             thread.final_result.connect(self.onEncryptFinished)
             thread.start()
             
@@ -155,7 +147,7 @@ class SM4Widget(ScrollArea):
         """加密完成"""
         self.encryptCard.setCiphertext(ciphertext)
         self.decryptCard.setCiphertext(ciphertext)
-        self.logCard.log(f"密文: {ciphertext}", "success")
+        self.logCard.log(f"密文: {ciphertext[:50]}{'...' if len(ciphertext) > 50 else ''}", "success")
         self.logCard.log("加密完成", "success")
         
         InfoBar.success(
@@ -171,30 +163,18 @@ class SM4Widget(ScrollArea):
             
             # 验证密钥
             key_text = self.keyCard.getKey()
-            valid, result = self.validateHexList(key_text, "密钥", 16)
-            if not valid:
-                raise ValueError(result)
-            key_list = result
+            key = self.validateKey(key_text)
             
-            # 验证密文
-            ciphertext_text = self.decryptCard.getCiphertext()
-            valid, result = self.validateHexList(ciphertext_text, "密文", 16)
-            if not valid:
-                raise ValueError(result)
-            ciphertext_list = result
+            # 获取密文
+            ciphertext = self.decryptCard.getCiphertext()
+            if not ciphertext:
+                raise ValueError("请输入密文")
             
-            # 格式化显示
-            ciphertext_formatted = TypeConvert.hex_list_to_str(ciphertext_list)
-            key_formatted = TypeConvert.hex_list_to_str(key_list)
-            
-            self.decryptCard.setCiphertext(ciphertext_formatted)
-            self.keyCard.setKey(key_formatted)
-            
-            self.logCard.log(f"密文: {ciphertext_formatted}", "info")
-            self.logCard.log(f"密钥: {key_formatted}", "info")
+            self.logCard.log(f"密文: {ciphertext[:50]}{'...' if len(ciphertext) > 50 else ''}", "info")
+            self.logCard.log(f"密钥: {key}", "info")
             
             # 创建解密线程
-            thread = SM4Thread(self, ciphertext_list, key_list, 1)
+            thread = MonoThread(self, ciphertext, key, 1)
             thread.final_result.connect(self.onDecryptFinished)
             thread.start()
             
@@ -205,7 +185,7 @@ class SM4Widget(ScrollArea):
     def onDecryptFinished(self, plaintext):
         """解密完成"""
         self.decryptCard.setPlaintext(plaintext)
-        self.logCard.log(f"明文: {plaintext}", "success")
+        self.logCard.log(f"明文: {plaintext[:50]}{'...' if len(plaintext) > 50 else ''}", "success")
         self.logCard.log("解密完成", "success")
         
         InfoBar.success(

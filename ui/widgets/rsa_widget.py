@@ -10,7 +10,7 @@ from qfluentwidgets import (
     FluentIcon as FIF
 )
 
-from ui.fluent.components.algorithm_card import EncryptCard, DecryptCard, LogCard
+from ui.components.algorithm_card import EncryptCard, DecryptCard, LogCard
 from core.algorithms.asymmetric import RSA
 from infrastructure.converters import TypeConvert
 

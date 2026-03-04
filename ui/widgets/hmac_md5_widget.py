@@ -9,7 +9,7 @@ from qfluentwidgets import (
     InfoBar, MessageBox, CardWidget, PushButton
 )
 
-from ui.fluent.components.algorithm_card import LogCard
+from ui.components.algorithm_card import LogCard
 from core.algorithms.hash.HMAC_MD5 import Thread as HMACThread
 from infrastructure.converters import TypeConvert
 

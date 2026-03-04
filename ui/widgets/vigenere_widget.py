@@ -1,5 +1,5 @@
 """
-Caesar 密码算法界面 - Fluent Design 版本
+Vigenere 密码算法界面 - Fluent Design 版本
 """
 
 from PyQt5.QtCore import Qt
@@ -9,16 +9,16 @@ from qfluentwidgets import (
     InfoBar, MessageBox
 )
 
-from ui.fluent.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
-from core.algorithms.classical.Caesar import Thread as CaesarThread
+from ui.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
+from core.algorithms.classical.Vigenere import Thread as VigenereThread
 
 
-class CaesarWidget(ScrollArea):
-    """Caesar 密码算法界面"""
+class VigenereWidget(ScrollArea):
+    """Vigenere 密码算法界面"""
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setObjectName("caesarWidget")
+        self.setObjectName("vigenereWidget")
         self.initUI()
         self.connectSignals()
     
@@ -33,26 +33,26 @@ class CaesarWidget(ScrollArea):
         layout.setContentsMargins(36, 36, 36, 36)
         
         # 标题
-        title = TitleLabel("Caesar 密码")
+        title = TitleLabel("Vigenere 密码")
         layout.addWidget(title)
         
         # 描述
         desc = BodyLabel(
-            "Caesar密码是一种简单的替换密码，通过将字母表中的字母移动固定位数来加密。"
-            "密钥是一个整数，表示移动的位数。"
+            "Vigenere密码是一种多表替换密码，使用一个关键词来加密明文。"
+            "密钥是一个字母字符串，会循环使用来加密明文中的每个字母。"
         )
         desc.setWordWrap(True)
         layout.addWidget(desc)
         
         # 密钥配置卡片
         self.keyCard = KeyCard()
-        self.keyCard.keyEdit.setPlainText("3")
-        self.keyCard.keyEdit.setPlaceholderText("输入密钥（整数）...")
+        self.keyCard.keyEdit.setPlainText("best")
+        self.keyCard.keyEdit.setPlaceholderText("输入密钥（字母字符串）...")
         layout.addWidget(self.keyCard)
         
         # 加密卡片
         self.encryptCard = EncryptCard()
-        self.encryptCard.plaintextEdit.setPlainText("China")
+        self.encryptCard.plaintextEdit.setPlainText("data security")
         layout.addWidget(self.encryptCard)
         
         # 解密卡片
@@ -66,7 +66,7 @@ class CaesarWidget(ScrollArea):
         layout.addStretch()
         
         # 初始日志
-        self.logCard.log("Caesar 算法已加载", "success")
+        self.logCard.log("Vigenere 算法已加载", "success")
     
     def connectSignals(self):
         """连接信号"""
@@ -88,8 +88,10 @@ class CaesarWidget(ScrollArea):
     def generateKey(self):
         """生成密钥"""
         import random
-        key = random.randint(1, 25)
-        self.keyCard.setKey(str(key))
+        import string
+        length = random.randint(4, 8)
+        key = ''.join(random.choices(string.ascii_lowercase, k=length))
+        self.keyCard.setKey(key)
         self.logCard.log(f"已生成随机密钥: {key}", "success")
         InfoBar.success(
             title="生成成功",
@@ -127,14 +129,17 @@ class CaesarWidget(ScrollArea):
             if not key.strip():
                 raise ValueError("密钥不能为空")
             
-            if not key.isdigit():
-                raise ValueError("密钥必须是正整数")
+            # 检查密钥中至少含有一个字母
+            has_letter = any(c.isalpha() for c in key)
+            if not has_letter:
+                raise ValueError("密钥中至少要包含一个字母")
             
-            key_int = int(key)
-            if key_int < 0:
-                raise ValueError("密钥必须是正整数")
+            # 检查密钥中是否有汉字
+            for ch in key:
+                if '\u4e00' <= ch <= '\u9fff':
+                    raise ValueError("密钥不能包含汉字")
             
-            return True, key_int
+            return True, key
         except Exception as e:
             return False, str(e)
     
@@ -163,7 +168,7 @@ class CaesarWidget(ScrollArea):
             self.logCard.log(f"密钥: {key}", "info")
             
             # 创建加密线程
-            thread = CaesarThread(self, plaintext, key, 0)
+            thread = VigenereThread(self, plaintext, key, 0)
             thread.final_result.connect(self.onEncryptFinished)
             thread.start()
             
@@ -209,7 +214,7 @@ class CaesarWidget(ScrollArea):
             self.logCard.log(f"密钥: {key}", "info")
             
             # 创建解密线程
-            thread = CaesarThread(self, ciphertext, key, 1)
+            thread = VigenereThread(self, ciphertext, key, 1)
             thread.final_result.connect(self.onDecryptFinished)
             thread.start()
             

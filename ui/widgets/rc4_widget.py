@@ -1,5 +1,5 @@
 """
-AES 加密算法界面 - Fluent Design 版本
+RC4 流密码界面 - Fluent Design 版本
 """
 
 from PyQt5.QtCore import Qt
@@ -9,17 +9,17 @@ from qfluentwidgets import (
     InfoBar, MessageBox
 )
 
-from ui.fluent.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
-from core.algorithms.symmetric.AES import Thread as AESThread
+from ui.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
+from core.algorithms.symmetric.RC4 import Thread as RC4Thread
 from infrastructure.converters import TypeConvert
 
 
-class AESWidget(ScrollArea):
-    """AES 加密算法界面"""
+class RC4Widget(ScrollArea):
+    """RC4 流密码界面"""
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setObjectName("aesWidget")
+        self.setObjectName("rc4Widget")
         self.initUI()
         self.connectSignals()
     
@@ -34,32 +34,33 @@ class AESWidget(ScrollArea):
         layout.setContentsMargins(36, 36, 36, 36)
         
         # 标题
-        title = TitleLabel("AES 加密")
+        title = TitleLabel("RC4 流密码")
         layout.addWidget(title)
         
         # 描述
         desc = BodyLabel(
-            "AES (Advanced Encryption Standard) 是一种对称加密算法，"
-            "使用128位密钥对128位数据块进行加密。输入格式为十六进制。"
+            "RC4 是一种流密码算法，使用可变长度密钥（40-2048位）。"
+            "通过密钥调度算法(KSA)和伪随机生成算法(PRGA)生成密钥流，"
+            "然后与明文进行异或运算。输入格式为十六进制。"
         )
         desc.setWordWrap(True)
         layout.addWidget(desc)
         
         # 密钥配置卡片
         self.keyCard = KeyCard()
-        self.keyCard.keyEdit.setPlainText("2B 7E 15 16 28 AE D2 A6 AB F7 15 88 09 CF 4F 3C")
-        self.keyCard.keyEdit.setPlaceholderText("输入128位密钥（十六进制）...")
+        self.keyCard.keyEdit.setPlainText("01 23 45 67 89 AB CD EF")
+        self.keyCard.keyEdit.setPlaceholderText("输入密钥（十六进制，可变长度）...")
         layout.addWidget(self.keyCard)
         
         # 加密卡片
         self.encryptCard = EncryptCard()
-        self.encryptCard.plaintextEdit.setPlainText("32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34")
-        self.encryptCard.plaintextEdit.setPlaceholderText("输入128位明文（十六进制）...")
+        self.encryptCard.plaintextEdit.setPlainText("48 65 6C 6C 6F 20 57 6F 72 6C 64")
+        self.encryptCard.plaintextEdit.setPlaceholderText("输入明文（十六进制）...")
         layout.addWidget(self.encryptCard)
         
         # 解密卡片
         self.decryptCard = DecryptCard()
-        self.decryptCard.ciphertextEdit.setPlaceholderText("输入128位密文（十六进制）...")
+        self.decryptCard.ciphertextEdit.setPlaceholderText("输入密文（十六进制）...")
         layout.addWidget(self.decryptCard)
         
         # 日志卡片
@@ -69,7 +70,7 @@ class AESWidget(ScrollArea):
         layout.addStretch()
         
         # 初始日志
-        self.logCard.log("AES 算法已加载", "success")
+        self.logCard.log("RC4 算法已加载", "success")
     
     def connectSignals(self):
         """连接信号"""
@@ -88,32 +89,27 @@ class AESWidget(ScrollArea):
     def generateKey(self):
         """生成密钥"""
         import os
-        key_bytes = os.urandom(16)
+        # 生成8字节（64位）密钥
+        key_bytes = os.urandom(8)
         key_hex = ' '.join([f'{b:02X}' for b in key_bytes])
         self.keyCard.setKey(key_hex)
         self.logCard.log(f"已生成随机密钥", "success")
         InfoBar.success(
             title="生成成功",
-            content="已生成128位随机密钥",
+            content="已生成64位随机密钥",
             parent=self
         )
     
-    def validateHexInput(self, text, name, expected_length=16):
+    def validateHexInput(self, text, name):
         """验证十六进制输入"""
         try:
             hex_list = TypeConvert.str_to_hex_list(text)
             
-            if hex_list == 'ERROR_CHARACTER':
-                raise ValueError(f"{name}包含非法字符，只能包含十六进制字符（0-9, A-F）")
-            
-            if hex_list == 'ERROR_LENGTH':
-                raise ValueError(f"{name}长度必须是2的倍数")
-            
-            if hex_list is None:
+            if hex_list is None or hex_list == 'ERROR_CHARACTER' or hex_list == 'ERROR_LENGTH':
                 raise ValueError(f"{name}格式错误")
             
-            if len(hex_list) != expected_length:
-                raise ValueError(f"{name}长度必须是{expected_length}字节（{expected_length*2}个十六进制字符），当前长度为{len(hex_list)}字节")
+            if len(hex_list) == 0:
+                raise ValueError(f"{name}不能为空")
             
             return True, hex_list
         except Exception as e:
@@ -126,32 +122,36 @@ class AESWidget(ScrollArea):
             
             # 验证密钥
             key_text = self.keyCard.getKey()
-            valid, result = self.validateHexInput(key_text, "密钥", 16)
+            valid, result = self.validateHexInput(key_text, "密钥")
             if not valid:
                 raise ValueError(result)
+            key_list = result
+            key_len = len(key_list)
             
             # 验证明文
             plaintext_text = self.encryptCard.getPlaintext()
-            valid, result = self.validateHexInput(plaintext_text, "明文", 16)
+            valid, result = self.validateHexInput(plaintext_text, "明文")
             if not valid:
                 raise ValueError(result)
+            plaintext_list = result
+            plaintext_len = len(plaintext_list)
             
             # 转换为整数
-            plaintext = TypeConvert.str_to_int(plaintext_text)
-            key = TypeConvert.str_to_int(key_text)
+            plaintext_int = TypeConvert.hex_list_to_int(plaintext_list)
+            key_int = TypeConvert.hex_list_to_int(key_list)
             
             # 格式化显示
-            plaintext_formatted = TypeConvert.int_to_str(plaintext, 16)
-            key_formatted = TypeConvert.int_to_str(key, 16)
+            plaintext_formatted = TypeConvert.hex_list_to_str(plaintext_list)
+            key_formatted = TypeConvert.hex_list_to_str(key_list)
             
             self.encryptCard.setPlaintext(plaintext_formatted)
             self.keyCard.setKey(key_formatted)
             
-            self.logCard.log(f"明文: {plaintext_formatted}", "info")
-            self.logCard.log(f"密钥: {key_formatted}", "info")
+            self.logCard.log(f"明文长度: {plaintext_len} 字节", "info")
+            self.logCard.log(f"密钥长度: {key_len} 字节", "info")
             
             # 创建加密线程
-            thread = AESThread(self, plaintext, key, 0)
+            thread = RC4Thread(self, plaintext_int, plaintext_len, key_int, key_len, 0)
             thread.final_result.connect(self.onEncryptFinished)
             thread.start()
             
@@ -163,7 +163,7 @@ class AESWidget(ScrollArea):
         """加密完成"""
         self.encryptCard.setCiphertext(ciphertext)
         self.decryptCard.setCiphertext(ciphertext)
-        self.logCard.log(f"密文: {ciphertext}", "success")
+        self.logCard.log(f"密文: {ciphertext[:50]}...", "success")
         self.logCard.log("加密完成", "success")
         
         InfoBar.success(
@@ -179,32 +179,36 @@ class AESWidget(ScrollArea):
             
             # 验证密钥
             key_text = self.keyCard.getKey()
-            valid, result = self.validateHexInput(key_text, "密钥", 16)
+            valid, result = self.validateHexInput(key_text, "密钥")
             if not valid:
                 raise ValueError(result)
+            key_list = result
+            key_len = len(key_list)
             
             # 验证密文
             ciphertext_text = self.decryptCard.getCiphertext()
-            valid, result = self.validateHexInput(ciphertext_text, "密文", 16)
+            valid, result = self.validateHexInput(ciphertext_text, "密文")
             if not valid:
                 raise ValueError(result)
+            ciphertext_list = result
+            ciphertext_len = len(ciphertext_list)
             
             # 转换为整数
-            ciphertext = TypeConvert.str_to_int(ciphertext_text)
-            key = TypeConvert.str_to_int(key_text)
+            ciphertext_int = TypeConvert.hex_list_to_int(ciphertext_list)
+            key_int = TypeConvert.hex_list_to_int(key_list)
             
             # 格式化显示
-            ciphertext_formatted = TypeConvert.int_to_str(ciphertext, 16)
-            key_formatted = TypeConvert.int_to_str(key, 16)
+            ciphertext_formatted = TypeConvert.hex_list_to_str(ciphertext_list)
+            key_formatted = TypeConvert.hex_list_to_str(key_list)
             
             self.decryptCard.setCiphertext(ciphertext_formatted)
             self.keyCard.setKey(key_formatted)
             
-            self.logCard.log(f"密文: {ciphertext_formatted}", "info")
-            self.logCard.log(f"密钥: {key_formatted}", "info")
+            self.logCard.log(f"密文长度: {ciphertext_len} 字节", "info")
+            self.logCard.log(f"密钥长度: {key_len} 字节", "info")
             
             # 创建解密线程
-            thread = AESThread(self, ciphertext, key, 1)
+            thread = RC4Thread(self, ciphertext_int, ciphertext_len, key_int, key_len, 1)
             thread.final_result.connect(self.onDecryptFinished)
             thread.start()
             
@@ -215,7 +219,7 @@ class AESWidget(ScrollArea):
     def onDecryptFinished(self, plaintext):
         """解密完成"""
         self.decryptCard.setPlaintext(plaintext)
-        self.logCard.log(f"明文: {plaintext}", "success")
+        self.logCard.log(f"明文: {plaintext[:50]}...", "success")
         self.logCard.log("解密完成", "success")
         
         InfoBar.success(

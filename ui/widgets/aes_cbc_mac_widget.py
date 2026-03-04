@@ -10,7 +10,7 @@ from qfluentwidgets import (
     FluentIcon as FIF
 )
 
-from ui.fluent.components.algorithm_card import LogCard
+from ui.components.algorithm_card import LogCard
 from core.algorithms.hash.AES_CBC_MAC import Thread as AESCBCMACThread
 from infrastructure.converters import TypeConvert
 

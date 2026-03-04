@@ -9,7 +9,7 @@ from qfluentwidgets import (
     InfoBar, MessageBox
 )
 
-from ui.fluent.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
+from ui.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
 from core.algorithms.symmetric.SPECK import Thread as SPECKThread
 from infrastructure.converters import TypeConvert
 

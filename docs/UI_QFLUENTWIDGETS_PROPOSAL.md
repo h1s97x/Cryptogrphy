@@ -186,7 +186,7 @@ parser.add_argument('--ui', choices=['classic', 'fluent'], default='fluent')
 args = parser.parse_args()
 
 if args.ui == 'fluent':
-    from ui.fluent.main_window import FluentMainWindow as MainWindow
+    from ui.main_window import FluentMainWindow as MainWindow
 else:
     from ui.main_window import CryptographyWidget as MainWindow
 ```
