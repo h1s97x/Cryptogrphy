@@ -1,43 +1,57 @@
 """
-首页界面
+首页界面 - 显示算法分类导航
 """
 
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QGridLayout
+from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGridLayout
 from qfluentwidgets import (
     ScrollArea, TitleLabel, BodyLabel, CardWidget,
-    FluentIcon as FIF, IconWidget
+    FluentIcon as FIF, IconWidget, PrimaryPushButton
 )
 
 
-class StatCard(CardWidget):
-    """统计卡片"""
+class CategoryCard(CardWidget):
+    """分类卡片"""
     
-    def __init__(self, icon, title, value, parent=None):
+    clicked = pyqtSignal(str)  # 点击信号，传递分类名称
+    
+    def __init__(self, icon, title, count, description, category, parent=None):
         super().__init__(parent)
-        self.initUI(icon, title, value)
+        self.category = category
+        self.initUI(icon, title, count, description)
     
-    def initUI(self, icon, title, value):
-        layout = QHBoxLayout(self)
+    def initUI(self, icon, title, count, description):
+        layout = QVBoxLayout(self)
+        layout.setSpacing(16)
         
         # 图标
         iconWidget = IconWidget(icon, self)
-        iconWidget.setFixedSize(48, 48)
-        layout.addWidget(iconWidget)
+        iconWidget.setFixedSize(64, 64)
+        layout.addWidget(iconWidget, alignment=Qt.AlignCenter)
         
-        # 文本
-        textLayout = QVBoxLayout()
-        titleLabel = BodyLabel(title)
-        valueLabel = TitleLabel(str(value))
-        textLayout.addWidget(titleLabel)
-        textLayout.addWidget(valueLabel)
+        # 标题和数量
+        titleLabel = TitleLabel(f"{title} ({count})")
+        titleLabel.setAlignment(Qt.AlignCenter)
+        layout.addWidget(titleLabel)
         
-        layout.addLayout(textLayout)
-        layout.addStretch()
+        # 描述
+        descLabel = BodyLabel(description)
+        descLabel.setWordWrap(True)
+        descLabel.setAlignment(Qt.AlignCenter)
+        layout.addWidget(descLabel)
+        
+        # 按钮
+        self.openBtn = PrimaryPushButton("查看算法")
+        self.openBtn.clicked.connect(lambda: self.clicked.emit(self.category))
+        layout.addWidget(self.openBtn)
+        
+        self.setFixedHeight(260)
 
 
 class HomeInterface(ScrollArea):
     """首页界面"""
+    
+    categoryClicked = pyqtSignal(str)  # 分类点击信号
     
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -59,47 +73,72 @@ class HomeInterface(ScrollArea):
         
         # 描述
         desc = BodyLabel(
-            "这是一个集成了多种密码算法的教学和实验平台，"
-            "包括经典密码、分组密码、公钥密码、哈希算法等。"
+            "这是一个集成了多种密码算法的教学和实验平台。"
+            "选择下方的分类，探索不同类型的密码学算法。"
         )
         desc.setWordWrap(True)
         layout.addWidget(desc)
         
-        # 统计卡片
-        statsLayout = QGridLayout()
-        statsLayout.setSpacing(16)
+        # 分类卡片
+        categoriesLayout = QGridLayout()
+        categoriesLayout.setSpacing(20)
         
-        stats = [
-            (FIF.FONT, "经典密码", 7),
-            (FIF.FINGERPRINT, "分组密码", 6),
-            (FIF.CERTIFICATE, "公钥密码", 7),
-            (FIF.TAG, "哈希算法", 9),
-            (FIF.SYNC, "流密码", 4),
-            (FIF.LABEL, "数学基础", 3),
+        categories = [
+            {
+                'icon': FIF.FONT,
+                'title': '经典密码',
+                'count': 7,
+                'description': 'Caesar、Hill、Vigenere、Playfair、Enigma等古典加密算法',
+                'category': 'classical'
+            },
+            {
+                'icon': FIF.FINGERPRINT,
+                'title': '对称密码',
+                'count': 8,
+                'description': 'AES、DES、SM4等现代分组密码和流密码算法',
+                'category': 'symmetric'
+            },
+            {
+                'icon': FIF.CERTIFICATE,
+                'title': '公钥密码',
+                'count': 4,
+                'description': 'RSA、ElGamal、ECDSA等非对称加密和数字签名',
+                'category': 'asymmetric'
+            },
+            {
+                'icon': FIF.TAG,
+                'title': '哈希算法',
+                'count': 7,
+                'description': 'MD5、SHA系列、SM3等消息摘要和MAC算法',
+                'category': 'hash'
+            },
+            {
+                'icon': FIF.CALCULATOR,
+                'title': '数学基础',
+                'count': 3,
+                'description': 'Euler定理、中国剩余定理、欧几里得算法',
+                'category': 'mathematical'
+            },
+            {
+                'icon': FIF.LINK,
+                'title': '密码协议',
+                'count': 0,
+                'description': 'Diffie-Hellman、数字证书、零知识证明等',
+                'category': 'protocol'
+            },
         ]
         
-        for i, (icon, title, count) in enumerate(stats):
-            card = StatCard(icon, title, count)
-            statsLayout.addWidget(card, i // 3, i % 3)
+        for i, cat in enumerate(categories):
+            card = CategoryCard(
+                cat['icon'],
+                cat['title'],
+                cat['count'],
+                cat['description'],
+                cat['category']
+            )
+            card.clicked.connect(self.categoryClicked.emit)
+            categoriesLayout.addWidget(card, i // 3, i % 3)
         
-        layout.addLayout(statsLayout)
-        
-        # 快速开始
-        quickStartCard = CardWidget()
-        quickStartLayout = QVBoxLayout(quickStartCard)
-        
-        quickTitle = TitleLabel("快速开始")
-        quickStartLayout.addWidget(quickTitle)
-        
-        quickDesc = BodyLabel(
-            "1. 从左侧导航栏选择一个算法\n"
-            "2. 配置密钥参数\n"
-            "3. 输入明文或密文\n"
-            "4. 点击加密或解密按钮\n"
-            "5. 查看结果和日志"
-        )
-        quickStartLayout.addWidget(quickDesc)
-        
-        layout.addWidget(quickStartCard)
-        
+        layout.addLayout(categoriesLayout)
         layout.addStretch()
+

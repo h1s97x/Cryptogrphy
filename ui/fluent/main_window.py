@@ -1,6 +1,6 @@
 """
 Fluent Design 主窗口
-使用 QFluentWidgets 实现现代化界面
+使用 QFluentWidgets 实现现代化界面，支持分层导航
 """
 
 from PyQt5.QtCore import Qt, QSize
@@ -21,14 +21,13 @@ class FluentMainWindow(FluentWindow):
         super().__init__()
         self.initWindow()
         self.initNavigation()
+        self.initCategoryInterfaces()
+        self.connectSignals()
     
     def initWindow(self):
         """初始化窗口"""
         self.setWindowTitle("密码学平台")
         self.resize(1200, 800)
-        
-        # 设置窗口图标
-        # self.setWindowIcon(QIcon('resources/icons/logo.png'))
     
     def initNavigation(self):
         """初始化导航栏"""
@@ -46,26 +45,23 @@ class FluentMainWindow(FluentWindow):
             NavigationItemPosition.TOP
         )
         
-        # 经典密码
-        self.addClassicalCrypto()
+        # 创建分类导航组
+        self.navigationInterface.addSeparator(NavigationItemPosition.SCROLL)
         
-        # 分组密码
-        self.addBlockCrypto()
+        # 经典密码
+        self.addNavigationGroup('经典密码', FIF.FONT, 'classical')
+        
+        # 对称密码
+        self.addNavigationGroup('对称密码', FIF.FINGERPRINT, 'symmetric')
         
         # 公钥密码
-        self.addPublicKeyCrypto()
+        self.addNavigationGroup('公钥密码', FIF.CERTIFICATE, 'asymmetric')
         
         # 哈希算法
-        self.addHashAlgorithms()
-        
-        # 流密码
-        self.addStreamCrypto()
+        self.addNavigationGroup('哈希算法', FIF.TAG, 'hash')
         
         # 数学基础
-        self.addMathematical()
-        
-        # 密码协议
-        self.addProtocols()
+        self.addNavigationGroup('数学基础', FIF.CALCULATOR, 'mathematical')
         
         # 设置（底部）
         self.settingsInterface = SettingsInterface(self)
@@ -76,335 +72,182 @@ class FluentMainWindow(FluentWindow):
             NavigationItemPosition.BOTTOM
         )
     
-    def addClassicalCrypto(self):
-        """添加经典密码分类"""
-        from ui.fluent.widgets.hill_widget import HillWidget
-        from ui.fluent.widgets.caesar_widget import CaesarWidget
-        from ui.fluent.widgets.vigenere_widget import VigenereWidget
-        from ui.fluent.widgets.playfair_widget import PlayfairWidget
-        from ui.fluent.widgets.enigma_widget import EnigmaWidget
-        from ui.fluent.widgets.monoalphabetic_widget import MonoalphabeticWidget
-        from ui.fluent.widgets.frequency_analysis_widget import FrequencyAnalysisWidget
-        
-        # Hill
-        self.hillWidget = HillWidget(self)
-        self.hillWidget.setObjectName('hillWidget')
-        self.addSubInterface(
-            self.hillWidget,
-            FIF.DOCUMENT,
-            'Hill',
-            NavigationItemPosition.SCROLL
-        )
-        
-        # Caesar
-        self.caesarWidget = CaesarWidget(self)
-        self.caesarWidget.setObjectName('caesarWidget')
-        self.addSubInterface(
-            self.caesarWidget,
-            FIF.DOCUMENT,
-            'Caesar',
-            NavigationItemPosition.SCROLL
-        )
-        
-        # Vigenere
-        self.vigenereWidget = VigenereWidget(self)
-        self.vigenereWidget.setObjectName('vigenereWidget')
-        self.addSubInterface(
-            self.vigenereWidget,
-            FIF.DOCUMENT,
-            'Vigenere',
-            NavigationItemPosition.SCROLL
-        )
-        
-        # Playfair
-        self.playfairWidget = PlayfairWidget(self)
-        self.playfairWidget.setObjectName('playfairWidget')
-        self.addSubInterface(
-            self.playfairWidget,
-            FIF.DOCUMENT,
-            'Playfair',
-            NavigationItemPosition.SCROLL
-        )
-        
-        # Enigma
-        self.enigmaWidget = EnigmaWidget(self)
-        self.enigmaWidget.setObjectName('enigmaWidget')
-        self.addSubInterface(
-            self.enigmaWidget,
-            FIF.DOCUMENT,
-            'Enigma',
-            NavigationItemPosition.SCROLL
-        )
-        
-        # Monoalphabetic
-        self.monoWidget = MonoalphabeticWidget(self)
-        self.monoWidget.setObjectName('monoWidget')
-        self.addSubInterface(
-            self.monoWidget,
-            FIF.DOCUMENT,
-            'Monoalphabetic',
-            NavigationItemPosition.SCROLL
-        )
-        
-        # Frequency Analysis
-        self.freqWidget = FrequencyAnalysisWidget(self)
-        self.freqWidget.setObjectName('freqWidget')
-        self.addSubInterface(
-            self.freqWidget,
-            FIF.DOCUMENT,
-            'Frequency Analysis',
-            NavigationItemPosition.SCROLL
+    def addNavigationGroup(self, title, icon, category):
+        """添加导航组"""
+        # 创建父节点
+        self.navigationInterface.addItem(
+            routeKey=f'{category}_group',
+            icon=icon,
+            text=title,
+            onClick=lambda: self.switchTo(self.categoryInterfaces[category]),
+            position=NavigationItemPosition.SCROLL
         )
     
-    def addBlockCrypto(self):
-        """添加分组密码分类"""
-        from ui.fluent.widgets.aes_widget import AESWidget
-        from ui.fluent.widgets.des_widget import DESWidget
-        from ui.fluent.widgets.sm4_widget import SM4Widget
-        from ui.fluent.widgets.speck_widget import SPECKWidget
-        from ui.fluent.widgets.simon_widget import SIMONWidget
-        from ui.fluent.widgets.block_mode_widget import BlockModeWidget
+    def initCategoryInterfaces(self):
+        """初始化分类界面"""
+        from ui.fluent.interfaces.category_interface import CategoryInterface
         
-        # AES
-        self.aesWidget = AESWidget(self)
-        self.aesWidget.setObjectName('aesWidget')
-        self.addSubInterface(
-            self.aesWidget,
-            FIF.DOCUMENT,
-            'AES',
-            NavigationItemPosition.SCROLL
+        self.categoryInterfaces = {}
+        self.algorithmWidgets = {}
+        
+        # 经典密码分类
+        self.categoryInterfaces['classical'] = CategoryInterface(
+            '经典密码',
+            '古典密码学算法，包括替换密码、置换密码等',
+            [
+                {'icon': FIF.DOCUMENT, 'name': 'Hill', 'description': '基于矩阵运算的多表替换密码', 'objectName': 'hillWidget'},
+                {'icon': FIF.DOCUMENT, 'name': 'Caesar', 'description': '最简单的移位替换密码', 'objectName': 'caesarWidget'},
+                {'icon': FIF.DOCUMENT, 'name': 'Vigenere', 'description': '多表替换密码，使用密钥字', 'objectName': 'vigenereWidget'},
+                {'icon': FIF.DOCUMENT, 'name': 'Playfair', 'description': '双字母替换密码', 'objectName': 'playfairWidget'},
+                {'icon': FIF.DOCUMENT, 'name': 'Enigma', 'description': '二战德军使用的转子密码机', 'objectName': 'enigmaWidget'},
+                {'icon': FIF.DOCUMENT, 'name': 'Monoalphabetic', 'description': '单表替换密码', 'objectName': 'monoWidget'},
+                {'icon': FIF.DOCUMENT, 'name': 'Frequency Analysis', 'description': '频率分析破解工具', 'objectName': 'freqWidget'},
+            ],
+            self
         )
         
-        # DES
-        self.desWidget = DESWidget(self)
-        self.desWidget.setObjectName('desWidget')
-        self.addSubInterface(
-            self.desWidget,
-            FIF.DOCUMENT,
-            'DES',
-            NavigationItemPosition.SCROLL
+        # 对称密码分类
+        self.categoryInterfaces['symmetric'] = CategoryInterface(
+            '对称密码',
+            '现代分组密码和流密码算法',
+            [
+                {'icon': FIF.FINGERPRINT, 'name': 'AES', 'description': '高级加密标准，最广泛使用', 'objectName': 'aesWidget'},
+                {'icon': FIF.FINGERPRINT, 'name': 'DES', 'description': '数据加密标准', 'objectName': 'desWidget'},
+                {'icon': FIF.FINGERPRINT, 'name': 'SM4', 'description': '国密分组密码算法', 'objectName': 'sm4Widget'},
+                {'icon': FIF.FINGERPRINT, 'name': 'RC4', 'description': '流密码算法', 'objectName': 'rc4Widget'},
+                {'icon': FIF.FINGERPRINT, 'name': 'SPECK', 'description': 'NSA轻量级分组密码', 'objectName': 'speckWidget'},
+                {'icon': FIF.FINGERPRINT, 'name': 'SIMON', 'description': 'NSA轻量级分组密码', 'objectName': 'simonWidget'},
+                {'icon': FIF.FINGERPRINT, 'name': 'Block Mode', 'description': 'ECB和CBC分组模式', 'objectName': 'blockModeWidget'},
+            ],
+            self
         )
         
-        # SM4
-        self.sm4Widget = SM4Widget(self)
-        self.sm4Widget.setObjectName('sm4Widget')
-        self.addSubInterface(
-            self.sm4Widget,
-            FIF.DOCUMENT,
-            'SM4',
-            NavigationItemPosition.SCROLL
+        # 公钥密码分类
+        self.categoryInterfaces['asymmetric'] = CategoryInterface(
+            '公钥密码',
+            '非对称加密和数字签名算法',
+            [
+                {'icon': FIF.CERTIFICATE, 'name': 'RSA', 'description': '最常用的公钥加密算法', 'objectName': 'rsaWidget'},
+                {'icon': FIF.CERTIFICATE, 'name': 'RSA Sign', 'description': 'RSA数字签名', 'objectName': 'rsaSignWidget'},
+                {'icon': FIF.CERTIFICATE, 'name': 'ElGamal', 'description': '基于离散对数的公钥密码', 'objectName': 'elgamalWidget'},
+                {'icon': FIF.CERTIFICATE, 'name': 'ECDSA', 'description': '椭圆曲线数字签名算法', 'objectName': 'ecdsaWidget'},
+            ],
+            self
         )
         
-        # SPECK
-        self.speckWidget = SPECKWidget(self)
-        self.speckWidget.setObjectName('speckWidget')
-        self.addSubInterface(
-            self.speckWidget,
-            FIF.DOCUMENT,
-            'SPECK',
-            NavigationItemPosition.SCROLL
+        # 哈希算法分类
+        self.categoryInterfaces['hash'] = CategoryInterface(
+            '哈希算法',
+            '消息摘要和消息认证码算法',
+            [
+                {'icon': FIF.TAG, 'name': 'MD5', 'description': '128位消息摘要算法', 'objectName': 'md5Widget'},
+                {'icon': FIF.TAG, 'name': 'SHA-1', 'description': '160位安全哈希算法', 'objectName': 'sha1Widget'},
+                {'icon': FIF.TAG, 'name': 'SHA-256', 'description': 'SHA-2系列256位哈希', 'objectName': 'sha256Widget'},
+                {'icon': FIF.TAG, 'name': 'SHA-3', 'description': '最新的哈希标准', 'objectName': 'sha3Widget'},
+                {'icon': FIF.TAG, 'name': 'SM3', 'description': '国密哈希算法', 'objectName': 'sm3Widget'},
+                {'icon': FIF.TAG, 'name': 'HMAC-MD5', 'description': '基于MD5的消息认证码', 'objectName': 'hmacmd5Widget'},
+                {'icon': FIF.TAG, 'name': 'AES-CBC-MAC', 'description': '基于AES-CBC的MAC', 'objectName': 'aesCbcMacWidget'},
+            ],
+            self
         )
         
-        # SIMON
-        self.simonWidget = SIMONWidget(self)
-        self.simonWidget.setObjectName('simonWidget')
-        self.addSubInterface(
-            self.simonWidget,
-            FIF.DOCUMENT,
-            'SIMON',
-            NavigationItemPosition.SCROLL
+        # 数学基础分类
+        self.categoryInterfaces['mathematical'] = CategoryInterface(
+            '数学基础',
+            '密码学相关的数学算法和定理',
+            [
+                {'icon': FIF.CALCULATOR, 'name': 'Euler', 'description': '欧拉定理和欧拉函数', 'objectName': 'eulerWidget'},
+                {'icon': FIF.CALCULATOR, 'name': 'CRT', 'description': '中国剩余定理', 'objectName': 'crtWidget'},
+                {'icon': FIF.CALCULATOR, 'name': 'Euclidean', 'description': '欧几里得算法求最大公约数', 'objectName': 'euclideanWidget'},
+            ],
+            self
         )
         
-        # Block Mode
-        self.blockModeWidget = BlockModeWidget(self)
-        self.blockModeWidget.setObjectName('blockModeWidget')
-        self.addSubInterface(
-            self.blockModeWidget,
-            FIF.DOCUMENT,
-            'Block Mode',
-            NavigationItemPosition.SCROLL
-        )
+        # 将分类界面添加到窗口（但不添加到导航栏）
+        for category, interface in self.categoryInterfaces.items():
+            self.stackedWidget.addWidget(interface)
     
-    def addPublicKeyCrypto(self):
-        """添加公钥密码分类"""
-        from ui.fluent.widgets.rsa_widget import RSAWidget
-        from ui.fluent.widgets.rsa_sign_widget import RSASignWidget
-        from ui.fluent.widgets.elgamal_widget import ElGamalWidget
-        from ui.fluent.widgets.ecdsa_widget import ECDSAWidget
+    def connectSignals(self):
+        """连接信号"""
+        # 首页分类点击
+        self.homeInterface.categoryClicked.connect(self.onCategoryClicked)
         
-        # RSA
-        self.rsaWidget = RSAWidget(self)
-        self.rsaWidget.setObjectName('rsaWidget')
-        self.addSubInterface(
-            self.rsaWidget,
-            FIF.DOCUMENT,
-            'RSA',
-            NavigationItemPosition.SCROLL
-        )
-        
-        # RSA Sign
-        self.rsaSignWidget = RSASignWidget(self)
-        self.rsaSignWidget.setObjectName('rsaSignWidget')
-        self.addSubInterface(
-            self.rsaSignWidget,
-            FIF.DOCUMENT,
-            'RSA Sign',
-            NavigationItemPosition.SCROLL
-        )
-        
-        # ElGamal
-        self.elgamalWidget = ElGamalWidget(self)
-        self.elgamalWidget.setObjectName('elgamalWidget')
-        self.addSubInterface(
-            self.elgamalWidget,
-            FIF.DOCUMENT,
-            'ElGamal',
-            NavigationItemPosition.SCROLL
-        )
-        
-        # ECDSA
-        self.ecdsaWidget = ECDSAWidget(self)
-        self.ecdsaWidget.setObjectName('ecdsaWidget')
-        self.addSubInterface(
-            self.ecdsaWidget,
-            FIF.DOCUMENT,
-            'ECDSA',
-            NavigationItemPosition.SCROLL
-        )
+        # 分类界面算法点击
+        for interface in self.categoryInterfaces.values():
+            interface.algorithmClicked.connect(self.onAlgorithmClicked)
     
-    def addHashAlgorithms(self):
-        """添加哈希算法分类"""
-        from ui.fluent.widgets.md5_widget import MD5Widget
-        from ui.fluent.widgets.sha1_widget import SHA1Widget
-        from ui.fluent.widgets.sha256_widget import SHA256Widget
-        from ui.fluent.widgets.sha3_widget import SHA3Widget
-        from ui.fluent.widgets.sm3_widget import SM3Widget
-        from ui.fluent.widgets.hmac_md5_widget import HMACMD5Widget
-        from ui.fluent.widgets.aes_cbc_mac_widget import AESCBCMACWidget
-        
-        # MD5
-        self.md5Widget = MD5Widget(self)
-        self.md5Widget.setObjectName('md5Widget')
-        self.addSubInterface(
-            self.md5Widget,
-            FIF.DOCUMENT,
-            'MD5',
-            NavigationItemPosition.SCROLL
-        )
-        
-        # SHA-1
-        self.sha1Widget = SHA1Widget(self)
-        self.sha1Widget.setObjectName('sha1Widget')
-        self.addSubInterface(
-            self.sha1Widget,
-            FIF.DOCUMENT,
-            'SHA-1',
-            NavigationItemPosition.SCROLL
-        )
-        
-        # SHA-256
-        self.sha256Widget = SHA256Widget(self)
-        self.sha256Widget.setObjectName('sha256Widget')
-        self.addSubInterface(
-            self.sha256Widget,
-            FIF.DOCUMENT,
-            'SHA-256',
-            NavigationItemPosition.SCROLL
-        )
-        
-        # SHA-3
-        self.sha3Widget = SHA3Widget(self)
-        self.sha3Widget.setObjectName('sha3Widget')
-        self.addSubInterface(
-            self.sha3Widget,
-            FIF.DOCUMENT,
-            'SHA-3',
-            NavigationItemPosition.SCROLL
-        )
-        
-        # SM3
-        self.sm3Widget = SM3Widget(self)
-        self.sm3Widget.setObjectName('sm3Widget')
-        self.addSubInterface(
-            self.sm3Widget,
-            FIF.DOCUMENT,
-            'SM3',
-            NavigationItemPosition.SCROLL
-        )
-        
-        # HMAC-MD5
-        self.hmacmd5Widget = HMACMD5Widget(self)
-        self.hmacmd5Widget.setObjectName('hmacmd5Widget')
-        self.addSubInterface(
-            self.hmacmd5Widget,
-            FIF.DOCUMENT,
-            'HMAC-MD5',
-            NavigationItemPosition.SCROLL
-        )
-        
-        # AES-CBC-MAC
-        self.aesCbcMacWidget = AESCBCMACWidget(self)
-        self.aesCbcMacWidget.setObjectName('aesCbcMacWidget')
-        self.addSubInterface(
-            self.aesCbcMacWidget,
-            FIF.DOCUMENT,
-            'AES-CBC-MAC',
-            NavigationItemPosition.SCROLL
-        )
+    def onCategoryClicked(self, category):
+        """分类卡片点击"""
+        if category in self.categoryInterfaces:
+            self.switchTo(self.categoryInterfaces[category])
     
-    def addStreamCrypto(self):
-        """添加流密码分类"""
-        from ui.fluent.widgets.rc4_widget import RC4Widget
+    def onAlgorithmClicked(self, objectName):
+        """算法卡片点击"""
+        # 延迟加载算法Widget
+        if objectName not in self.algorithmWidgets:
+            self.loadAlgorithmWidget(objectName)
         
-        # RC4
-        self.rc4Widget = RC4Widget(self)
-        self.rc4Widget.setObjectName('rc4Widget')
-        self.addSubInterface(
-            self.rc4Widget,
-            FIF.DOCUMENT,
-            'RC4',
-            NavigationItemPosition.SCROLL
-        )
+        # 切换到算法界面
+        if objectName in self.algorithmWidgets:
+            self.switchTo(self.algorithmWidgets[objectName])
     
-    def addMathematical(self):
-        """添加数学基础分类"""
-        from ui.fluent.widgets.euler_widget import EulerWidget
-        from ui.fluent.widgets.crt_widget import CRTWidget
-        from ui.fluent.widgets.euclidean_widget import EuclideanWidget
+    def loadAlgorithmWidget(self, objectName):
+        """延迟加载算法Widget"""
+        widget_map = {
+            # 经典密码
+            'hillWidget': ('ui.fluent.widgets.hill_widget', 'HillWidget'),
+            'caesarWidget': ('ui.fluent.widgets.caesar_widget', 'CaesarWidget'),
+            'vigenereWidget': ('ui.fluent.widgets.vigenere_widget', 'VigenereWidget'),
+            'playfairWidget': ('ui.fluent.widgets.playfair_widget', 'PlayfairWidget'),
+            'enigmaWidget': ('ui.fluent.widgets.enigma_widget', 'EnigmaWidget'),
+            'monoWidget': ('ui.fluent.widgets.monoalphabetic_widget', 'MonoalphabeticWidget'),
+            'freqWidget': ('ui.fluent.widgets.frequency_analysis_widget', 'FrequencyAnalysisWidget'),
+            
+            # 对称密码
+            'aesWidget': ('ui.fluent.widgets.aes_widget', 'AESWidget'),
+            'desWidget': ('ui.fluent.widgets.des_widget', 'DESWidget'),
+            'sm4Widget': ('ui.fluent.widgets.sm4_widget', 'SM4Widget'),
+            'rc4Widget': ('ui.fluent.widgets.rc4_widget', 'RC4Widget'),
+            'speckWidget': ('ui.fluent.widgets.speck_widget', 'SPECKWidget'),
+            'simonWidget': ('ui.fluent.widgets.simon_widget', 'SIMONWidget'),
+            'blockModeWidget': ('ui.fluent.widgets.block_mode_widget', 'BlockModeWidget'),
+            
+            # 公钥密码
+            'rsaWidget': ('ui.fluent.widgets.rsa_widget', 'RSAWidget'),
+            'rsaSignWidget': ('ui.fluent.widgets.rsa_sign_widget', 'RSASignWidget'),
+            'elgamalWidget': ('ui.fluent.widgets.elgamal_widget', 'ElGamalWidget'),
+            'ecdsaWidget': ('ui.fluent.widgets.ecdsa_widget', 'ECDSAWidget'),
+            
+            # 哈希算法
+            'md5Widget': ('ui.fluent.widgets.md5_widget', 'MD5Widget'),
+            'sha1Widget': ('ui.fluent.widgets.sha1_widget', 'SHA1Widget'),
+            'sha256Widget': ('ui.fluent.widgets.sha256_widget', 'SHA256Widget'),
+            'sha3Widget': ('ui.fluent.widgets.sha3_widget', 'SHA3Widget'),
+            'sm3Widget': ('ui.fluent.widgets.sm3_widget', 'SM3Widget'),
+            'hmacmd5Widget': ('ui.fluent.widgets.hmac_md5_widget', 'HMACMD5Widget'),
+            'aesCbcMacWidget': ('ui.fluent.widgets.aes_cbc_mac_widget', 'AESCBCMACWidget'),
+            
+            # 数学基础
+            'eulerWidget': ('ui.fluent.widgets.euler_widget', 'EulerWidget'),
+            'crtWidget': ('ui.fluent.widgets.crt_widget', 'CRTWidget'),
+            'euclideanWidget': ('ui.fluent.widgets.euclidean_widget', 'EuclideanWidget'),
+        }
         
-        # Euler
-        self.eulerWidget = EulerWidget(self)
-        self.eulerWidget.setObjectName('eulerWidget')
-        self.addSubInterface(
-            self.eulerWidget,
-            FIF.DOCUMENT,
-            'Euler',
-            NavigationItemPosition.SCROLL
-        )
-        
-        # CRT
-        self.crtWidget = CRTWidget(self)
-        self.crtWidget.setObjectName('crtWidget')
-        self.addSubInterface(
-            self.crtWidget,
-            FIF.DOCUMENT,
-            'CRT',
-            NavigationItemPosition.SCROLL
-        )
-        
-        # Euclidean
-        self.euclideanWidget = EuclideanWidget(self)
-        self.euclideanWidget.setObjectName('euclideanWidget')
-        self.addSubInterface(
-            self.euclideanWidget,
-            FIF.DOCUMENT,
-            'Euclidean',
-            NavigationItemPosition.SCROLL
-        )
-    
-    def addProtocols(self):
-        """添加密码协议分类"""
-        pass
+        if objectName in widget_map:
+            module_path, class_name = widget_map[objectName]
+            try:
+                # 动态导入
+                module = __import__(module_path, fromlist=[class_name])
+                widget_class = getattr(module, class_name)
+                widget = widget_class(self)
+                widget.setObjectName(objectName)
+                
+                # 添加到stackedWidget
+                self.stackedWidget.addWidget(widget)
+                self.algorithmWidgets[objectName] = widget
+                
+            except Exception as e:
+                MessageBox("错误", f"加载算法失败: {str(e)}", self).exec()
 
 
 if __name__ == '__main__':
