@@ -175,9 +175,10 @@ class FluentMainWindow(FluentWindow):
                 {'icon': FIF.LINK, 'name': 'Verify', 'description': '挑战-响应验证协议 - AES加密', 'objectName': 'verifyWidget'},
                 {'icon': FIF.LINK, 'name': 'Millionaire', 'description': '百万富翁问题 - 安全多方计算', 'objectName': 'millionaireWidget'},
                 {'icon': FIF.LINK, 'name': 'Zero Knowledge Proof', 'description': '零知识证明 - 阿里巴巴洞穴', 'objectName': 'zkpWidget'},
+                {'icon': FIF.LINK, 'name': 'Digital Envelope', 'description': '数字信封 - RSA+AES混合加密', 'objectName': 'digitalEnvelopeWidget'},
                 # TODO: 添加更多协议
                 # {'icon': FIF.LINK, 'name': 'Diffie-Hellman', 'description': '密钥交换协议', 'objectName': 'dhWidget'},
-                # {'icon': FIF.LINK, 'name': 'Digital Envelope', 'description': '数字信封 - RSA+AES', 'objectName': 'deWidget'},
+                # {'icon': FIF.LINK, 'name': 'Digital Certificate', 'description': '数字证书 - PKI', 'objectName': 'dcWidget'},
             ],
             self
         )
@@ -256,6 +257,7 @@ class FluentMainWindow(FluentWindow):
             'verifyWidget': ('ui.widgets.protocols.verify_widget', 'VerifyWidget'),
             'millionaireWidget': ('ui.widgets.protocols.millionaire_widget', 'MillionaireWidget'),
             'zkpWidget': ('ui.widgets.protocols.zkp_widget', 'ZKPWidget'),
+            'digitalEnvelopeWidget': ('ui.widgets.protocols.digital_envelope_widget', 'DigitalEnvelopeWidget'),
         }
         
         if objectName in widget_map:
