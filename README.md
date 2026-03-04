@@ -38,6 +38,7 @@ python main.py --theme dark
 - Hill 密码 ✅
 - Caesar 密码 ✅
 - Vigenere 密码 ✅
+- Playfair 密码 ✅
 
 ### 分组密码
 - AES ✅
@@ -48,10 +49,11 @@ python main.py --theme dark
 
 ### 哈希算法
 - MD5 ✅
+- SHA-1 ✅
 - SHA-256 ✅
 
 ### 数学基础
-- Euler 函数 🚧
+- Euler 定理 ✅
 
 ✅ 已完成 | 🚧 开发中
 
