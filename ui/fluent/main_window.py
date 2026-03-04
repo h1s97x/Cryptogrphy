@@ -154,6 +154,17 @@ class FluentMainWindow(FluentWindow):
     def addHashAlgorithms(self):
         """添加哈希算法分类"""
         from ui.fluent.widgets.sha256_widget import SHA256Widget
+        from ui.fluent.widgets.md5_widget import MD5Widget
+        
+        # MD5
+        self.md5Widget = MD5Widget(self)
+        self.md5Widget.setObjectName('md5Widget')
+        self.addSubInterface(
+            self.md5Widget,
+            FIF.DOCUMENT,
+            'MD5',
+            NavigationItemPosition.SCROLL
+        )
         
         # SHA-256
         self.sha256Widget = SHA256Widget(self)
