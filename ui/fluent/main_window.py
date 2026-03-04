@@ -255,7 +255,17 @@ class FluentMainWindow(FluentWindow):
     
     def addStreamCrypto(self):
         """添加流密码分类"""
-        pass
+        from ui.fluent.widgets.rc4_widget import RC4Widget
+        
+        # RC4
+        self.rc4Widget = RC4Widget(self)
+        self.rc4Widget.setObjectName('rc4Widget')
+        self.addSubInterface(
+            self.rc4Widget,
+            FIF.DOCUMENT,
+            'RC4',
+            NavigationItemPosition.SCROLL
+        )
     
     def addMathematical(self):
         """添加数学基础分类"""
