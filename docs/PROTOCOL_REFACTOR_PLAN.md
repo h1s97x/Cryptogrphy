@@ -159,19 +159,19 @@ class DiffieHellman:
 - 建议分多次提交，每次完成1-2个协议
 - 优先级：Replay Attack → Verify → 其他
 
-### Step 2: 简单协议重构（P3）
+### Step 2: 简单协议重构（P3） ✅
 
-从最简单的协议开始：
-
-1. **Replay Attack** - 最简单
-   - 创建 `ui/widgets/protocols/replay_attack_widget.py`
-   - 实现 Fluent UI
-   - 测试功能
+1. **Replay Attack** - 最简单 ✅
+   - [x] 创建 `ui/widgets/protocols/replay_attack_widget.py`
+   - [x] 实现 Fluent UI
+   - [x] 移除智能卡依赖
+   - [x] 测试功能
+   - 状态：完成
 
 2. **Verify** - 中等复杂度
-   - 创建 Widget
-   - 分离核心逻辑
-   - 测试
+   - [ ] 创建 Widget
+   - [ ] 分离核心逻辑
+   - [ ] 测试
 
 ### Step 3: 中等协议重构（P2）
 
