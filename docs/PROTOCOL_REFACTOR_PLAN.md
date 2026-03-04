@@ -156,11 +156,12 @@ class DiffieHellman:
 - ✅ 完成 Replay Attack 协议重构（ECDSA签名演示）
 - ✅ 完成 Verify 协议重构（挑战-响应验证，AES-ECB加密）
 - ✅ 完成 Millionaire Problem 协议重构（安全多方计算，RSA加密）
+- ✅ 完成 Zero Knowledge Proof 协议重构（阿里巴巴洞穴，概率验证）
 
 **下一步**:
-- 继续重构剩余4个协议（按优先级）
+- 继续重构剩余3个协议（按优先级）
 - 建议分多次提交，每次完成1-2个协议
-- 优先级：Zero Knowledge Proof → Digital Envelope → Diffie-Hellman → Digital Certificate
+- 优先级：Digital Envelope → Diffie-Hellman → Digital Certificate
 
 ### Step 2: 简单协议重构（P3） ✅
 
@@ -190,10 +191,15 @@ class DiffieHellman:
    - [x] 创建测试脚本 `test_millionaire.py`
    - 状态：完成
 
-4. **Zero Knowledge Proof**
-   - 零知识证明
-   - 创建 Widget
-   - 测试
+4. **Zero Knowledge Proof** ✅
+   - [x] 创建 `ui/widgets/protocols/zkp_widget.py`
+   - [x] 实现 Fluent UI（5个卡片：设置、单次验证、批量验证、统计、日志）
+   - [x] 实现阿里巴巴洞穴场景
+   - [x] 支持单次和批量验证
+   - [x] 添加统计分析和结论
+   - [x] 添加到主窗口配置
+   - [x] 创建测试脚本 `test_zkp.py`
+   - 状态：完成
 
 ### Step 4: 复杂协议重构（P2-P3）
 
