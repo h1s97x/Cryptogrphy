@@ -84,6 +84,7 @@ class FluentMainWindow(FluentWindow):
         from ui.fluent.widgets.playfair_widget import PlayfairWidget
         from ui.fluent.widgets.enigma_widget import EnigmaWidget
         from ui.fluent.widgets.monoalphabetic_widget import MonoalphabeticWidget
+        from ui.fluent.widgets.frequency_analysis_widget import FrequencyAnalysisWidget
         
         # Hill
         self.hillWidget = HillWidget(self)
@@ -144,6 +145,16 @@ class FluentMainWindow(FluentWindow):
             'Monoalphabetic',
             NavigationItemPosition.SCROLL
         )
+        
+        # Frequency Analysis
+        self.freqWidget = FrequencyAnalysisWidget(self)
+        self.freqWidget.setObjectName('freqWidget')
+        self.addSubInterface(
+            self.freqWidget,
+            FIF.DOCUMENT,
+            'Frequency Analysis',
+            NavigationItemPosition.SCROLL
+        )
     
     def addBlockCrypto(self):
         """添加分组密码分类"""
@@ -197,6 +208,7 @@ class FluentMainWindow(FluentWindow):
         from ui.fluent.widgets.rsa_widget import RSAWidget
         from ui.fluent.widgets.rsa_sign_widget import RSASignWidget
         from ui.fluent.widgets.elgamal_widget import ElGamalWidget
+        from ui.fluent.widgets.ecdsa_widget import ECDSAWidget
         
         # RSA
         self.rsaWidget = RSAWidget(self)
@@ -227,6 +239,16 @@ class FluentMainWindow(FluentWindow):
             'ElGamal',
             NavigationItemPosition.SCROLL
         )
+        
+        # ECDSA
+        self.ecdsaWidget = ECDSAWidget(self)
+        self.ecdsaWidget.setObjectName('ecdsaWidget')
+        self.addSubInterface(
+            self.ecdsaWidget,
+            FIF.DOCUMENT,
+            'ECDSA',
+            NavigationItemPosition.SCROLL
+        )
     
     def addHashAlgorithms(self):
         """添加哈希算法分类"""
@@ -236,6 +258,7 @@ class FluentMainWindow(FluentWindow):
         from ui.fluent.widgets.sha3_widget import SHA3Widget
         from ui.fluent.widgets.sm3_widget import SM3Widget
         from ui.fluent.widgets.hmac_md5_widget import HMACMD5Widget
+        from ui.fluent.widgets.aes_cbc_mac_widget import AESCBCMACWidget
         
         # MD5
         self.md5Widget = MD5Widget(self)
@@ -294,6 +317,16 @@ class FluentMainWindow(FluentWindow):
             self.hmacmd5Widget,
             FIF.DOCUMENT,
             'HMAC-MD5',
+            NavigationItemPosition.SCROLL
+        )
+        
+        # AES-CBC-MAC
+        self.aesCbcMacWidget = AESCBCMACWidget(self)
+        self.aesCbcMacWidget.setObjectName('aesCbcMacWidget')
+        self.addSubInterface(
+            self.aesCbcMacWidget,
+            FIF.DOCUMENT,
+            'AES-CBC-MAC',
             NavigationItemPosition.SCROLL
         )
     
