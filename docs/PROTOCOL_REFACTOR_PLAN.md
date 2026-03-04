@@ -158,11 +158,11 @@ class DiffieHellman:
 - ✅ 完成 Millionaire Problem 协议重构（安全多方计算，RSA加密）
 - ✅ 完成 Zero Knowledge Proof 协议重构（阿里巴巴洞穴，概率验证）
 - ✅ 完成 Digital Envelope 协议重构（RSA+AES混合加密）
+- ✅ 完成 Diffie-Hellman 协议重构（DH密钥交换，离散对数）
 
 **下一步**:
-- 继续重构剩余2个协议（按优先级）
-- 建议分多次提交，每次完成1个协议
-- 优先级：Diffie-Hellman → Digital Certificate
+- 继续重构最后1个协议
+- Digital Certificate（数字证书，PKI相关）
 
 ### Step 2: 简单协议重构（P3） ✅
 
@@ -214,10 +214,15 @@ class DiffieHellman:
    - [x] 创建测试脚本 `test_digital_envelope.py`
    - 状态：完成
 
-6. **Diffie-Hellman**
-   - 移除智能卡功能
-   - 创建 Widget
-   - 测试
+6. **Diffie-Hellman** ✅
+   - [x] 创建 `ui/widgets/protocols/diffie_hellman_widget.py`
+   - [x] 实现 Fluent UI（5个卡片：参数生成、Alice、Bob、密钥协商、日志）
+   - [x] 实现完整的DH密钥交换流程
+   - [x] 移除智能卡依赖，纯软件实现
+   - [x] 使用异步线程处理大数运算
+   - [x] 添加到主窗口配置
+   - [x] 创建测试脚本 `test_diffie_hellman.py`
+   - 状态：完成
 
 7. **Digital Certificate**
    - PKI 相关
