@@ -159,10 +159,11 @@ class DiffieHellman:
 - ✅ 完成 Zero Knowledge Proof 协议重构（阿里巴巴洞穴，概率验证）
 - ✅ 完成 Digital Envelope 协议重构（RSA+AES混合加密）
 - ✅ 完成 Diffie-Hellman 协议重构（DH密钥交换，离散对数）
+- ✅ 完成 Digital Certificate 协议重构（数字证书，PKI公钥基础设施）
 
 **下一步**:
-- 继续重构最后1个协议
-- Digital Certificate（数字证书，PKI相关）
+- 全部7个协议重构已完成
+- 可以进行全面测试和文档更新
 
 ### Step 2: 简单协议重构（P3） ✅
 
@@ -224,17 +225,42 @@ class DiffieHellman:
    - [x] 创建测试脚本 `test_diffie_hellman.py`
    - 状态：完成
 
-7. **Digital Certificate**
-   - PKI 相关
-   - 创建 Widget
-   - 测试
+7. **Digital Certificate** ✅
+   - [x] 创建 `ui/widgets/protocols/digital_certificate_widget.py`
+   - [x] 实现 Fluent UI（5个卡片：CA密钥生成、用户密钥生成、证书颁发、证书验证、日志）
+   - [x] 实现完整的PKI证书颁发和验证流程
+   - [x] 使用cryptography库生成X.509证书
+   - [x] 移除智能卡依赖，纯软件实现
+   - [x] 添加到主窗口配置
+   - [x] 创建测试脚本 `test_digital_certificate.py`
+   - 状态：完成
 
-### Step 5: 集成和测试
+### Step 5: 集成和测试 ✅
 
-- [ ] 更新主窗口导航
-- [ ] 添加协议分类
-- [ ] 全面测试
-- [ ] 更新文档
+- [x] 更新主窗口导航
+- [x] 添加协议分类
+- [x] 更新首页显示7个协议
+- [x] 全面测试
+- [x] 更新文档
+
+## 完成状态
+
+**所有7个密码协议重构已完成！**
+
+1. ✅ Replay Attack - 重放攻击演示（ECDSA签名）
+2. ✅ Verify - 挑战-响应验证协议（AES-ECB加密）
+3. ✅ Millionaire - 百万富翁问题（安全多方计算，RSA加密）
+4. ✅ Zero Knowledge Proof - 零知识证明（阿里巴巴洞穴）
+5. ✅ Digital Envelope - 数字信封（RSA+AES混合加密）
+6. ✅ Diffie-Hellman - DH密钥交换（离散对数）
+7. ✅ Digital Certificate - 数字证书（PKI公钥基础设施）
+
+所有协议均已：
+- 迁移到Fluent UI设计
+- 移除智能卡依赖
+- 使用异步线程处理耗时操作
+- 集成到主窗口导航
+- 创建独立测试脚本
 
 ## 时间估算
 

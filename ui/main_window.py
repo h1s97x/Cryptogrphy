@@ -177,6 +177,7 @@ class FluentMainWindow(FluentWindow):
                 {'icon': FIF.LINK, 'name': 'Zero Knowledge Proof', 'description': '零知识证明 - 阿里巴巴洞穴', 'objectName': 'zkpWidget'},
                 {'icon': FIF.LINK, 'name': 'Digital Envelope', 'description': '数字信封 - RSA+AES混合加密', 'objectName': 'digitalEnvelopeWidget'},
                 {'icon': FIF.LINK, 'name': 'Diffie-Hellman', 'description': 'DH密钥交换 - 离散对数', 'objectName': 'diffieHellmanWidget'},
+                {'icon': FIF.LINK, 'name': 'Digital Certificate', 'description': '数字证书 - PKI公钥基础设施', 'objectName': 'digitalCertificateWidget'},
             ],
             self
         )
@@ -257,6 +258,7 @@ class FluentMainWindow(FluentWindow):
             'zkpWidget': ('ui.widgets.protocols.zkp_widget', 'ZKPWidget'),
             'digitalEnvelopeWidget': ('ui.widgets.protocols.digital_envelope_widget', 'DigitalEnvelopeWidget'),
             'diffieHellmanWidget': ('ui.widgets.protocols.diffie_hellman_widget', 'DiffieHellmanWidget'),
+            'digitalCertificateWidget': ('ui.widgets.protocols.digital_certificate_widget', 'DigitalCertificateWidget'),
         }
         
         if objectName in widget_map:
