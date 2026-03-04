@@ -113,3 +113,40 @@ def int_to_bytes(i, min_size = None):
     if min_size != None and len(b) < min_size:
         b = b'\x00'*(min_size-len(b)) + b
     return b
+
+
+# 为了兼容性，创建一个TypeConvert类作为命名空间
+class TypeConvert:
+    """类型转换工具类 - 提供命名空间访问"""
+    
+    @staticmethod
+    def is_hex_string(string):
+        return is_hex_string(string)
+    
+    @staticmethod
+    def str_to_hex_list(text: str):
+        return str_to_hex_list(text)
+    
+    @staticmethod
+    def int_to_str(int_data: int, length: int):
+        return int_to_str(int_data, length)
+    
+    @staticmethod
+    def hex_list_to_str(hex_list):
+        return hex_list_to_str(hex_list)
+    
+    @staticmethod
+    def str_to_int(text: str):
+        return str_to_int(text)
+    
+    @staticmethod
+    def int_to_hex_list(int_data, length):
+        return int_to_hex_list(int_data, length)
+    
+    @staticmethod
+    def hex_list_to_int(hex_list):
+        return hex_list_to_int(hex_list)
+    
+    @staticmethod
+    def int_to_bytes(i, min_size=None):
+        return int_to_bytes(i, min_size)
