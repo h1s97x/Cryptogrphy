@@ -153,11 +153,13 @@ class DiffieHellman:
 - 制定了详细的重构计划
 - 创建了协议Widget目录结构
 - 确定了重构策略（保持目录位置，移除智能卡依赖）
+- ✅ 完成 Replay Attack 协议重构（ECDSA签名演示）
+- ✅ 完成 Verify 协议重构（挑战-响应验证，AES-ECB加密）
 
 **下一步**:
-- 从简单协议开始逐个重构
+- 继续重构剩余5个协议（按优先级）
 - 建议分多次提交，每次完成1-2个协议
-- 优先级：Replay Attack → Verify → 其他
+- 优先级：Millionaire → Zero Knowledge Proof → Digital Envelope → Diffie-Hellman → Digital Certificate
 
 ### Step 2: 简单协议重构（P3） ✅
 
@@ -168,10 +170,13 @@ class DiffieHellman:
    - [x] 测试功能
    - 状态：完成
 
-2. **Verify** - 中等复杂度
-   - [ ] 创建 Widget
-   - [ ] 分离核心逻辑
-   - [ ] 测试
+2. **Verify** - 中等复杂度 ✅
+   - [x] 创建 `ui/widgets/protocols/verify_widget.py`
+   - [x] 实现 Fluent UI（6个卡片：PC密钥、智能卡密钥、挑战、响应、验证、日志）
+   - [x] 移除智能卡依赖，使用 AES-ECB 纯软件模拟
+   - [x] 添加到主窗口配置
+   - [x] 创建测试脚本 `test_verify.py`
+   - 状态：完成
 
 ### Step 3: 中等协议重构（P2）
 

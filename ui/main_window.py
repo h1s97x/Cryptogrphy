@@ -172,6 +172,7 @@ class FluentMainWindow(FluentWindow):
             '基于密码算法构建的安全协议',
             [
                 {'icon': FIF.LINK, 'name': 'Replay Attack', 'description': '重放攻击演示 - ECDSA签名', 'objectName': 'replayAttackWidget'},
+                {'icon': FIF.LINK, 'name': 'Verify', 'description': '挑战-响应验证协议 - AES加密', 'objectName': 'verifyWidget'},
                 # TODO: 添加更多协议
                 # {'icon': FIF.LINK, 'name': 'Diffie-Hellman', 'description': '密钥交换协议', 'objectName': 'dhWidget'},
                 # {'icon': FIF.LINK, 'name': 'Digital Envelope', 'description': '数字信封 - RSA+AES', 'objectName': 'deWidget'},
@@ -250,6 +251,7 @@ class FluentMainWindow(FluentWindow):
             
             # 密码协议
             'replayAttackWidget': ('ui.widgets.protocols.replay_attack_widget', 'ReplayAttackWidget'),
+            'verifyWidget': ('ui.widgets.protocols.verify_widget', 'VerifyWidget'),
         }
         
         if objectName in widget_map:
