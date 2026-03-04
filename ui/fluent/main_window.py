@@ -185,6 +185,7 @@ class FluentMainWindow(FluentWindow):
         """添加公钥密码分类"""
         from ui.fluent.widgets.rsa_widget import RSAWidget
         from ui.fluent.widgets.rsa_sign_widget import RSASignWidget
+        from ui.fluent.widgets.elgamal_widget import ElGamalWidget
         
         # RSA
         self.rsaWidget = RSAWidget(self)
@@ -203,6 +204,16 @@ class FluentMainWindow(FluentWindow):
             self.rsaSignWidget,
             FIF.DOCUMENT,
             'RSA Sign',
+            NavigationItemPosition.SCROLL
+        )
+        
+        # ElGamal
+        self.elgamalWidget = ElGamalWidget(self)
+        self.elgamalWidget.setObjectName('elgamalWidget')
+        self.addSubInterface(
+            self.elgamalWidget,
+            FIF.DOCUMENT,
+            'ElGamal',
             NavigationItemPosition.SCROLL
         )
     
