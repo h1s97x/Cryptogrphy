@@ -122,8 +122,8 @@ class HomeInterface(ScrollArea):
             {
                 'icon': FIF.LINK,
                 'title': '密码协议',
-                'count': 2,
-                'description': '重放攻击、Verify验证协议等安全协议演示',
+                'count': 3,
+                'description': '重放攻击、Verify验证、百万富翁问题等安全协议',
                 'category': 'protocols'
             },
         ]

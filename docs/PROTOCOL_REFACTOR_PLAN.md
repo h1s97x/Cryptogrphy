@@ -155,11 +155,12 @@ class DiffieHellman:
 - 确定了重构策略（保持目录位置，移除智能卡依赖）
 - ✅ 完成 Replay Attack 协议重构（ECDSA签名演示）
 - ✅ 完成 Verify 协议重构（挑战-响应验证，AES-ECB加密）
+- ✅ 完成 Millionaire Problem 协议重构（安全多方计算，RSA加密）
 
 **下一步**:
-- 继续重构剩余5个协议（按优先级）
+- 继续重构剩余4个协议（按优先级）
 - 建议分多次提交，每次完成1-2个协议
-- 优先级：Millionaire → Zero Knowledge Proof → Digital Envelope → Diffie-Hellman → Digital Certificate
+- 优先级：Zero Knowledge Proof → Digital Envelope → Diffie-Hellman → Digital Certificate
 
 ### Step 2: 简单协议重构（P3） ✅
 
@@ -180,10 +181,14 @@ class DiffieHellman:
 
 ### Step 3: 中等协议重构（P2）
 
-3. **Millionaire Problem**
-   - 安全多方计算示例
-   - 创建 Widget
-   - 测试
+3. **Millionaire Problem** ✅
+   - [x] 创建 `ui/widgets/protocols/millionaire_widget.py`
+   - [x] 实现 Fluent UI（5个卡片：初始化、李的操作、王的操作、验证、日志）
+   - [x] 实现完整的安全多方计算流程
+   - [x] 使用简化RSA加密
+   - [x] 添加到主窗口配置
+   - [x] 创建测试脚本 `test_millionaire.py`
+   - 状态：完成
 
 4. **Zero Knowledge Proof**
    - 零知识证明

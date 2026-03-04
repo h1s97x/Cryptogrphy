@@ -112,7 +112,7 @@ cbb975d chore: 清理过时的脚本文件
 |------|--------|--------|------|
 | Replay Attack | 低 | P3 | ✅ 完成 |
 | Verify | 中 | P2 | ✅ 完成 |
-| Millionaire | 中 | P3 | ⏳ 待办 |
+| Millionaire | 中 | P3 | ✅ 完成 |
 | Zero Knowledge Proof | 中 | P3 | ⏳ 待办 |
 | Digital Envelope | 高 | P2 | ⏳ 待办 |
 | Diffie-Hellman | 高 | P2 | ⏳ 待办 |
