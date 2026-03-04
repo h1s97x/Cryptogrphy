@@ -47,9 +47,12 @@ class HillWidget(CryptographyWidget):
                       Button(id="ExportFile", name="ExportFile", clicked_function=self.export_file),
                   ])
         ]
-        # 在QWebEngineView中加载网址
-        # 目前有一个故障，测试时在本目录下运行会导致运行目录设置为本目录，因此path路径就会不正确，但是在主窗口运行就正常
-        self.webview.load(QUrl.fromLocalFile(self.path))
+        
+        # 创建webview（如果需要显示HTML）
+        # 注意：webview在基类中已创建，这里只需要加载URL
+        if hasattr(self, 'webview'):
+            self.webview.load(QUrl.fromLocalFile(self.path))
+        
         self.render()
         self.log_message("Hill algorithm has been imported.\n")
 

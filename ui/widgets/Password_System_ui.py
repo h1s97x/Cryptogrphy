@@ -44,8 +44,8 @@ class PSWidget(CryptographyWidget):
         ]
         self.render()
         self.log_message("Password System algorithm has been imported.\n")
-        self.path = Path.MENU_DIRECTORY
-        self.hash_table_path = Path.MENU_DIRECTORY + "table/"
+        self.path = MENU_DIRECTORY
+        self.hash_table_path = MENU_DIRECTORY + "table/"
         self.hash_value = {"SHA1": "0D 5F 29 BC 67 14 8C 3E 2A 6B E4 D3 94 76 A7 A2 C4 EB 5B 03",
                            "SHA256": "F8 BA 9C 14 DB 55 C0 02 AD 91 69 37 82 D5 E7 65 8B 8E 65 EB 66 FE A2 85 1C 24 99 5C A2 F7 16 9A",
                            "SHA3-256": "12 C0 84 B6 76 7F 9A 78 1F 2C DF DE 23 F6 42 87 64 19 40 77 0B 95 01 42 18 28 4C 26 5C 6A 20 94",

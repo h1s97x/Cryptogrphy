@@ -9,6 +9,7 @@ class DESWidget(CryptographyWidget):
     def __init__(self):
         super().__init__()
         self.menuBar().setHidden(True)
+        self.setWindowTitle("DES")
         
         self.groups_config = [
             KeyGroup(name="Key",
