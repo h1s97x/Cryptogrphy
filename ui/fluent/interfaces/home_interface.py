@@ -113,7 +113,7 @@ class HomeInterface(ScrollArea):
                 'category': 'hash'
             },
             {
-                'icon': FIF.CALCULATOR,
+                'icon': FIF.EDIT,
                 'title': '数学基础',
                 'count': 3,
                 'description': 'Euler定理、中国剩余定理、欧几里得算法',

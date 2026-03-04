@@ -61,7 +61,7 @@ class FluentMainWindow(FluentWindow):
         self.addNavigationGroup('哈希算法', FIF.TAG, 'hash')
         
         # 数学基础
-        self.addNavigationGroup('数学基础', FIF.CALCULATOR, 'mathematical')
+        self.addNavigationGroup('数学基础', FIF.EDIT, 'mathematical')
         
         # 设置（底部）
         self.settingsInterface = SettingsInterface(self)
@@ -156,9 +156,9 @@ class FluentMainWindow(FluentWindow):
             '数学基础',
             '密码学相关的数学算法和定理',
             [
-                {'icon': FIF.CALCULATOR, 'name': 'Euler', 'description': '欧拉定理和欧拉函数', 'objectName': 'eulerWidget'},
-                {'icon': FIF.CALCULATOR, 'name': 'CRT', 'description': '中国剩余定理', 'objectName': 'crtWidget'},
-                {'icon': FIF.CALCULATOR, 'name': 'Euclidean', 'description': '欧几里得算法求最大公约数', 'objectName': 'euclideanWidget'},
+                {'icon': FIF.EDIT, 'name': 'Euler', 'description': '欧拉定理和欧拉函数', 'objectName': 'eulerWidget'},
+                {'icon': FIF.EDIT, 'name': 'CRT', 'description': '中国剩余定理', 'objectName': 'crtWidget'},
+                {'icon': FIF.EDIT, 'name': 'Euclidean', 'description': '欧几里得算法求最大公约数', 'objectName': 'euclideanWidget'},
             ],
             self
         )
