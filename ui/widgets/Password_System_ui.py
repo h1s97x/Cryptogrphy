@@ -11,11 +11,9 @@ from infrastructure.Path import *
 
 class PSWidget(CryptographyWidget):
     def __init__(self):
-        CryptographyWidget.__init__(self)
+        super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("Password System")
-        self.widgets_dict = {}
-        self.groups_config = [
+        self.setWindowTitle("Password System")        self.groups_config = [
             KeyGroup(name="Hash Function",
                      key_edit=[],
                      buttons=[],
@@ -43,7 +41,7 @@ class PSWidget(CryptographyWidget):
                   buttons=[])
         ]
         self.render()
-        self.logging.log("Password System algorithm has been imported.\n")
+        self.log_message("Password System algorithm has been imported.\n")
         self.path = Path.MENU_DIRECTORY
         self.hash_table_path = Path.MENU_DIRECTORY + "table/"
         self.hash_value = {"SHA1": "0D 5F 29 BC 67 14 8C 3E 2A 6B E4 D3 94 76 A7 A2 C4 EB 5B 03",
@@ -65,7 +63,7 @@ class PSWidget(CryptographyWidget):
         if not self.error_password():
             return
         if self.account == "":
-            self.logging.log("The Account cannot be empty.\n")
+            self.log_message("The Account cannot be empty.\n")
             self.pop_message_box("The Account cannot be empty.")
             return
         self.information = []
@@ -98,45 +96,45 @@ class PSWidget(CryptographyWidget):
 
     def error_password(self):
         if not self.password:
-            self.logging.log("The Password cannot be empty.\n")
+            self.log_message("The Password cannot be empty.\n")
             self.pop_message_box("The Password cannot be empty.")
             return False
         if not self.password.isdigit():
-            self.logging.log("The password should contain only numeric strings.\n")
+            self.log_message("The password should contain only numeric strings.\n")
             self.pop_message_box("The password should contain only numeric strings.")
             return False
         password_list = re.sub(r"(?<=\w)(?=(?:\w\w)+$)", " ", self.password).split(" ")
         if len(self.password) != 6:
-            self.logging.log("The number of passwords is incorrect.\n")
+            self.log_message("The number of passwords is incorrect.\n")
             self.pop_message_box("The number of passwords is incorrect.")
             return False
         elif (int(password_list[0]) < 0) | (int(password_list[0]) > 99):
-            self.logging.log("The first two digits of the password are incorrect.\n")
+            self.log_message("The first two digits of the password are incorrect.\n")
             self.pop_message_box("The first two digits of the password are incorrect.")
             return False
         elif (int(password_list[1]) < 1) | (int(password_list[1]) > 12):
-            self.logging.log("The middle two digits of the password are incorrect.\n")
+            self.log_message("The middle two digits of the password are incorrect.\n")
             self.pop_message_box("The middle two digits of the password are incorrect.")
             return False
         day_31 = {1, 3, 5, 7, 8, 10, 12}  # 大月
         day_30 = {4, 6, 9, 11}  # 小月
         if int(password_list[1]) in day_31:
             if (int(password_list[2]) < 1) | (int(password_list[2]) > 31):
-                self.logging.log("The last two digits of the password are incorrect.\n")
+                self.log_message("The last two digits of the password are incorrect.\n")
                 self.pop_message_box("The last two digits of the password are incorrect.")
                 return False
         elif int(password_list[1]) in day_30:
             if (int(password_list[2]) < 1) | (int(password_list[2]) > 30):
-                self.logging.log("The last two digits of the password are incorrect.\n")
+                self.log_message("The last two digits of the password are incorrect.\n")
                 self.pop_message_box("The last two digits of the password are incorrect.")
                 return False
         elif int(password_list[1]) == 2:
             if (((int(password_list[0]) % 4 == 0) & (int(password_list[0]) % 100 != 0)) | (int(password_list[0]) % 400 == 0)) & ((int(password_list[2]) < 1) | (int(password_list[2]) > 29)):
-                self.logging.log("The last two digits of the password are incorrect.\n")
+                self.log_message("The last two digits of the password are incorrect.\n")
                 self.pop_message_box("The last two digits of the password are incorrect.")
                 return False
             elif (int(password_list[2]) < 1) | (int(password_list[2]) > 28):
-                self.logging.log("The last two digits of the password are incorrect.\n")
+                self.log_message("The last two digits of the password are incorrect.\n")
                 self.pop_message_box("The last two digits of the password are incorrect.")
                 return False
         return True
@@ -149,7 +147,7 @@ class PSWidget(CryptographyWidget):
         with open(self.path + "Account Information.csv", 'r') as f:
             for row in csv.reader(f):
                 if row[0] == self.account and row[2] == self.hash_mode:
-                    self.logging.log("Account already exists. Please reset!\n")
+                    self.log_message("Account already exists. Please reset!\n")
                     self.pop_message_box("Account already exists. Please reset!")
                     f.close()
                     return
@@ -169,11 +167,11 @@ class PSWidget(CryptographyWidget):
         hash_mode = self.widgets_dict["ComboBox"].get_text()
         flag = 1
         if account == "":
-            self.logging.log("The account cannot be empty.\n")
+            self.log_message("The account cannot be empty.\n")
             self.pop_message_box("The account cannot be empty.")
             return
         if password == "":
-            self.logging.log("The password cannot be empty.\n")
+            self.log_message("The password cannot be empty.\n")
             self.pop_message_box("The password cannot be empty.")
             return
         if account in self.account_str:
@@ -206,7 +204,7 @@ class PSWidget(CryptographyWidget):
         elif flag == 2:
             self.pop_message_box("The account doesn't exist")
         else:
-            self.logging.log("The password is incorrect.\n")
+            self.log_message("The password is incorrect.\n")
             self.pop_message_box("The password is incorrect.")
 
     def login_clean(self):
