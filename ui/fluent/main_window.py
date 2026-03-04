@@ -178,6 +178,7 @@ class FluentMainWindow(FluentWindow):
         from ui.fluent.widgets.md5_widget import MD5Widget
         from ui.fluent.widgets.sha1_widget import SHA1Widget
         from ui.fluent.widgets.sha256_widget import SHA256Widget
+        from ui.fluent.widgets.sha3_widget import SHA3Widget
         
         # MD5
         self.md5Widget = MD5Widget(self)
@@ -206,6 +207,16 @@ class FluentMainWindow(FluentWindow):
             self.sha256Widget,
             FIF.DOCUMENT,
             'SHA-256',
+            NavigationItemPosition.SCROLL
+        )
+        
+        # SHA-3
+        self.sha3Widget = SHA3Widget(self)
+        self.sha3Widget.setObjectName('sha3Widget')
+        self.addSubInterface(
+            self.sha3Widget,
+            FIF.DOCUMENT,
+            'SHA-3',
             NavigationItemPosition.SCROLL
         )
     
