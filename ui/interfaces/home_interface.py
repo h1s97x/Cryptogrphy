@@ -122,9 +122,9 @@ class HomeInterface(ScrollArea):
             {
                 'icon': FIF.LINK,
                 'title': '密码协议',
-                'count': 0,
-                'description': 'Diffie-Hellman、数字证书、零知识证明等',
-                'category': 'protocol'
+                'count': 1,
+                'description': '重放攻击、Diffie-Hellman、数字证书等安全协议',
+                'category': 'protocols'
             },
         ]
         

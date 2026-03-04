@@ -63,6 +63,9 @@ class FluentMainWindow(FluentWindow):
         # 数学基础
         self.addNavigationGroup('数学基础', FIF.EDIT, 'mathematical')
         
+        # 密码协议
+        self.addNavigationGroup('密码协议', FIF.LINK, 'protocols')
+        
         # 设置（底部）
         self.settingsInterface = SettingsInterface(self)
         self.addSubInterface(
@@ -163,6 +166,19 @@ class FluentMainWindow(FluentWindow):
             self
         )
         
+        # 密码协议分类
+        self.categoryInterfaces['protocols'] = CategoryInterface(
+            '密码协议',
+            '基于密码算法构建的安全协议',
+            [
+                {'icon': FIF.LINK, 'name': 'Replay Attack', 'description': '重放攻击演示 - ECDSA签名', 'objectName': 'replayAttackWidget'},
+                # TODO: 添加更多协议
+                # {'icon': FIF.LINK, 'name': 'Diffie-Hellman', 'description': '密钥交换协议', 'objectName': 'dhWidget'},
+                # {'icon': FIF.LINK, 'name': 'Digital Envelope', 'description': '数字信封 - RSA+AES', 'objectName': 'deWidget'},
+            ],
+            self
+        )
+        
         # 将分类界面添加到窗口（但不添加到导航栏）
         for category, interface in self.categoryInterfaces.items():
             self.stackedWidget.addWidget(interface)
@@ -231,6 +247,9 @@ class FluentMainWindow(FluentWindow):
             'eulerWidget': ('ui.widgets.euler_widget', 'EulerWidget'),
             'crtWidget': ('ui.widgets.crt_widget', 'CRTWidget'),
             'euclideanWidget': ('ui.widgets.euclidean_widget', 'EuclideanWidget'),
+            
+            # 密码协议
+            'replayAttackWidget': ('ui.widgets.protocols.replay_attack_widget', 'ReplayAttackWidget'),
         }
         
         if objectName in widget_map:
