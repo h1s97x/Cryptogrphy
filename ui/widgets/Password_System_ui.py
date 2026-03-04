@@ -13,7 +13,9 @@ class PSWidget(CryptographyWidget):
     def __init__(self):
         super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("Password System")        self.groups_config = [
+        self.setWindowTitle("Password System")
+        
+        self.groups_config = [
             KeyGroup(name="Hash Function",
                      key_edit=[],
                      buttons=[],

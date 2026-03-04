@@ -8,7 +8,9 @@ from infrastructure.converters.TypeConvert import *
 class DESWidget(CryptographyWidget):
     def __init__(self):
         super().__init__()
-        self.menuBar().setHidden(True)        self.groups_config = [
+        self.menuBar().setHidden(True)
+        
+        self.groups_config = [
             KeyGroup(name="Key",
                      key_edit=[Key(enabled=True, id="Key", label="Key (Hex)",
                                    default_text="0F 15 71 C9 47 D9 E8 59")],

@@ -10,7 +10,9 @@ class CRTWidget(CryptographyWidget):
     def __init__(self):
         super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("CRT")        self.groups_config = [
+        self.setWindowTitle("CRT")
+        
+        self.groups_config = [
             Group(name="",
                   plain_text_edits=[PlainTextEdit(id="a1", label="a1 (Int)", default_text="2"),
                                     PlainTextEdit(id="a2", label="a2 (Int)", default_text="3"),

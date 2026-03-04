@@ -9,7 +9,9 @@ class SM3Widget(CryptographyWidget):
     def __init__(self):
         super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("SM3")        self.groups_config = [
+        self.setWindowTitle("SM3")
+        
+        self.groups_config = [
             Group(name="SM3 Hash",
                   plain_text_edits=[PlainTextEdit(id="Plaintext", label="Message (Hex)",
                                                   default_text="61 62 63"),

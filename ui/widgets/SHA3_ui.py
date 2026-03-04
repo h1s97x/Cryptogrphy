@@ -9,7 +9,9 @@ class SHA3Widget(CryptographyWidget):
     def __init__(self):
         super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("SHA-3")        self.groups_config = [
+        self.setWindowTitle("SHA-3")
+        
+        self.groups_config = [
             KeyGroup(name="",
                      key_edit=[],
                      buttons=[],

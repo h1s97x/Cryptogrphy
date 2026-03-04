@@ -9,7 +9,9 @@ class AES_CBC_MACWidget(CryptographyWidget):
     def __init__(self):
         super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("AES-CBC-MAC")        self.groups_config = [
+        self.setWindowTitle("AES-CBC-MAC")
+        
+        self.groups_config = [
             Group(name="AES-CBC-MAC Hash",
                   plain_text_edits=[PlainTextEdit(id="Message", label="Message (Hex)",
                                                   default_text="32 43 F6 A8 88 5A 30 8D 31 31 98 A2 E0 37 07 34 "

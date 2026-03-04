@@ -10,7 +10,9 @@ class FAWidget(CryptographyWidget):
     def __init__(self):
         super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("Frequency Analysis")        self.groups_config = [
+        self.setWindowTitle("Frequency Analysis")
+        
+        self.groups_config = [
             Group(name="File Import",
                   plain_text_edits=[PlainTextEdit(id="Filepath", label="File Path",
                                                   default_text="", read_only=True)],

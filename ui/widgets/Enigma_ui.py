@@ -9,7 +9,9 @@ class EnigmaWidget(CryptographyWidget):
     def __init__(self):
         super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("Enigma")        self.groups_config = [
+        self.setWindowTitle("Enigma")
+        
+        self.groups_config = [
             Group(name="Key",
                      plain_text_edits=[
                          PlainTextEdit(id="Ring_Setting", label="Ring Setting (Str)",

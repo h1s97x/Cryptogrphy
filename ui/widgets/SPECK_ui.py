@@ -14,7 +14,9 @@ class SPECKWidget(CryptographyWidget):
         self.menuBar().setHidden(True)
         self.setWindowTitle("SPECK")
         self.PlainLen = 64 // 8
-        self.KeyLen = 128 // 8        self.groups_config = [
+        self.KeyLen = 128 // 8
+        
+        self.groups_config = [
             KeyGroup(name="Key",
                      key_edit=[Key(enabled=True, id="Key", label="Key (Hex)",
                                    default_text="0F 0E 0D 0C 0B 0A 09 08 07 06 05 04 03 02 01 00")],

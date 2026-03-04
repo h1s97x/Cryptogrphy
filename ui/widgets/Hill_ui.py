@@ -17,7 +17,9 @@ class HillWidget(CryptographyWidget):
         # set button component configurations;
         # id: the identity of the component
         # clicked_function: execute the function after the button clicked
-        self.path = self.directory + "/ClassicCrypto/Hill/html/index.html"        self.groups_config = [
+        self.path = self.directory + "/ClassicCrypto/Hill/html/index.html"
+        
+        self.groups_config = [
             Group(name="Key",
                   plain_text_edits=[PlainTextEdit(id="Key", label="Key (Str)",
                                    default_text="8 6 9 5\n6 9 5 10\n5 8 4 9\n10 6 11 4")],

@@ -9,7 +9,9 @@ class EuclideanWidget(CryptographyWidget):
     def __init__(self):
         super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("Euclidean")        self.groups_config = [
+        self.setWindowTitle("Euclidean")
+        
+        self.groups_config = [
             Group(name="",
                   plain_text_edits=[PlainTextEdit(id="a", label="a (Int)", default_text="18"),
                                     PlainTextEdit(id="b", label="b (Int)", default_text="12"),

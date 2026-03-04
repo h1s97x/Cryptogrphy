@@ -10,7 +10,9 @@ class MD5Widget(CryptographyWidget):
     def __init__(self):
         super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("MD5")        self.groups_config = [
+        self.setWindowTitle("MD5")
+        
+        self.groups_config = [
             Group(name="MD5 Hash",
                   plain_text_edits=[PlainTextEdit(id="Message", label="Message (Hex)",
                                                   default_text="61 62 63"),

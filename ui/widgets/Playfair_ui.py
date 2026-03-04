@@ -9,7 +9,9 @@ class PlayfairWidget(CryptographyWidget):
     def __init__(self):
         super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("Playfair")        self.groups_config = [
+        self.setWindowTitle("Playfair")
+        
+        self.groups_config = [
             Group(name="Key",
                   plain_text_edits=[PlainTextEdit(id="Key", label="Key (Str)",
                                    default_text="PLAYFAIR IS DIGRAM CIPHER")],

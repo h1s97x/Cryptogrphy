@@ -10,7 +10,9 @@ class SHA1Widget(CryptographyWidget):
     def __init__(self):
         super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("SHA-1")        self.groups_config = [
+        self.setWindowTitle("SHA-1")
+        
+        self.groups_config = [
             Group(name="SHA1 Hash",
                   plain_text_edits=[PlainTextEdit(id="Message", label="Message (Hex)",
                                                   default_text="61 62 63"),

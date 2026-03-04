@@ -10,7 +10,9 @@ class RC4Widget(CryptographyWidget):
     def __init__(self):
         super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("RC4")        self.groups_config = [
+        self.setWindowTitle("RC4")
+        
+        self.groups_config = [
             KeyGroup(name="Key",
                   key_edit=[Key(enabled=True, id="Key", label="Key (Hex)",
                                         default_text="4B 65 79 ")],

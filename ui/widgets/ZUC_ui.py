@@ -11,7 +11,9 @@ class ZUCWidget(CryptographyWidget):
         self.menuBar().setHidden(True)
         # set tabs widget configurations
         # link: link to the html file
-        self.setWindowTitle("ZUC")        self.groups_config = [
+        self.setWindowTitle("ZUC")
+        
+        self.groups_config = [
             KeyGroup(name="Key",
                   key_edit=[Key(enabled=True, id="Key", label="Key (Hex)",
                                         default_text="3D 4C 4B E9 6A 82 FD AE B5 8F 64 1D B1 7B 45 5B")],

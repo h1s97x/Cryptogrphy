@@ -9,7 +9,9 @@ class BlockModeWidget(CryptographyWidget):
     def __init__(self):
         super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("Block Mode")        self.groups_config = [
+        self.setWindowTitle("Block Mode")
+        
+        self.groups_config = [
             KeyGroup(name="Key",
                      key_edit=[Key(enabled=True, id="Key", label="Key (Hex)",
                                    default_text="2B 7E 15 16 28 AE D2 A6 AB F7 15 88 09 CF 4F 3C ")],

@@ -11,7 +11,9 @@ class SEALWidget(CryptographyWidget):
         self.menuBar().setHidden(True)
         self.setWindowTitle("SEAL")
         self.PlainLen = int(128 / 8)
-        self.KeyLen = int(160 / 8)        self.groups_config = [
+        self.KeyLen = int(160 / 8)
+        
+        self.groups_config = [
             KeyGroup(name="Key",
                   key_edit=[Key(enabled=True, id="Key", label="Key (Hex)",
                                         default_text="30 31 32 33 34 35 36 37 38 39 30 31 32 33 34 35 36 37 38 39")],

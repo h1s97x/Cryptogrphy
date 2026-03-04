@@ -11,7 +11,9 @@ class MonoalphabeticWidget(CryptographyWidget):
     def __init__(self):
         super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("Monoalphabetic Cipher")        self.groups_config = [
+        self.setWindowTitle("Monoalphabetic Cipher")
+        
+        self.groups_config = [
             Group(name="Key",
                   plain_text_edits=[PlainTextEdit(id="Key", label="Key (Str)",
                                    default_text="xyzz")],

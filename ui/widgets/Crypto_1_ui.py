@@ -9,7 +9,9 @@ class Crypto1Widget(CryptographyWidget):
     def __init__(self):
         super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("Crypto-1")        self.groups_config = [
+        self.setWindowTitle("Crypto-1")
+        
+        self.groups_config = [
             KeyGroup(name="Key",
                   key_edit=[Key(enabled=True, id="Key", label="Key (Hex)",
                                         default_text="4B 62 45 CB 95 79"),

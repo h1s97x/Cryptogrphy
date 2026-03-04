@@ -10,7 +10,9 @@ class SM4Widget(CryptographyWidget):
     def __init__(self):
         super().__init__()
         self.menuBar().setHidden(True)
-        self.setWindowTitle("SM4")        self.groups_config = [
+        self.setWindowTitle("SM4")
+        
+        self.groups_config = [
             KeyGroup(name="Key",
                      key_edit=[Key(enabled=True, id="Key", label="Key (Hex)",
                                    default_text="01 23 45 67 89 AB CD EF FE DC BA 98 76 54 32 10")],

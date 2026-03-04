@@ -10,7 +10,9 @@ class HashReverseWidget(CryptographyWidget):
         super().__init__()
         self.menuBar().setHidden(True)
         self.setWindowTitle("Hash Reverse")
-        # self.tabs_config = [IntroductionTab(link="file:///" + Path.MENU_DIRECTORY + "/CryptographicAlgorithm/CryptographicHashFunction/Hash_Reverse/html/index.html")]        self.groups_config = [
+        # self.tabs_config = [IntroductionTab(link="file:///" + Path.MENU_DIRECTORY + "/CryptographicAlgorithm/CryptographicHashFunction/Hash_Reverse/html/index.html")]
+        
+        self.groups_config = [
             KeyGroup(name="Hash Function",
                      key_edit=[],
                      buttons=[],
