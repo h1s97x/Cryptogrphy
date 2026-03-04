@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 
-import Hash.SHA256.SHA256 as SHA2
+from core.algorithms.hash import SHA256
 from core.algorithms.asymmetric import ECDSA
 from ui.main_window import Button, PlainTextEdit, Key, KeyGroup, Group
 from ui.main_window import CryptographyWidget
@@ -89,7 +89,7 @@ class ECDSAWidget(CryptographyWidget):
                 self.logging.log("Please input Message.\n")
                 self.pop_message_box("Please input Message.")
                 return
-            thread = SHA2.Thread(self, message, message_len)
+            thread = SHA256.Thread(self, message, message_len)
             thread.final_result.connect(self.set_hash)
             thread.start()
         except Exception as e:

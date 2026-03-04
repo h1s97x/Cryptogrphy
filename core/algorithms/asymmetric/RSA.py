@@ -1,21 +1,8 @@
 import logging
 from PyQt5 import QtCore
-# TODO: mm_rsa 模块已被删除，需要重新实现或使用 cryptography 库替代
-# from PublicKeyCryptography import mm_rsa
-
-# 临时占位符，防止导入错误
-class mm_rsa:
-    @staticmethod
-    def newkeys(size, shift_select=False):
-        raise NotImplementedError("RSA 功能需要重新实现")
-    
-    @staticmethod
-    def encrypt(data, key):
-        raise NotImplementedError("RSA 功能需要重新实现")
-    
-    @staticmethod
-    def decrypt(data, key):
-        raise NotImplementedError("RSA 功能需要重新实现")
+from Crypto.PublicKey import RSA as CryptoRSA
+from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Random import get_random_bytes
 
 
 class KeyThread(QtCore.QThread):
@@ -25,8 +12,18 @@ class KeyThread(QtCore.QThread):
         super(KeyThread, self).__init__(parent)
 
     def run(self):
-        keys = mm_rsa.newkeys(1024, shift_select=False)
-        self.call_back.emit(keys)
+        """生成RSA密钥对"""
+        try:
+            # 使用pycryptodome生成1024位RSA密钥对
+            key = CryptoRSA.generate(1024)
+            public_key = key.publickey()
+            
+            # 返回(公钥, 私钥)元组
+            keys = (public_key, key)
+            self.call_back.emit(keys)
+        except Exception as e:
+            logging.error(f"密钥生成失败: {e}")
+            self.call_back.emit((None, None))
 
 
 class RsaThread(QtCore.QThread):
@@ -39,26 +36,74 @@ class RsaThread(QtCore.QThread):
         self.encrypt_selected = encrypt_selected
 
     def encrypt(self):
+        """RSA加密"""
         try:
-            encrypted = mm_rsa.encrypt(self.input_bytes, self.key[0])
-            temp = ""
-            for item in encrypted:
-                temp = temp + '{:02X}'.format(int(item)) + " "
-            self.call_back.emit(temp.strip())
+            # key[0]是公钥
+            public_key = self.key[0]
+            cipher = PKCS1_OAEP.new(public_key)
+            
+            # 将输入转换为bytes
+            if isinstance(self.input_bytes, str):
+                data = self.input_bytes.encode('utf-8')
+            else:
+                data = self.input_bytes
+            
+            # RSA加密有长度限制，需要分块
+            max_length = 86  # 1024位密钥的最大明文长度（字节）
+            encrypted_blocks = []
+            
+            for i in range(0, len(data), max_length):
+                block = data[i:i+max_length]
+                encrypted_block = cipher.encrypt(block)
+                encrypted_blocks.append(encrypted_block)
+            
+            # 将所有加密块转换为十六进制字符串
+            result = ""
+            for block in encrypted_blocks:
+                for byte in block:
+                    result += '{:02X} '.format(byte)
+            
+            self.call_back.emit(result.strip())
         except Exception as e:
-            logging.debug(e)
+            logging.error(f"加密失败: {e}")
             self.call_back.emit("Encrypt Failed")
 
     def decrypt(self):
+        """RSA解密"""
         try:
             logging.info("Decrypt thread is running.")
-            decrypted = mm_rsa.decrypt(self.input_bytes, self.key[1])
-            temp = ""
-            for item in decrypted:
-                temp = temp + '{:02X}'.format(int(item)) + " "
-            self.call_back.emit(temp.strip())
+            # key[1]是私钥
+            private_key = self.key[1]
+            cipher = PKCS1_OAEP.new(private_key)
+            
+            # 将十六进制字符串转换回bytes
+            if isinstance(self.input_bytes, str):
+                hex_str = self.input_bytes.replace(' ', '')
+                data = bytes.fromhex(hex_str)
+            else:
+                data = self.input_bytes
+            
+            # RSA解密需要分块（每块128字节，对应1024位密钥）
+            block_size = 128
+            decrypted_blocks = []
+            
+            for i in range(0, len(data), block_size):
+                block = data[i:i+block_size]
+                decrypted_block = cipher.decrypt(block)
+                decrypted_blocks.append(decrypted_block)
+            
+            # 合并所有解密块
+            decrypted_data = b''.join(decrypted_blocks)
+            
+            # 转换为十六进制字符串
+            result = ""
+            for byte in decrypted_data:
+                result += '{:02X} '.format(byte)
+            
+            self.call_back.emit(result.strip())
         except Exception as e:
-            logging.debug(e)
+            logging.error(f"解密失败: {e}")
+            self.call_back.emit("Decrypt Failed")
 
     def run(self):
         if self.encrypt_selected == 0:

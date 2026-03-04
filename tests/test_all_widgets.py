@@ -1,6 +1,6 @@
 """
 批量测试所有UI组件
-自动化测试36个组件的基本功能
+自动化测试所有组件的基本功能（包括非对称加密）
 """
 import sys
 from PyQt5.QtCore import Qt, QCoreApplication
@@ -33,6 +33,13 @@ WIDGETS_TO_TEST = {
         ('ZUC', 'ui.widgets.ZUC_ui', 'ZUCWidget'),
         ('SEAL', 'ui.widgets.SEAL_ui', 'SEALWidget'),
         ('Crypto-1', 'ui.widgets.Crypto_1_ui', 'Crypto1Widget'),
+    ],
+    '非对称加密': [
+        ('RSA', 'ui.widgets.RSA_ui', 'RSAWidget'),
+        ('RSA Sign', 'ui.widgets.RSA_Sign_ui', 'RSASignWidget'),
+        ('ECC', 'ui.widgets.ECC_ui', 'ECCWidget'),
+        ('ECDSA', 'ui.widgets.ECDSA_ui', 'ECDSAWidget'),
+        ('ElGamal', 'ui.widgets.ElGamal_ui', 'ElGamalWidget'),
     ],
     '哈希算法': [
         ('MD5', 'ui.widgets.MD5_ui', 'MD5Widget'),

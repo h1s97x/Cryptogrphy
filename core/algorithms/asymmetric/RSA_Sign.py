@@ -2,23 +2,10 @@ import decimal
 import itertools
 import logging
 from PyQt5 import QtCore
-# TODO: mm_rsa 模块已被删除，需要重新实现或使用 cryptography 库替代
-# from PublicKeyCryptography import mm_rsa
+from Crypto.PublicKey import RSA as CryptoRSA
+from Crypto.Signature import pkcs1_15
+from Crypto.Hash import SHA256
 from infrastructure.converters.TypeConvert import *
-
-# 临时占位符，防止导入错误
-class mm_rsa:
-    @staticmethod
-    def newkeys(size, shift_select=False):
-        raise NotImplementedError("RSA 签名功能需要重新实现")
-    
-    @staticmethod
-    def sign(data, key):
-        raise NotImplementedError("RSA 签名功能需要重新实现")
-    
-    @staticmethod
-    def verify(data, signature, key):
-        raise NotImplementedError("RSA 签名功能需要重新实现")
 
 
 def hex_to_str(s):
@@ -128,8 +115,18 @@ class KeyThread(QtCore.QThread):
         super(KeyThread, self).__init__(parent)
 
     def run(self):
-        keys = mm_rsa.newkeys(1024, shift_select=False)
-        self.call_back.emit(keys)
+        """生成RSA密钥对用于签名"""
+        try:
+            # 使用pycryptodome生成1024位RSA密钥对
+            key = CryptoRSA.generate(1024)
+            public_key = key.publickey()
+            
+            # 返回(公钥, 私钥)元组
+            keys = (public_key, key)
+            self.call_back.emit(keys)
+        except Exception as e:
+            logging.error(f"密钥生成失败: {e}")
+            self.call_back.emit((None, None))
 
 
 class RsaSignThread(QtCore.QThread):
@@ -141,15 +138,33 @@ class RsaSignThread(QtCore.QThread):
         self.key = key
 
     def sign(self):
+        """RSA签名"""
         try:
             logging.info("Sign thread is running.")
-            decrypted = mm_rsa.decrypt(self.input_bytes, self.key[1])
-            temp = ""
-            for item in decrypted:
-                temp = temp + '{:02X}'.format(int(item)) + " "
-            self.call_back.emit(temp.strip())
+            # key[1]是私钥
+            private_key = self.key[1]
+            
+            # 将输入转换为bytes
+            if isinstance(self.input_bytes, str):
+                data = self.input_bytes.encode('utf-8')
+            else:
+                data = self.input_bytes
+            
+            # 计算SHA-256哈希
+            h = SHA256.new(data)
+            
+            # 使用私钥签名
+            signature = pkcs1_15.new(private_key).sign(h)
+            
+            # 转换为十六进制字符串
+            result = ""
+            for byte in signature:
+                result += '{:02X} '.format(byte)
+            
+            self.call_back.emit(result.strip())
         except Exception as e:
-            logging.debug(e)
+            logging.error(f"签名失败: {e}")
+            self.call_back.emit("Sign Failed")
 
     def run(self):
         self.sign()
