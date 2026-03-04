@@ -85,7 +85,7 @@ class RSASignCard(CardWidget):
         layout.setSpacing(12)
         
         # 标题
-        title = BodyLabel("签名")
+        title = BodyLabel("✍️ 签名")
         title.setStyleSheet("font-weight: bold; font-size: 14px;")
         layout.addWidget(title)
         
@@ -109,7 +109,8 @@ class RSASignCard(CardWidget):
         layout.addWidget(self.signatureEdit)
         
         # 按钮
-        btnLayout = QVBoxLayout()
+        from PyQt5.QtWidgets import QHBoxLayout
+        btnLayout = QHBoxLayout()
         btnLayout.setSpacing(8)
         
         self.signBtn = PushButton("生成签名")
@@ -118,11 +119,17 @@ class RSASignCard(CardWidget):
         self.copyBtn = PushButton("复制签名")
         btnLayout.addWidget(self.copyBtn)
         
+        btnLayout.addStretch()
+        
         layout.addLayout(btnLayout)
     
     def getMessage(self):
         """获取消息"""
         return self.messageEdit.toPlainText()
+    
+    def setMessage(self, message):
+        """设置消息"""
+        self.messageEdit.setPlainText(message)
     
     def setSignature(self, signature):
         """设置签名"""
@@ -136,6 +143,89 @@ class RSASignCard(CardWidget):
         """清空"""
         self.messageEdit.clear()
         self.signatureEdit.clear()
+
+
+class RSAVerifyCard(CardWidget):
+    """RSA验证卡片"""
+    
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.initUI()
+    
+    def initUI(self):
+        layout = QVBoxLayout(self)
+        layout.setSpacing(12)
+        
+        # 标题
+        title = BodyLabel("✅ 签名验证")
+        title.setStyleSheet("font-weight: bold; font-size: 14px;")
+        layout.addWidget(title)
+        
+        # 消息输入
+        msgLabel = BodyLabel("消息:")
+        layout.addWidget(msgLabel)
+        
+        self.messageEdit = PlainTextEdit()
+        self.messageEdit.setPlaceholderText("输入要验证的消息...")
+        self.messageEdit.setMaximumHeight(80)
+        layout.addWidget(self.messageEdit)
+        
+        # 签名输入
+        sigLabel = BodyLabel("签名值:")
+        layout.addWidget(sigLabel)
+        
+        self.signatureEdit = PlainTextEdit()
+        self.signatureEdit.setPlaceholderText("输入签名值...")
+        self.signatureEdit.setMaximumHeight(80)
+        layout.addWidget(self.signatureEdit)
+        
+        # 验证结果
+        resultLabel = BodyLabel("验证结果:")
+        layout.addWidget(resultLabel)
+        
+        self.resultEdit = PlainTextEdit()
+        self.resultEdit.setReadOnly(True)
+        self.resultEdit.setPlaceholderText("验证结果将显示在这里...")
+        self.resultEdit.setMaximumHeight(60)
+        layout.addWidget(self.resultEdit)
+        
+        # 按钮
+        from PyQt5.QtWidgets import QHBoxLayout
+        btnLayout = QHBoxLayout()
+        btnLayout.setSpacing(8)
+        
+        self.verifyBtn = PushButton("验证签名")
+        btnLayout.addWidget(self.verifyBtn)
+        
+        btnLayout.addStretch()
+        
+        layout.addLayout(btnLayout)
+    
+    def getMessage(self):
+        """获取消息"""
+        return self.messageEdit.toPlainText()
+    
+    def setMessage(self, message):
+        """设置消息"""
+        self.messageEdit.setPlainText(message)
+    
+    def getSignature(self):
+        """获取签名"""
+        return self.signatureEdit.toPlainText()
+    
+    def setSignature(self, signature):
+        """设置签名"""
+        self.signatureEdit.setPlainText(signature)
+    
+    def setResult(self, result):
+        """设置结果"""
+        self.resultEdit.setPlainText(result)
+    
+    def clear(self):
+        """清空"""
+        self.messageEdit.clear()
+        self.signatureEdit.clear()
+        self.resultEdit.clear()
 
 
 class RSASignWidget(ScrollArea):
@@ -177,6 +267,10 @@ class RSASignWidget(ScrollArea):
         self.signCard = RSASignCard()
         layout.addWidget(self.signCard)
         
+        # 验证卡片
+        self.verifyCard = RSAVerifyCard()
+        layout.addWidget(self.verifyCard)
+        
         # 日志卡片
         self.logCard = LogCard()
         layout.addWidget(self.logCard)
@@ -191,6 +285,7 @@ class RSASignWidget(ScrollArea):
         self.keyCard.generateBtn.clicked.connect(self.generateKeys)
         self.signCard.signBtn.clicked.connect(self.sign)
         self.signCard.copyBtn.clicked.connect(self.copySignature)
+        self.verifyCard.verifyBtn.clicked.connect(self.verify)
     
     def generateKeys(self):
         """生成密钥对"""
@@ -258,6 +353,10 @@ class RSASignWidget(ScrollArea):
             return
         
         self.signCard.setSignature(signature)
+        # 自动填充到验证卡片
+        self.verifyCard.setMessage(self.signCard.getMessage())
+        self.verifyCard.setSignature(signature)
+        
         self.logCard.log(f"签名值: {signature[:50]}...", "success")
         self.logCard.log("签名完成", "success")
         
@@ -266,6 +365,64 @@ class RSASignWidget(ScrollArea):
             content="消息已成功签名",
             parent=self
         )
+    
+    def verify(self):
+        """验证签名"""
+        try:
+            self.logCard.log("开始验证签名...", "info")
+            
+            # 检查密钥
+            keys = self.keyCard.getKeys()
+            if keys[0] is None:
+                raise ValueError("请先生成密钥对")
+            
+            # 获取消息和签名
+            message = self.verifyCard.getMessage()
+            signature_hex = self.verifyCard.getSignature()
+            
+            if not message:
+                raise ValueError("请输入要验证的消息")
+            
+            if not signature_hex:
+                raise ValueError("请输入签名值")
+            
+            self.logCard.log(f"消息: {message[:50]}{'...' if len(message) > 50 else ''}", "info")
+            self.logCard.log(f"签名: {signature_hex[:50]}...", "info")
+            
+            # 导入验证所需的库
+            from Crypto.Hash import SHA256
+            from Crypto.Signature import pkcs1_15
+            
+            # 计算消息哈希
+            h = SHA256.new(message.encode('utf-8'))
+            
+            # 将十六进制签名转换为字节
+            signature_bytes = bytes.fromhex(signature_hex.replace(' ', ''))
+            
+            # 验证签名
+            try:
+                pkcs1_15.new(keys[0]).verify(h, signature_bytes)
+                result = "✅ 验证成功：签名有效"
+                self.logCard.log("签名验证通过", "success")
+                InfoBar.success(
+                    title="验证成功",
+                    content="签名验证通过",
+                    parent=self
+                )
+            except (ValueError, TypeError) as e:
+                result = "❌ 验证失败：签名无效"
+                self.logCard.log("签名验证失败", "error")
+                InfoBar.error(
+                    title="验证失败",
+                    content="签名验证未通过",
+                    parent=self
+                )
+            
+            self.verifyCard.setResult(result)
+            
+        except Exception as e:
+            self.logCard.log(f"验证失败: {str(e)}", "error")
+            MessageBox("错误", f"验证失败: {str(e)}", self).exec()
     
     def copySignature(self):
         """复制签名"""
