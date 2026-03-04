@@ -13,6 +13,7 @@ ENV/
 # IDE 配置
 .vscode/
 .idea/
+.kiro/
 *.swp
 *.swo
 *~
