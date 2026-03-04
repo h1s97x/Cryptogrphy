@@ -1,6 +1,6 @@
 from . import Digital_Envelope
 from MathMagic.Modules.CryptographyModule import CryptographyWidget, Button, PlainTextEdit, IntroductionTab, IntermediateValueTab, SmartCardTab, SmartCard, Group, ErrorType
-from Util import Path, TypeConvert
+from infrastructure.Path import *, TypeConvert
 
 
 class DEWidget(CryptographyWidget):

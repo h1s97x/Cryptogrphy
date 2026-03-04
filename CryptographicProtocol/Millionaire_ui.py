@@ -1,7 +1,7 @@
 import math
 import random
 from MathMagic.Modules.CryptographyModule import CryptographyWidget, Button, PlainTextEdit, IntroductionTab, Group, ErrorType
-from Util import Path
+from infrastructure.Path import *
 
 
 class MillionaireWidget(CryptographyWidget):

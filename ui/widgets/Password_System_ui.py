@@ -1,0 +1,219 @@
+import csv
+import re
+import hashlib
+from core.algorithms.hash.SM3 import Thread as SM3
+from PyQt5.QtWidgets import QApplication
+
+from ui.main_window import Button, PlainTextEdit, KeyGroup, Group, ComboBox
+from ui.main_window import CryptographyWidget
+from infrastructure.Path import *
+
+
+class PSWidget(CryptographyWidget):
+    def __init__(self):
+        super().__init__()
+        self.menuBar().setHidden(True)
+        self.setWindowTitle("Password System")
+        
+        self.groups_config = [
+            KeyGroup(name="Hash Function",
+                     key_edit=[],
+                     buttons=[],
+                     combo_box=[ComboBox(enabled=True, id="ComboBox", label="Select",
+                                         items=["SHA1", "SHA256", "SHA3-256", "MD5", "SM3"],changed_function=self.combox_changed)]
+                     ),
+            Group(name="Registration",
+                  plain_text_edits=[PlainTextEdit(id="Account_Registration", label="Account (String)", default_text=""),
+                                    PlainTextEdit(id="Password_Registration", label="Password (String)", default_text="")
+                                    ],
+                  buttons=[
+                      Button(id="Sign Up", name="Sign Up", clicked_function=self.sign_up),
+                      Button(id="Clean", name="Clean", clicked_function=self.password_registration_clean)
+                  ]),
+            Group(name="Login",
+                  plain_text_edits=[PlainTextEdit(id="Account_Login", label="Account (String)", default_text=""),
+                                    PlainTextEdit(id="Password_Login", label="Password (String)", default_text="")
+                                    ],
+                  buttons=[
+                      Button(id="Login", name="Login In", clicked_function=self.login_in),
+                      Button(id="Clean", name="Clean", clicked_function=self.login_clean)
+                  ]),
+            Group(name="Password Hash",
+                  plain_text_edits=[PlainTextEdit(id="Password_Hash", label="Password Hash(hex)", default_text="", read_only=True)],
+                  buttons=[])
+        ]
+        self.render()
+        self.log_message("Password System algorithm has been imported.\n")
+        self.path = MENU_DIRECTORY
+        self.hash_table_path = MENU_DIRECTORY + "table/"
+        self.hash_value = {"SHA1": "0D 5F 29 BC 67 14 8C 3E 2A 6B E4 D3 94 76 A7 A2 C4 EB 5B 03",
+                           "SHA256": "F8 BA 9C 14 DB 55 C0 02 AD 91 69 37 82 D5 E7 65 8B 8E 65 EB 66 FE A2 85 1C 24 99 5C A2 F7 16 9A",
+                           "SHA3-256": "12 C0 84 B6 76 7F 9A 78 1F 2C DF DE 23 F6 42 87 64 19 40 77 0B 95 01 42 18 28 4C 26 5C 6A 20 94",
+                           "MD5": "7D 02 70 0A 9A F2 E8 D8 E3 0C F0 64 AB D8 1A C0",
+                           "SM3": "BA 3F A9 D8 FB C3 27 7A 58 04 B1 2C AE F4 2B 87 BE F7 3A E8 BD 4C AF 20 1A E8 1C A7 7B F5 82 DF"}
+        self.account_str = ["shuyuan1412SHA1", "shuyuan1412SHA256", "shuyuan1412SHA3-256", "shuyuan1412MD5", "shuyuan1412SM3"]
+        self.account = None
+        self.password = None
+        self.information = None
+        self.hash_mode = None
+
+    def combox_changed(self):
+        pass
+    def sign_up(self):
+        self.account = self.widgets_dict["Account_Registration"].get_text()
+        self.password = self.widgets_dict["Password_Registration"].get_text()
+        if not self.error_password():
+            return
+        if self.account == "":
+            self.log_message("The Account cannot be empty.\n")
+            self.pop_message_box("The Account cannot be empty.")
+            return
+        self.information = []
+        self.information.append(self.account)
+        self.hash_mode = self.widgets_dict["ComboBox"].get_text()
+        if self.hash_mode == "SHA1":
+            value = hashlib.sha1()
+            value.update(self.password.encode())
+            self.set_print_hash(value.hexdigest().upper())
+        elif self.hash_mode == "SHA256":
+            value = hashlib.sha256()
+            value.update(self.password.encode())
+            self.set_print_hash(value.hexdigest().upper())
+        elif self.hash_mode == "SHA3-256":
+            value = hashlib.sha3_256()
+            value.update(self.password.encode())
+            self.set_print_hash(value.hexdigest().upper())
+        elif self.hash_mode == "MD5":
+            value = hashlib.md5()
+            value.update(self.password.encode())
+            self.set_print_hash(value.hexdigest().upper())
+        elif self.hash_mode == "SM3":
+            password_list = list(self.password)
+            password_list_sm3 = [0] * 6
+            for j in range(6):
+                password_list_sm3[j] = ord(password_list[j])
+            thread = SM3.Thread(self, password_list_sm3)
+            thread.final_result.connect(self.set_print_hash)
+            thread.start()
+
+    def error_password(self):
+        if not self.password:
+            self.log_message("The Password cannot be empty.\n")
+            self.pop_message_box("The Password cannot be empty.")
+            return False
+        if not self.password.isdigit():
+            self.log_message("The password should contain only numeric strings.\n")
+            self.pop_message_box("The password should contain only numeric strings.")
+            return False
+        password_list = re.sub(r"(?<=\w)(?=(?:\w\w)+$)", " ", self.password).split(" ")
+        if len(self.password) != 6:
+            self.log_message("The number of passwords is incorrect.\n")
+            self.pop_message_box("The number of passwords is incorrect.")
+            return False
+        elif (int(password_list[0]) < 0) | (int(password_list[0]) > 99):
+            self.log_message("The first two digits of the password are incorrect.\n")
+            self.pop_message_box("The first two digits of the password are incorrect.")
+            return False
+        elif (int(password_list[1]) < 1) | (int(password_list[1]) > 12):
+            self.log_message("The middle two digits of the password are incorrect.\n")
+            self.pop_message_box("The middle two digits of the password are incorrect.")
+            return False
+        day_31 = {1, 3, 5, 7, 8, 10, 12}  # 大月
+        day_30 = {4, 6, 9, 11}  # 小月
+        if int(password_list[1]) in day_31:
+            if (int(password_list[2]) < 1) | (int(password_list[2]) > 31):
+                self.log_message("The last two digits of the password are incorrect.\n")
+                self.pop_message_box("The last two digits of the password are incorrect.")
+                return False
+        elif int(password_list[1]) in day_30:
+            if (int(password_list[2]) < 1) | (int(password_list[2]) > 30):
+                self.log_message("The last two digits of the password are incorrect.\n")
+                self.pop_message_box("The last two digits of the password are incorrect.")
+                return False
+        elif int(password_list[1]) == 2:
+            if (((int(password_list[0]) % 4 == 0) & (int(password_list[0]) % 100 != 0)) | (int(password_list[0]) % 400 == 0)) & ((int(password_list[2]) < 1) | (int(password_list[2]) > 29)):
+                self.log_message("The last two digits of the password are incorrect.\n")
+                self.pop_message_box("The last two digits of the password are incorrect.")
+                return False
+            elif (int(password_list[2]) < 1) | (int(password_list[2]) > 28):
+                self.log_message("The last two digits of the password are incorrect.\n")
+                self.pop_message_box("The last two digits of the password are incorrect.")
+                return False
+        return True
+
+    def set_print_hash(self, text):
+        result = re.sub(r"(?<=\w)(?=(?:\w\w)+$)", " ", text)
+        self.widgets_dict["Password_Hash"].set_text(result)
+        self.information.append(result)
+        self.information.append(self.hash_mode)
+        with open(self.path + "Account Information.csv", 'r') as f:
+            for row in csv.reader(f):
+                if row[0] == self.account and row[2] == self.hash_mode:
+                    self.log_message("Account already exists. Please reset!\n")
+                    self.pop_message_box("Account already exists. Please reset!")
+                    f.close()
+                    return
+        with open(self.path + "Account Information.csv", 'a+', newline='') as f:
+            csv.writer(f).writerow(self.information)
+            f.close()
+        self.widgets_dict["Account_Login"].set_text(self.account)
+        self.widgets_dict["Password_Login"].set_text(self.password)
+        self.pop_message_box("Registration is successful")
+
+    def password_registration_clean(self):
+        self.widgets_dict["Password_Registration"].set_text("")
+
+    def login_in(self):
+        account = self.widgets_dict["Account_Login"].get_text()
+        password = self.widgets_dict["Password_Login"].get_text()
+        hash_mode = self.widgets_dict["ComboBox"].get_text()
+        flag = 1
+        if account == "":
+            self.log_message("The account cannot be empty.\n")
+            self.pop_message_box("The account cannot be empty.")
+            return
+        if password == "":
+            self.log_message("The password cannot be empty.\n")
+            self.pop_message_box("The password cannot be empty.")
+            return
+        if account in self.account_str:
+            if hash_mode in account:
+                flag = self.hash_value[hash_mode]
+            else:
+                flag = 0
+        else:
+            with open(self.path + "Account Information.csv", 'r') as f_information:
+                for i in csv.reader(f_information):
+                    if i[0] == account:
+                        if i[2] == hash_mode:
+                            flag = i[1]
+                        else:
+                            flag = 0
+                    elif flag != 0:
+                        flag = 2
+                f_information.close()
+        if flag != 0 and flag != 2:
+            with open(self.hash_table_path + hash_mode + ".csv", 'r') as f_hash:
+                for j in csv.reader(f_hash):
+                    if j[0] == password and j[1] == flag.replace(" ", ""):
+                        self.widgets_dict["Password_Hash"].set_text(re.sub(r"(?<=\w)(?=(?:\w\w)+$)", " ", j[1]))
+                        flag = 1
+                f_hash.close()
+        if flag == 1:
+            self.pop_message_box("Login successful.")
+        elif flag == 0:
+            self.pop_message_box("The hash algorithm was selected incorrectly.")
+        elif flag == 2:
+            self.pop_message_box("The account doesn't exist")
+        else:
+            self.log_message("The password is incorrect.\n")
+            self.pop_message_box("The password is incorrect.")
+
+    def login_clean(self):
+        self.widgets_dict["Account_Login"].set_text("")
+        self.widgets_dict["Password_Login"].set_text("")
+
+if __name__ == '__main__':
+    app = QApplication([])
+    window = PSWidget()
+    app.exec_()

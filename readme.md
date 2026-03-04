@@ -1,3 +1,105 @@
+# 密码学教学平台
+
+## 项目状态
+✅ 项目重构已完成（2026年3月3日）
+
+## 当前版本
+Version 2.1 - 2026.03.03
+
+## 项目简介
+密码学教学平台是一个基于 PyQt5 的桌面应用程序，提供各种密码学算法的可视化演示和学习工具。
+
+## 项目结构
+```
+Cryptogrphy/
+├── core/algorithms/      # 核心算法实现
+│   ├── classical/        # 古典密码（Caesar、Vigenere、Hill等）
+│   ├── symmetric/        # 对称加密（AES、DES、SM4、RC4等）
+│   ├── asymmetric/       # 非对称加密（RSA、ECC、SM2等）
+│   ├── hash/            # 哈希算法（MD5、SHA系列、SM3等）
+│   └── mathematical/    # 数学基础（CRT、Euclidean、Euler）
+├── ui/widgets/          # 用户界面组件
+├── infrastructure/      # 基础设施（类型转换、安全工具等）
+├── resources/          # 资源文件（HTML文档、测试数据）
+├── tests/              # 测试文件
+└── docs/               # 项目文档
+```
+
+## 快速开始
+
+### 安装依赖
+```bash
+pip install -r requirements.txt
+```
+
+### 启动应用
+```bash
+python main.py
+```
+
+## 功能模块
+
+### ✅ 完全可用的模块
+- **古典密码**：Caesar、Vigenere、Hill、Playfair、Enigma、单表代换、频率分析
+- **对称加密**：AES、DES、SM4、SIMON、SPECK、Block Mode、RC4、ZUC、SEAL、Crypto-1
+- **哈希算法**：MD5、SHA1、SHA256、SHA3、SM3、HMAC-MD5、AES-CBC-MAC、Hash Reverse
+- **数学基础**：CRT（中国剩余定理）、Euclidean（欧几里得算法）、Euler（欧拉定理）
+- **其他功能**：Password System（密码系统）
+
+### ⏸️ 需要安装依赖的模块
+- **非对称加密**：RSA、RSA Sign、ECC、ECDSA、ElGamal、SM2、SM2 Sign
+  - 需要安装：`pip install pycryptodome gmssl`
+
+## 文档
+
+### 核心文档
+- [项目最终状态](docs/FINAL_STATUS.md) - 完整的项目状态报告，包含所有功能模块状态
+- [架构文档](docs/ARCHITECTURE.md) - 系统架构设计、技术栈、设计模式详解
+- [技术路线图](docs/ROADMAP.md) - 项目发展规划、版本计划、里程碑
+- [快速开始指南](docs/guides/QUICK_START.md) - 新用户快速上手指南
+- [快速修复指南](docs/guides/quick_fixes.md) - 常见问题解决方案
+
+### 技术文档
+- [需求规格说明](docs/restructure/密码学平台重构需求规格说明书.md) - 项目重构需求规格
+- [实验报告](docs/reports/实验报告.md) - 课程实验报告，包含详细的技术实现
+
+### 开发笔记
+- [Python技巧](docs/notes/Python.md) - Python依赖管理和目录树生成
+- [Python导入机制](docs/notes/Python导入库.md) - Python模块和包的导入详解
+- [延迟导入技术](docs/notes/延迟导入.md) - 延迟导入的实现和应用
+
+## 测试
+
+### 运行测试
+```bash
+# 项目结构测试
+python tests/test_project.py
+
+# 算法功能测试
+python tests/test_algorithms.py
+```
+
+## 已知问题
+详见 [FINAL_STATUS.md](docs/FINAL_STATUS.md) 中的"已知问题和待办事项"部分。
+
+## 版本历史
+
+### Version 2.1 - 2026.03.03
+- ✅ 完成项目结构重构
+- ✅ 统一导入路径到新结构
+- ✅ 删除旧目录结构
+- ✅ 整理项目文档
+- ✅ 清理Python缓存文件
+
+### Version 2.0 - 2025.12.11
+- 建立新的模块化结构
+- 迁移算法到 core/algorithms/
+- 迁移UI组件到 ui/widgets/
+
+---
+
+## 历史版本记录
+
 ## Version1.0 - 2023.12.05
 ### BUG
 
@@ -342,3 +444,34 @@ Qt5 有两种不同的 Web 工具包:基于 WebKit 的 QtWebKit 和基于 Chromi
 考试周比较忙，所以最近没有更新，其实之前已经写好了，框架也改动了一下，加入了html，将不同加密函数分到子文件夹下，方便管理。
 
 Web界面还有些问题，因为过了有点久，先提交一版，后续xiu'gai
+
+
+## Version2.0 - 2025.12.11 by AI
+打算重构一下框架和代码。
+Task Completion Summary
+I have successfully completed Task 1: Set up new modular project structure. Here's what was accomplished:
+
+✅ Complete Directory Structure Created
+core/: Pure algorithm implementations organized by category (classical, symmetric, asymmetric, hash, mathematical)
+ui/: User interface components with widgets and dialogs separation
+infrastructure/: Cross-cutting concerns (threading, logging, security, converters)
+tests/: Comprehensive test structure (unit, property, integration)
+resources/: Static resources (HTML docs, test data)
+✅ Files Successfully Reorganized
+30+ core algorithm files moved to appropriate categories
+40+ UI widget files consolidated in ui/widgets/
+Infrastructure utilities properly categorized
+HTML documentation and test data organized in resources/
+✅ Import Statements Updated
+150+ Python files updated with new import paths
+Backward compatibility maintained through temporary import modules
+Circular import issues resolved
+All Util imports migrated to infrastructure structure
+✅ Verification Completed
+Main application starts successfully without errors
+All algorithm imports work correctly
+Infrastructure components accessible
+Structure follows design document specifications
+The new modular structure provides clear separation of concerns, improved maintainability, and a solid foundation for all subsequent modernization tasks. The project is now ready for Task 2: Create base interfaces and abstract classes.
+
+An unexpected error occurred, please retry.

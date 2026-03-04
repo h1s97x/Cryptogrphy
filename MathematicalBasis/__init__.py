@@ -1,3 +1,0 @@
-from MathematicalBasis.CRT.CRT_ui import CRTWidget
-from MathematicalBasis.Euler.Euler_ui import EulerWidget
-from MathematicalBasis.Euclidean.Euclidean_ui import EuclideanWidget

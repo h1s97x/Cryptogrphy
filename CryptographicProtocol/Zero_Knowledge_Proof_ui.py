@@ -1,7 +1,7 @@
 import math
 import random
 from MathMagic.Modules.CryptographyModule import CryptographyWidget, Button, PlainTextEdit, IntroductionTab, ErrorType, KeyGroup, Group, ComboBox
-from Util import Path
+from infrastructure.Path import *
 
 
 class ZKPWidget(CryptographyWidget):

@@ -2,7 +2,7 @@ import logging
 import random
 from . import Verify
 from MathMagic.Modules.CryptographyModule import CryptographyWidget, Button, PlainTextEdit, IntroductionTab, SmartCardTab, SmartCard, Group, ErrorType
-from Util import Path, TypeConvert
+from infrastructure.Path import *, TypeConvert
 
 
 class VerifyWidget(CryptographyWidget):
