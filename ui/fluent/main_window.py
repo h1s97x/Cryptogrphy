@@ -235,6 +235,7 @@ class FluentMainWindow(FluentWindow):
         from ui.fluent.widgets.sha256_widget import SHA256Widget
         from ui.fluent.widgets.sha3_widget import SHA3Widget
         from ui.fluent.widgets.sm3_widget import SM3Widget
+        from ui.fluent.widgets.hmac_md5_widget import HMACMD5Widget
         
         # MD5
         self.md5Widget = MD5Widget(self)
@@ -283,6 +284,16 @@ class FluentMainWindow(FluentWindow):
             self.sm3Widget,
             FIF.DOCUMENT,
             'SM3',
+            NavigationItemPosition.SCROLL
+        )
+        
+        # HMAC-MD5
+        self.hmacmd5Widget = HMACMD5Widget(self)
+        self.hmacmd5Widget.setObjectName('hmacmd5Widget')
+        self.addSubInterface(
+            self.hmacmd5Widget,
+            FIF.DOCUMENT,
+            'HMAC-MD5',
             NavigationItemPosition.SCROLL
         )
     
