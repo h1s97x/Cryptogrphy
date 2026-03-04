@@ -37,16 +37,17 @@ python main.py --theme dark
 ### 经典密码
 - Hill 密码 ✅
 - Caesar 密码 ✅
-- Vigenere 密码 🚧
+- Vigenere 密码 ✅
 
 ### 分组密码
 - AES ✅
-- DES 🚧
+- DES ✅
 
 ### 公钥密码
 - RSA ✅
 
 ### 哈希算法
+- MD5 ✅
 - SHA-256 ✅
 
 ### 数学基础
