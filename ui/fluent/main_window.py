@@ -82,6 +82,7 @@ class FluentMainWindow(FluentWindow):
         from ui.fluent.widgets.caesar_widget import CaesarWidget
         from ui.fluent.widgets.vigenere_widget import VigenereWidget
         from ui.fluent.widgets.playfair_widget import PlayfairWidget
+        from ui.fluent.widgets.enigma_widget import EnigmaWidget
         
         # Hill
         self.hillWidget = HillWidget(self)
@@ -120,6 +121,16 @@ class FluentMainWindow(FluentWindow):
             self.playfairWidget,
             FIF.DOCUMENT,
             'Playfair',
+            NavigationItemPosition.SCROLL
+        )
+        
+        # Enigma
+        self.enigmaWidget = EnigmaWidget(self)
+        self.enigmaWidget.setObjectName('enigmaWidget')
+        self.addSubInterface(
+            self.enigmaWidget,
+            FIF.DOCUMENT,
+            'Enigma',
             NavigationItemPosition.SCROLL
         )
     
