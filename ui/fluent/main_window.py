@@ -173,6 +173,7 @@ class FluentMainWindow(FluentWindow):
     def addPublicKeyCrypto(self):
         """添加公钥密码分类"""
         from ui.fluent.widgets.rsa_widget import RSAWidget
+        from ui.fluent.widgets.rsa_sign_widget import RSASignWidget
         
         # RSA
         self.rsaWidget = RSAWidget(self)
@@ -181,6 +182,16 @@ class FluentMainWindow(FluentWindow):
             self.rsaWidget,
             FIF.DOCUMENT,
             'RSA',
+            NavigationItemPosition.SCROLL
+        )
+        
+        # RSA Sign
+        self.rsaSignWidget = RSASignWidget(self)
+        self.rsaSignWidget.setObjectName('rsaSignWidget')
+        self.addSubInterface(
+            self.rsaSignWidget,
+            FIF.DOCUMENT,
+            'RSA Sign',
             NavigationItemPosition.SCROLL
         )
     
