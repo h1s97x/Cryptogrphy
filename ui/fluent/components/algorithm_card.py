@@ -196,6 +196,76 @@ class DecryptCard(CardWidget):
         self.plaintextEdit.clear()
 
 
+class HashCard(CardWidget):
+    """哈希卡片"""
+    
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.initUI()
+    
+    def initUI(self):
+        layout = QVBoxLayout(self)
+        layout.setSpacing(12)
+        
+        # 标题
+        card_title = BodyLabel("🔐 哈希计算")
+        card_title.setStyleSheet("font-weight: bold; font-size: 14px;")
+        layout.addWidget(card_title)
+        
+        # 消息输入
+        messageLabel = BodyLabel("消息")
+        layout.addWidget(messageLabel)
+        
+        self.messageEdit = TextEdit()
+        self.messageEdit.setPlaceholderText("输入消息...")
+        self.messageEdit.setMaximumHeight(100)
+        layout.addWidget(self.messageEdit)
+        
+        # 哈希输出
+        hashLabel = BodyLabel("哈希值")
+        layout.addWidget(hashLabel)
+        
+        self.hashEdit = TextEdit()
+        self.hashEdit.setPlaceholderText("哈希结果将显示在这里")
+        self.hashEdit.setReadOnly(True)
+        self.hashEdit.setMaximumHeight(100)
+        layout.addWidget(self.hashEdit)
+        
+        # 按钮组
+        btnLayout = QHBoxLayout()
+        
+        self.hashBtn = PrimaryPushButton(FIF.FINGERPRINT, "计算哈希")
+        self.copyBtn = PushButton(FIF.COPY, "复制")
+        self.clearBtn = PushButton(FIF.DELETE, "清空")
+        
+        btnLayout.addWidget(self.hashBtn)
+        btnLayout.addWidget(self.copyBtn)
+        btnLayout.addWidget(self.clearBtn)
+        btnLayout.addStretch()
+        
+        layout.addLayout(btnLayout)
+    
+    def getMessage(self):
+        """获取消息"""
+        return self.messageEdit.toPlainText()
+    
+    def setMessage(self, text):
+        """设置消息"""
+        self.messageEdit.setPlainText(text)
+    
+    def getHash(self):
+        """获取哈希值"""
+        return self.hashEdit.toPlainText()
+    
+    def setHash(self, text):
+        """设置哈希值"""
+        self.hashEdit.setPlainText(text)
+    
+    def clear(self):
+        """清空"""
+        self.hashEdit.clear()
+
+
 class LogCard(CardWidget):
     """日志卡片"""
     
