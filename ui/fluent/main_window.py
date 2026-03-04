@@ -127,6 +127,7 @@ class FluentMainWindow(FluentWindow):
         """添加分组密码分类"""
         from ui.fluent.widgets.aes_widget import AESWidget
         from ui.fluent.widgets.des_widget import DESWidget
+        from ui.fluent.widgets.sm4_widget import SM4Widget
         
         # AES
         self.aesWidget = AESWidget(self)
@@ -145,6 +146,16 @@ class FluentMainWindow(FluentWindow):
             self.desWidget,
             FIF.DOCUMENT,
             'DES',
+            NavigationItemPosition.SCROLL
+        )
+        
+        # SM4
+        self.sm4Widget = SM4Widget(self)
+        self.sm4Widget.setObjectName('sm4Widget')
+        self.addSubInterface(
+            self.sm4Widget,
+            FIF.DOCUMENT,
+            'SM4',
             NavigationItemPosition.SCROLL
         )
     
