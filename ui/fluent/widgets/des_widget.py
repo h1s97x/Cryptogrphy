@@ -12,7 +12,7 @@ from qfluentwidgets import (
 
 from ui.fluent.components.algorithm_card import EncryptCard, DecryptCard, LogCard, KeyCard
 from core.algorithms.symmetric.DES import Thread as DESThread
-from infrastructure.converters.TypeConvert import TypeConvert
+from infrastructure.converters import TypeConvert
 
 
 class DESWidget(ScrollArea):

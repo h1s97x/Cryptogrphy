@@ -12,7 +12,7 @@ from qfluentwidgets import (
 
 from ui.fluent.components.algorithm_card import EncryptCard, DecryptCard, LogCard
 from core.algorithms.asymmetric import RSA
-from infrastructure.converters.TypeConvert import TypeConvert
+from infrastructure.converters import TypeConvert
 
 
 class RSAKeyCard(CardWidget):

@@ -11,7 +11,7 @@ from qfluentwidgets import (
 
 from ui.fluent.components.algorithm_card import HashCard, LogCard
 from core.algorithms.hash.SM3 import Thread as SM3Thread
-from infrastructure.converters.TypeConvert import TypeConvert
+from infrastructure.converters import TypeConvert
 
 
 class SM3Widget(ScrollArea):
@@ -47,7 +47,7 @@ class SM3Widget(ScrollArea):
         
         # 哈希卡片
         self.hashCard = HashCard()
-        self.hashCard.inputEdit.setPlaceholderText("输入要哈希的消息...")
+        self.hashCard.messageEdit.setPlaceholderText("输入要哈希的消息...")
         layout.addWidget(self.hashCard)
         
         # 日志卡片
@@ -71,7 +71,7 @@ class SM3Widget(ScrollArea):
             self.logCard.log("开始计算哈希...", "info")
             
             # 获取输入
-            message = self.hashCard.getInput()
+            message = self.hashCard.getMessage()
             if not message:
                 raise ValueError("请输入消息")
             

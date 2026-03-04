@@ -11,7 +11,7 @@ from qfluentwidgets import (
 
 from ui.fluent.components.algorithm_card import HashCard, LogCard
 from core.algorithms.hash.SHA1 import Thread as SHA1Thread
-from infrastructure.converters.TypeConvert import TypeConvert
+from infrastructure.converters import TypeConvert
 
 
 class SHA1Widget(ScrollArea):

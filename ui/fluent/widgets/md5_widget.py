@@ -11,7 +11,7 @@ from qfluentwidgets import (
 
 from ui.fluent.components.algorithm_card import HashCard, LogCard
 from core.algorithms.hash.MD5 import Thread as MD5Thread
-from infrastructure.converters.TypeConvert import TypeConvert
+from infrastructure.converters import TypeConvert
 
 
 class MD5Widget(ScrollArea):

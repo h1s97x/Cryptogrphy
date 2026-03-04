@@ -11,7 +11,7 @@ from qfluentwidgets import (
 
 from ui.fluent.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
 from core.algorithms.symmetric.SM4 import Thread as SM4Thread
-from infrastructure.converters.TypeConvert import TypeConvert
+from infrastructure.converters import TypeConvert
 
 
 class SM4Widget(ScrollArea):

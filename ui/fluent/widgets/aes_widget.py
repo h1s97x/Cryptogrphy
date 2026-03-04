@@ -11,7 +11,7 @@ from qfluentwidgets import (
 
 from ui.fluent.components.algorithm_card import KeyCard, EncryptCard, DecryptCard, LogCard
 from core.algorithms.symmetric.AES import Thread as AESThread
-from infrastructure.converters.TypeConvert import TypeConvert
+from infrastructure.converters import TypeConvert
 
 
 class AESWidget(ScrollArea):

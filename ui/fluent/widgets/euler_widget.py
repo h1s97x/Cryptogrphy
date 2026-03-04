@@ -89,7 +89,7 @@ class EulerResultCard(CardWidget):
         btnLayout = QHBoxLayout()
         
         self.phiBtn = PrimaryPushButton(FIF.LABEL, "计算 φ(m)")
-        self.modBtn = PrimaryPushButton(FIF.CALCULATOR, "计算 a^n mod m")
+        self.modBtn = PrimaryPushButton(FIF.EDIT, "计算 a^n mod m")
         self.clearBtn = PushButton(FIF.DELETE, "清空")
         
         btnLayout.addWidget(self.phiBtn)
