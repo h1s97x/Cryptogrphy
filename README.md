@@ -150,7 +150,7 @@ pip install pytest pytest-cov flake8 gmssl
 pytest tests/unit/ -v
 
 # 运行并生成覆盖率报告
-pytest tests/unit/ --cov=core --cov-report=html
+pytest tests/unit/ --cov=core --cov=infrastructure --cov-report=html
 ```
 
 测试内容包括：
